@@ -17,14 +17,13 @@ def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increm
 
     radius_step = (end_radius - start_radius) / (angle_range / increment)
 
-    # end_angle + 1deg is required to complete the loop
     radius = start_radius
-    for i in np.arange(start_angle, end_angle + math.radians(1.0), increment):
-        radius += radius_step
+    for i in np.arange(start_angle, end_angle, increment):
         x = radius * cos(i)
         y = radius * sin(i)
         pt = [x, y]
         points.append(pt)
+        radius += radius_step
 
     return linear_extrude(height, center = center) (polygon(points=points))
 
