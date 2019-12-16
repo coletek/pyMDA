@@ -7,7 +7,7 @@ def stepper_driver():
         cube([86, 55, 20])
     )
 
-def stepper(nema_type = 17, length = 24, segments_count = None):
+def stepper(nema_type = 17, length = 24.0, segments_count = None):
 
     if nema_type == 17:
         width = 42
@@ -44,7 +44,7 @@ def pulley(angle = 0):
         )
     )
 
-def stepper_and_pulley(angle = 0, nema_type = 17, length = 24, segments_count = None):
+def stepper_and_pulley(angle = 0.0, nema_type = 17, length = 24.0, segments_count = None):
     return union()(
         stepper(nema_type, length, segments_count),
         translate([0, 13, 0]) (
@@ -60,7 +60,7 @@ def bearing(id, od, thickness):
     p = outter - translate([0, 0, -1]) (inner)
     return p
 
-def collar(id, thickness, width, connection_gap, connection_hole_dia, connection_height, connection_thickness, connection_gap_closed):
+def collar(id, thickness, width, connection_gap, connection_hole_dia, connection_thickness, connection_height = 0.0, connection_gap_closed = 0.0):
 
     od = id + thickness * 2.0
     connection_width = connection_thickness * 2.0 + connection_gap

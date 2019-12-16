@@ -9,8 +9,10 @@ def prism(l, w, h):
         faces=[[0,1,2,3],[5,4,3,2],[0,4,5,1],[0,3,4],[5,2,1]]
     )
 
-def cam(height, start_radius, start_angle, end_radius, end_angle, increment, center = True):
+def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increment, center = True):
 
+    # todo: change angles to SI units (radians)
+    
     points = []
 
     radius_step = (end_radius - start_radius) / (360.0 / increment)
