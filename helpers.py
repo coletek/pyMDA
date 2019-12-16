@@ -27,6 +27,24 @@ def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increm
 
     return linear_extrude(height, center = center) (polygon(points=points))
 
+def cam_profile_find_radius(target_angle, start_radius, start_angle, end_radius, end_angle, increment = 0.01):
+
+    # TODO: this could/should be replaced with a single equation - can't think of the solution right now.
+    
+    angle_range = end_angle - start_angle
+
+    radius_step = (end_radius - start_radius) / (angle_range / increment)
+
+    # end_angle + 1deg is required to complete the loop
+    radius = start_radius
+    for i in np.arange(start_angle, end_angle + math.radians(1.0), increment):
+        radius += radius_step
+        #print math.degrees(target_angle), math.degrees(i), radius
+        if round(math.degrees(i)) == round(math.degrees(target_angle)):
+            return radius
+
+    return False
+
 def cube_curved_sides(x, y, z, corner_radius, side_count, segments_count):
 
     # alternative approach to minkowski, so it imports into OpenSCAD and export as STEP
