@@ -63,7 +63,6 @@ def bearing(id, od, thickness):
 def collar(id, thickness, width, connection_gap, connection_hole_dia, connection_thickness, connection_height = 0.0, connection_gap_closed = 0.0):
 
     od = id + thickness * 2.0
-    connection_width = connection_thickness * 2.0 + connection_gap
 
     # process connection_gap_closed - i.e. reduce the connection gap, which will also reduce the collar radius
     connection_gap -= connection_gap_closed
@@ -71,6 +70,8 @@ def collar(id, thickness, width, connection_gap, connection_hole_dia, connection
     od = C / (2.0 * math.pi) * 2.0
     id = od - thickness * 2.0
 
+    connection_width = connection_thickness * 2.0 + connection_gap
+    
     co = cylinder(d = od, h = width, segments = segments_count, center = True)
 
     cc = rotate(90, [0, 1, 0]) (cylinder(d = width, h = connection_width, segments = segments_count, center = True))
