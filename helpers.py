@@ -11,18 +11,16 @@ def prism(l, w, h):
 
 def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increment, center = True):
 
-    # todo: change angles to SI units (radians)
-    
     points = []
 
-    radius_step = (end_radius - start_radius) / (360.0 / increment)
+    radius_step = (end_radius - start_radius) / (math.radians(360.0) / increment)
 
-    # end_angle + 1 is required to complete the loop
+    # end_angle + 1deg is required to complete the loop
     radius = start_radius
-    for i in range(start_angle, end_angle + 1, increment):
+    for i in np.arange(start_angle, end_angle + math.radians(1.0), increment):
         radius += radius_step
-        x = radius * cos(math.radians(i))
-        y = radius * sin(math.radians(i))
+        x = radius * cos(i)
+        y = radius * sin(i)
         pt = [x, y]
         points.append(pt)
 
