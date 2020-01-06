@@ -263,11 +263,27 @@ def boss_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, heigh
 
     p = plate + \
         translate([0, 0, height / 2.0 + thickness / 2.0]) (rod) - \
-        translate([0, 0, height / 2.0 + thickness / 2.0 - 2.0]) (hole)
+        translate([0, 0, (height + thickness + 2) / 2.0 - thickness / 2.0 - 1]) (hole)
+    
+    if mounting_hole_dia > 0:
+        mounting_hole = cylinder(segments = segments_count, d = mounting_hole_dia, h = thickness + 2, center = True)
+        mounting_holes = translate([length / 3.0, 0, 0]) (mounting_hole) + \
+                         translate([-length / 3.0, 0, 0]) (mounting_hole)
+        p -= mounting_holes
+
+    return p
+
+def boss_dual_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, height, pitch, segments_count):
+
+    plate = cube([length, width, thickness], center = True)
+    rod = cylinder(segments = segments_count, d = dia, h = height, center = True)
+    hole = cylinder(segments = segments_count, d = hole_dia, h = height + thickness + 2, center = True)
 
     p = plate + \
-        translate([0, 0, height / 2.0 + thickness / 2.0]) (rod) - \
-        translate([0, 0, (height + thickness + 2) / 2.0 - thickness / 2.0 - 1]) (hole)
+        translate([-pitch / 2.0, 0, height / 2.0 + thickness / 2.0]) (rod) + \
+        translate([pitch / 2.0, 0, height / 2.0 + thickness / 2.0]) (rod) - \
+        translate([-pitch / 2.0, 0, (height + thickness + 2) / 2.0 - thickness / 2.0 - 1]) (hole) - \
+        translate([pitch / 2.0, 0, (height + thickness + 2) / 2.0 - thickness / 2.0 - 1]) (hole)
     
     if mounting_hole_dia > 0:
         mounting_hole = cylinder(segments = segments_count, d = mounting_hole_dia, h = thickness + 2, center = True)
