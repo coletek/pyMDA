@@ -7,8 +7,8 @@ bezier_step = 0.05
 segments_count = None
 
 # high res
-segments_count = 100
-bezier_step = 0.01
+#segments_count = 100
+#bezier_step = 0.01
 
 #
 # tolerance settings:
@@ -66,6 +66,7 @@ m4_nut_size = 7.0
 m4_nut_height = 3.0
 
 m10_tap_hole_size = 8.5 # fine
+m10_die_rod_size = 10.0
 m10_clearance_hole = 11
 
 m20_tap_hole_size = 17.5 # fine
