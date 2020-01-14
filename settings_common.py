@@ -7,8 +7,8 @@ bezier_step = 0.05
 segments_count = None
 
 # high res
-#segments_count = 100
-#bezier_step = 0.01
+bezier_step = 0.01
+segments_count = 100
 
 #
 # tolerance settings:

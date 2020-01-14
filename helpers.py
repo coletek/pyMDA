@@ -63,10 +63,10 @@ def cube_curved_sides(x, y, z, corner_radius, side_count, segments_count):
         )
     elif side_count == 2:
         # FIXME
-        return translate([x / 2.0 - corner_radius, y / 2.0 - corner_radius, 0]) (corner_round) + \
-            translate([x / 2.0 - corner_radius + corner_radius / 2.0, y / 2.0 - corner_radius + corner_radius / 2.0, 0]) (corner_sq) + \
-            translate([-x / 2.0 + corner_radius, y / 2.0 - corner_radius, 0]) (corner_round) + \
-            translate([-x / 2.0 + corner_radius - corner_radius / 2.0, y / 2.0 - corner_radius + corner_radius / 2.0, 0]) (corner_sq)
+        #return translate([x / 2.0 - corner_radius, y / 2.0 - corner_radius, 0]) (corner_round) + \
+        #    translate([x / 2.0 - corner_radius + corner_radius / 2.0, y / 2.0 - corner_radius + corner_radius / 2.0, 0]) (corner_sq) + \
+        #    translate([-x / 2.0 + corner_radius, y / 2.0 - corner_radius, 0]) (corner_round) + \
+        #    translate([-x / 2.0 + corner_radius - corner_radius / 2.0, y / 2.0 - corner_radius + corner_radius / 2.0, 0]) (corner_sq)
         return hull() (
             translate([x / 2.0 - corner_radius, y / 2.0 - corner_radius, 0]) (corner_round),
             translate([x / 2.0 - corner_radius + corner_radius / 2.0, y / 2.0 - corner_radius + corner_radius / 2.0, 0]) (corner_sq),
@@ -470,4 +470,23 @@ def plate(width, height, thickness, top_mounting_hole_depth = 0, bottom_mounting
 
         p = p - bolt_hole3 - bolt_hole4
                 
+    return p
+
+def rubber_button(radius, length, support_radius, support_length, segments_count):
+
+    main = cylinder(r = radius, h = length, segments = segments_count)
+
+    support = cylinder(r = support_radius, h = support_length, segments = segments_count)
+
+    p = main + support
+    
+    return p
+
+def lightpipe_straight(radius, length, support_radius, support_length, support_offset, segments_count):
+    main = cylinder(r = radius, h = length, segments = segments_count)
+
+    support = cylinder(r = support_radius, h = support_length, segments = segments_count)
+
+    p = main + translate([0, 0, support_offset]) (support)
+    
     return p
