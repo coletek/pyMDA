@@ -482,11 +482,14 @@ def rubber_button(radius, length, support_radius, support_length, segments_count
     
     return p
 
-def lightpipe_straight(radius, length, support_radius, support_length, support_offset, segments_count):
-    main = cylinder(r = radius, h = length, segments = segments_count)
+def lightpipe_straight(radius, length, support_radius, support_length, support_offset, head_radius, segments_count):
+    main = cylinder(r = radius, h = length - support_offset - support_length, segments = segments_count)
 
     support = cylinder(r = support_radius, h = support_length, segments = segments_count)
 
-    p = main + translate([0, 0, support_offset]) (support)
+    head = cylinder(r = head_radius, h = support_offset, segments = segments_count)
+    
+    p = head + translate([0, 0, support_offset]) (support) + \
+        translate([0, 0, support_offset + support_length]) (main)
     
     return p

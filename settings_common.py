@@ -11,16 +11,25 @@ bezier_step = 0.01
 segments_count = 100
 
 #
+# OpenSCAD settings
+#
+
+thickness_2d_shape = 1.0 # as defined by OpenSCAD 2D shapes
+
+#
 # tolerance settings:
 #
 # * SLS - https://www.hlhprototypes.com/wp-content/uploads/2018/11/HLH-SLS-3D-Printing-Design-Guide-v1.0.pdf
 # * SLA - https://www.hlhprototypes.com/wp-content/uploads/2018/11/HLH-SLA-3D-Printing-Design-Guide-v1.0.pdf
 # * CNC - https://www.hlhprototypes.com/wp-content/uploads/2018/11/HLH-CNC-Machining-Design-Guide-v1.0.pdf
+# * PCB - https://www.pcbway.com/pcb_prototype/PCB_Manufacturing_tolerances.html
 
 cnc_metal_tolerance = 0.05
 cnc_plastic_tolerance = 0.2
 sls_tolerance = 0.3
 sla_tolerance = 0.1
+pcb_outline_tolerance = 0.2 # when CNC is used
+pcb_hole_tolerance = 0.08
 
 #
 # clearance/mating settings:
@@ -30,14 +39,14 @@ sla_tolerance = 0.1
 # * CNC - https://www.hlhprototypes.com/wp-content/uploads/2018/11/HLH-CNC-Machining-Design-Guide-v1.0.pdf
 
 # mating clearance between same part types
-cnc_metal_clearance = 0.1 #?
-cnc_plastic_clearance = 0.2 #?
-sls_clearance = 0.5
-sla_clearance = 0.5
+cnc_metal_clearance = 0.1 # if moving
+cnc_plastic_clearance = 0.2 # if moving
+sls_clearance = 0.5 # if moving
+sla_clearance = 0.2 # if moving
 
 # mating clearance between 3D prints and cots parts
-sls_cots_clearance = 0.2 #?
-sla_cots_clearance = 0.2 #?
+sls_cots_clearance = 0.2 # if moving
+sla_cots_clearance = 0.2 # if moving
 
 #
 # threads:
