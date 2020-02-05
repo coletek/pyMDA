@@ -334,13 +334,7 @@ def stepper_mounting_plate(width, height, thickness, slot_dia, slot_height = 0, 
 	        cylinder(h = thickness + 2, d = slot_width, segments = segments_count)
             )
         ),
-        
-        translate([-thickness / 2.0 - 1, 0, -slot_height / 2.0]) (
-	    rotate(90, [0, 1, 0]) (
-	        cylinder(h = thickness + 2, d = slot_width, segments = segments_count)
-            )
-        ),
-        
+
         # stepper motor mounting slot +ve y
         translate([-thickness / 2.0 - 1,
 		   mounting_hole_gap / 2.0,
@@ -379,6 +373,12 @@ def stepper_mounting_plate(width, height, thickness, slot_dia, slot_height = 0, 
     
     if slot_height > 0:
 
+        slot0 = translate([-thickness / 2.0 - 1, 0, -slot_height / 2.0]) (
+	    rotate(90, [0, 1, 0]) (
+	        cylinder(h = thickness + 2, d = slot_width, segments = segments_count)
+            )
+        )
+        
         slot1 = translate([-thickness / 2.0 - 1,
 		           -slot_dia / 2.0 + mounting_hole_gap / 2.0,
 		           -slot_height / 2.0 - mounting_hole_gap / 2.0]) (
@@ -395,7 +395,7 @@ def stepper_mounting_plate(width, height, thickness, slot_dia, slot_height = 0, 
 			         slot_height + mounting_hole_gap])
                            )
         
-        p = p - slot1 - slot2
+        p = p - slot0 - slot1 - slot2
         
     if mounting_hole_depth > 0:
         
