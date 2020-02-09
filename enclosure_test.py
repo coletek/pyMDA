@@ -57,7 +57,7 @@ cb = enclosure_corner_bottom(wall_thickness, curve_radius, draft_angle, height, 
 f = enclosure_face(height, length, wall_thickness, curve_radius, draft_angle)
 
 p = e + cb + ct + f
-#p = e + f
+p = e + f
 
 print(scad_render(p))
 exit()

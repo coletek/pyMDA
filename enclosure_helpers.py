@@ -4,12 +4,28 @@ import math
 
 def enclosure_face(height, length, wall_thickness, curve_radius, draft_angle):
 
-    wall = translate([-length, -wall_thickness / 2.0, 0]) (cube([length, wall_thickness, height]))
-
-    p = rotate(-math.degrees(draft_angle), [1, 0, 0]) (wall)
-
     d = math.tan(draft_angle) * height
-
+    
+    CubePoints = [
+        [ 0,  -wall_thickness / 2.0,  0 ], #0
+        [ 0,  wall_thickness / 2.0,  0 ],  #1
+        [ -length, wall_thickness / 2.0,  0 ], #2
+        [ -length, -wall_thickness / 2.0,  0 ], #3
+        [ 0,  -wall_thickness / 2.0 + d, height], #4
+        [ 0,  wall_thickness / 2.0 + d, height],  #5
+        [ -length, wall_thickness / 2.0 + d, height],  #6
+        [ -length, -wall_thickness / 2.0 + d, height]]  #7
+    
+    CubeFaces = [
+        [0,1,2,3], # bottom
+        [4,5,6,7], # top
+        [2,3,7,6], # -ve x face
+        [0,1,5,4], # +ve x face
+        [0,3,7,4], # inner face
+        [1,2,6,5]] # outer face
+    
+    p = polyhedron(CubePoints, CubeFaces);
+    
     p = translate([(-curve_radius + d + wall_thickness / 2.0), 0, 0]) (p)
     
     return p
