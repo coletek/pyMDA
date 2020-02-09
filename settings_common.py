@@ -49,6 +49,19 @@ sls_cots_clearance = 0.2 # if moving
 sla_cots_clearance = 0.2 # if moving
 
 #
+# SLA printing settings
+#
+
+emboss_min_height = 0.5
+deboss_min_height = 0.3
+
+#
+# IM settings
+#
+
+draft_angle = 1.5
+
+#
 # threads:
 #
 # * https://www.trfastenings.com/Products/knowledgebase/Tables-Standards-Terminology/Tapping-Sizes-and-Clearance-Holes
