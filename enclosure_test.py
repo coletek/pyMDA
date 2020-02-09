@@ -6,8 +6,8 @@ from settings_common import *
 from enclosure_helpers import *
 import math
 
-wall_thickness = 2.0
-draft_angle = math.radians(1.5)
+wall_thickness = wall_thickness_min
+draft_angle = math.radians(draft_angle)
 #draft_angle = math.radians(5.0)
 #draft_angle = math.radians(0.0)
 height = 20

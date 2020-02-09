@@ -15,6 +15,7 @@ segments_count = 100
 #
 
 thickness_2d_shape = 1.0 # as defined by OpenSCAD 2D shapes
+overlap = 0.1 # for cuts, etc
 
 #
 # tolerance settings:
@@ -60,6 +61,7 @@ deboss_min_height = 0.3
 #
 
 draft_angle = 1.5
+wall_thickness_min = 1.0
 
 #
 # threads:

@@ -1,5 +1,6 @@
 from solid import *
 from solid.utils import *
+from settings_common import *
 import math
 
 def enclosure_face(height, length, wall_thickness, curve_radius, draft_angle):
@@ -76,14 +77,14 @@ def enclosure_edge(height, wall_thickness, curve_radius, draft_angle, segments_c
     #draft_angle = math.radians(1.5)
     #height = 20
     #curve_radius = 4.0
-    
+
     d = math.tan(draft_angle) * height
     
     edge_o = cylinder(h = height, r1 = curve_radius - d, r2 = curve_radius, center = True, segments = segments_count)
 
-    edge_i = cylinder(h = height + 2, r1 = curve_radius - d - wall_thickness, r2 = curve_radius - wall_thickness, center = True, segments = segments_count)
+    edge_i = cylinder(h = height + overlap, r1 = curve_radius - d - wall_thickness, r2 = curve_radius - wall_thickness, center = True, segments = segments_count)
     
-    aoi = translate([0, 0, -height / 2.0 - 1]) (cube([curve_radius, curve_radius, height + 2]))
+    aoi = translate([0, 0, -height / 2.0 - overlap / 2.0]) (cube([curve_radius, curve_radius, height + overlap]))
     
     full = edge_o - edge_i
 
