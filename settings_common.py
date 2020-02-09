@@ -15,7 +15,7 @@ segments_count = 100
 #
 
 thickness_2d_shape = 1.0 # as defined by OpenSCAD 2D shapes
-overlap = 0.1 # for cuts, etc
+overlap = 0.01 # for cuts, joins
 
 #
 # tolerance settings:
