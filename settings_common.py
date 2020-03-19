@@ -7,8 +7,8 @@ bezier_step = 0.05
 segments_count = None
 
 # high res
-bezier_step = 0.01
-segments_count = 100
+#bezier_step = 0.01
+#segments_count = 100
 
 #
 # OpenSCAD settings
@@ -49,7 +49,7 @@ sls_cots_clearance = 0.2 # if moving
 sla_cots_clearance = 0.2 # if moving
 
 #
-# threads:
+# bolt threads:
 #
 # * https://www.trfastenings.com/Products/knowledgebase/Tables-Standards-Terminology/Tapping-Sizes-and-Clearance-Holes
 # * https://ae01.alicdn.com/kf/HTB1hoF9LVXXXXczXXXXq6xXFXXXt/222055624/HTB1hoF9LVXXXXczXXXXq6xXFXXXt.jpg
@@ -80,3 +80,12 @@ m10_clearance_hole = 11
 
 m20_tap_hole_size = 17.5 # fine
 m20_clearance_hole = 22.0
+
+#
+# screw threads:
+#
+# * https://www.diydata.com/information/screwholes/screwholes.php
+
+g8_clearance_hole = 4.5
+g8_head_size = 8.0 # measured
+g8_head_or_nut_depth = 4.0 # measured
