@@ -15,6 +15,7 @@ segments_count = None
 #
 
 thickness_2d_shape = 1.0 # as defined by OpenSCAD 2D shapes
+overlap = 0.01 # for cuts, joins
 
 #
 # tolerance settings:
@@ -47,6 +48,20 @@ sla_clearance = 0.2 # if moving
 # mating clearance between 3D prints and cots parts
 sls_cots_clearance = 0.2 # if moving
 sla_cots_clearance = 0.2 # if moving
+
+#
+# SLA printing settings
+#
+
+emboss_min_height = 0.5
+deboss_min_height = 0.3
+
+#
+# IM settings
+#
+
+draft_angle = 1.5
+wall_thickness_min = 1.0
 
 #
 # bolt threads:
