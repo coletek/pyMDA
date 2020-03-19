@@ -7,8 +7,8 @@ bezier_step = 0.05
 segments_count = None
 
 # high res
-#bezier_step = 0.01
-#segments_count = 100
+bezier_step = 0.01
+segments_count = 300
 
 #
 # OpenSCAD settings
@@ -62,6 +62,7 @@ deboss_min_height = 0.3
 
 draft_angle = 1.5
 wall_thickness_min = 1.0
+wall_thickness_max = 3.0
 
 #
 # bolt threads:
