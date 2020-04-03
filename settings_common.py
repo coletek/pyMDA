@@ -11,6 +11,12 @@ bezier_step = 0.01
 segments_count = 300
 
 #
+# magic numbers
+#
+
+golden = (1 + 5 ** 0.5) / 2
+
+#
 # OpenSCAD settings
 #
 
