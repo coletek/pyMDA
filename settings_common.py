@@ -3,8 +3,8 @@
 #
 
 # low res
-bezier_step = 0.05
-segments_count = None
+#bezier_step = 0.05
+#segments_count = None
 
 # high res
 bezier_step = 0.01
@@ -14,11 +14,18 @@ segments_count = 100 # 300
 #segments_count = 300 # 300
 
 #
+# magic numbers
+#
+
+golden = (1 + 5 ** 0.5) / 2
+
+#
 # OpenSCAD settings
 #
 
 thickness_2d_shape = 1.0 # as defined by OpenSCAD 2D shapes
 overlap = 0.01 # for cuts, joins
+#overlap = 2.0 # for cuts, joins
 
 #
 # tolerance settings:
