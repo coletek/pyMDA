@@ -18,6 +18,8 @@ segments_count = 100 # 300
 #
 
 golden = (1 + 5 ** 0.5) / 2
+mm_to_inch = 25.4
+inch_to_mm = 1.0 / mm_to_inch
 
 #
 # OpenSCAD settings
