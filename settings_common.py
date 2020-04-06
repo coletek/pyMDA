@@ -8,7 +8,10 @@ segments_count = None
 
 # high res
 bezier_step = 0.01
-segments_count = 300
+segments_count = 100 # 300
+
+#bezier_step = 0.01
+#segments_count = 300 # 300
 
 #
 # OpenSCAD settings
