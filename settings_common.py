@@ -22,6 +22,18 @@ inch_to_mm = 25.4
 mm_to_inch = 1.0 / inch_to_mm
 
 #
+# Colours
+#
+
+colour_pcb = [0, 0.549, 0.29]
+
+#
+# pcb settings
+#
+
+pcb_thickness_typical = 1.6
+
+#
 # OpenSCAD settings
 #
 
