@@ -3,8 +3,8 @@
 #
 
 # low res
-#bezier_step = 0.05
-#segments_count = None
+bezier_step = 0.05
+segments_count = None
 
 # high res
 bezier_step = 0.01
@@ -17,7 +17,7 @@ segments_count = 100 # 300
 # magic numbers
 #
 
-golden = (1 + 5 ** 0.5) / 2
+golden_ratio = (1 + 5 ** 0.5) / 2
 inch_to_mm = 25.4
 mm_to_inch = 1.0 / inch_to_mm
 
@@ -40,6 +40,16 @@ pcb_thickness_typical = 1.6
 thickness_2d_shape = 1.0 # as defined by OpenSCAD 2D shapes
 overlap = 0.01 # for cuts, joins
 #overlap = 2.0 # for cuts, joins
+
+#
+# metal work tolerance settings
+#
+# https://www.protocase.com/resources/tolerances/profile-cutting.php
+
+laser_tolerance = 0.13
+extruded_chopsaw_tolerance = 0.25
+chopsaw_tolerance = 1.02
+bandsaw_tolerance = 3.18
 
 #
 # tolerance settings:
