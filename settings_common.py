@@ -32,6 +32,8 @@ colour_pcb = [0, 0.549, 0.29]
 #
 
 pcb_thickness_typical = 1.6
+pcb_outline_tolerance = 0.2 # when CNC is used
+pcb_hole_tolerance = 0.08
 
 #
 # OpenSCAD settings
@@ -63,8 +65,6 @@ cnc_metal_tolerance = 0.05
 cnc_plastic_tolerance = 0.2
 sls_tolerance = 0.3
 sla_tolerance = 0.1
-pcb_outline_tolerance = 0.2 # when CNC is used
-pcb_hole_tolerance = 0.08
 
 #
 # clearance/mating settings:
