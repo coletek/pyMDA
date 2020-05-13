@@ -34,6 +34,7 @@ colour_pcb = [0, 0.549, 0.29]
 pcb_thickness_typical = 1.6
 pcb_outline_tolerance = 0.2 # when CNC is used
 pcb_hole_tolerance = 0.08
+pcb_slot_min = 0.8 + pcb_outline_tolerance
 
 #
 # OpenSCAD settings
@@ -103,6 +104,7 @@ wall_thickness_max = 3.0
 #
 # * https://www.trfastenings.com/Products/knowledgebase/Tables-Standards-Terminology/Tapping-Sizes-and-Clearance-Holes
 # * https://ae01.alicdn.com/kf/HTB1hoF9LVXXXXczXXXXq6xXFXXXt/222055624/HTB1hoF9LVXXXXczXXXXq6xXFXXXt.jpg
+# * https://image.pushauction.com/0/0/f2c27552-fb37-436a-9369-5b4293c5087b/eda41698-7b80-41de-b5b8-98625f130e93.jpg
 
 m2_tap_hole_size = 1.6
 m2_clearance_hole = 2.4
@@ -116,6 +118,7 @@ m2_5_head_or_nut_depth = 2.36
 
 m3_tap_hole_size = 2.5
 m3_clearance_hole = 3.4
+m3_head_size = 6.0
 
 m4_tap_hole_size = 3.3
 m4_clearance_hole = 4.5
