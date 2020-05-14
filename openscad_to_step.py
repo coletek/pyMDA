@@ -6,6 +6,8 @@ import Part
 import importCSG
 
 def convert_openscad_to_step(scad_filename, step_filename, objname = 'difference'):
+
+    # TODO: automatically determine the top level object (objname)
     
     part_name = os.path.basename(scad_filename)
     part_name = part_name.replace(".scad", "")
