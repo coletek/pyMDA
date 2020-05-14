@@ -441,13 +441,13 @@ def plate(width, height, thickness, top_mounting_hole_depth = 0, bottom_mounting
 
         depth = top_mounting_hole_depth
         
-	bolt_hole1 = translate([0, width / 2.0 - distance, height / 2.0 - depth - 1]) (
-	    rotate(90, [0, 0, 1]) (
+        bolt_hole1 = translate([0, width / 2.0 - distance, height / 2.0 - depth - 1]) (
+            rotate(90, [0, 0, 1]) (
                 cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
             )
         )
         bolt_hole2 = translate([0, - width / 2.0 + distance, height / 2.0 - depth - 1]) (
-	    rotate(90, [0, 0, 1]) (
+            rotate(90, [0, 0, 1]) (
                 cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
             )
         )
@@ -458,13 +458,13 @@ def plate(width, height, thickness, top_mounting_hole_depth = 0, bottom_mounting
 
         depth = bottom_mounting_hole_depth
         
-	bolt_hole3 = translate([0, width / 2.0 - distance, - height / 2.0 - 1]) (
-	    rotate(90, [0, 0, 1]) (
+        bolt_hole3 = translate([0, width / 2.0 - distance, - height / 2.0 - 1]) (
+            rotate(90, [0, 0, 1]) (
                 cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
             )
         )
-	bolt_hole4 = translate([0, - width / 2.0 + distance, - height / 2.0 - 1]) (
-	    rotate(90, [0, 0, 1]) (
+        bolt_hole4 = translate([0, - width / 2.0 + distance, - height / 2.0 - 1]) (
+            rotate(90, [0, 0, 1]) (
                 cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
             )
         )
