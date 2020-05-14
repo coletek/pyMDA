@@ -494,3 +494,57 @@ def lightpipe_straight(radius, length, support_radius, support_length, support_o
         translate([0, 0, support_offset + support_length]) (main)
     
     return p
+
+def shs(width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0.0):
+    # works for -45 and 45.0
+    # TODO: make work for any angle
+    
+    p = cube([width, length, width], center = True) - cube([width - thickness, length + 2, width - thickness], center = True)
+
+    if end1_cut_angle != 0:
+        l = math.sqrt(2 * (width) * (width))
+        if end1_cut_angle < 0:
+            c = translate([0, 0, -(width) / 2.0]) (rotate(end1_cut_angle, [1, 0, 0]) (cube([width + 2, l, l], center = True)))
+        else:
+            c = translate([0, 0, (width) / 2.0]) (rotate(end1_cut_angle, [1, 0, 0]) (cube([width + 2, l, l], center = True)))
+        p -= translate([0, length / 2.0, 0]) (c)
+
+    if end2_cut_angle != 0:
+        l = math.sqrt(2 * (width) * (width))
+        if end2_cut_angle < 0:
+            c = translate([0, 0, -(width) / 2.0]) (rotate(end2_cut_angle, [1, 0, 0]) (cube([width + 2, l, l], center = True)))
+        else:
+            c = translate([0, 0, (width) / 2.0]) (rotate(end2_cut_angle, [1, 0, 0]) (cube([width + 2, l, l], center = True)))
+        p -= translate([0, -length / 2.0, 0]) (c)
+
+    p = color(Aluminum) (p)
+    return p
+
+def cs(width, thickness, length):
+    
+    p = cube([width, length, width], center = True) - translate([-0.5 - thickness, 0, 0]) (cube([width + 1, length + 2, width - thickness * 2.0], center = True))
+
+    p = color(Aluminum) (p)
+    return p
+
+def ls(width, height, thickness, length):
+    
+    p = cube([width, length, height], center = True) - translate([-0.5 - thickness, 0, -0.5 - thickness]) (cube([width + 1, length + 2, height + 1], center = True))
+
+    p = color(Aluminum) (p)
+    return p
+
+def sb(width, length):
+    
+    p = cube([width, length, width], center = True)
+
+    p = color(Aluminum) (p)
+    return p
+
+def rod(dia, length, segments_count):
+    return color(Aluminum) (cylinder(d = dia, h = length, center = True, segments = segments_count))
+
+def sheet(width = 600, length = 2400, thickness = 1.2):
+    p = cube([width, length, thickness], center = True)
+    p = color(Aluminum) (p)
+    return p
