@@ -7,6 +7,10 @@ import importCSG
 
 def convert_openscad_to_step(scad_filename, step_filename, objname = 'difference'):
 
+    # NOTES:
+    # * Works with ubuntu 18.04 (python 2.7.17 and freecad 0.16)
+    # * Needs rework for ubuntu 20.04 (python 3.8.2 and freecad 0.18.4)
+    
     # TODO: automatically determine the top level object (objname)
     
     part_name = os.path.basename(scad_filename)
