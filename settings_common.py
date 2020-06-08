@@ -3,15 +3,16 @@
 #
 
 # low res
-bezier_step = 0.05
-segments_count = None
+#bezier_step = 0.05
+#segments_count = None
 
 # high res
 bezier_step = 0.01
-segments_count = 100 # 300
+segments_count = 100
 
+# export res
 #bezier_step = 0.01
-#segments_count = 300 # 300
+#segments_count = 500
 
 #
 # magic numbers

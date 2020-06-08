@@ -106,7 +106,7 @@ def bearing_pillow_block_ucp204():
     return color(BlackPaint) (import_stl("cots/ucp204.stl"))
 
 # waiting on revised 3D model
-@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
+#@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
 def linear_actuator_pa12t(actuator_small_dist_to_mount = 4.85):
     return color(BlackPaint) (translate([0, -actuator_small_dist_to_mount, 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/PA-12-1.06.stl")))))
 
@@ -119,6 +119,11 @@ def linear_actuator_pa14p(actuator_dist_to_mount = 19.75, actuator_dist_to_mount
 @bom_part("Linear Actuator Mounting Bracket (BRK-14)", 8.5)
 def linear_actuator_mounting_bracket_brk14(actuator_mounting_bracket_length = 55.88):
     return color(BlackPaint) (rotate(90, [0, 1, 0]) (rotate(-90, [0, 0, 1]) (translate([actuator_mounting_bracket_length / 2.0 - 0.02 - 7.9, - 1.518, - 0.458 - 32.1]) (import_stl("cots/BRK-14-bracket.stl")))))
+
+# waiting on revised 3D model
+@bom_part("Linear Actuator Mounting Bracket (BRK-03)", 9.5)
+def linear_actuator_mounting_bracket_brk03(actuator_mounting_bracket_length = 55.88):
+    return color(BlackPaint) (translate([10.0, (0.79 + 0.75 / 2.0 + 5.16 + 0.11) * inch_to_mm + 1, 0]) (rotate(90, [1, 0, 0]) (rotate(90, [0, 0, 1]) (scale(20.066/50.8386) (import_stl("cots/BRK-03.stl"))))))
 
 def door(door_width, door_thickness, door_height):
     p = cube([door_width, door_thickness, door_height], center = True)

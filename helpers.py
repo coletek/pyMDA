@@ -495,6 +495,24 @@ def lightpipe_straight(radius, length, support_radius, support_length, support_o
     
     return p
 
+def matrix_copy(feature, part, space, x_length, y_length, x_count, y_count):
+    
+    x_gap = (x_length - x_count * space) / (x_count + 1.0)
+    y_gap = (y_length - y_count * space) / (y_count + 1.0)
+
+    p = part
+    
+    y = - y_length / 2.0 + y_gap + space / 2.0
+    for j in range(y_count):
+        x = - x_length / 2.0 + x_gap + space / 2.0
+        p -= translate([x, y, 0]) (feature)
+        for i in range(x_count - 1):
+            x += x_gap + space
+            p -= translate([x, y, 0]) (feature)
+        y += y_gap + space
+
+    return p
+
 def shs(width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0.0):
     # works for -45 and 45.0
     # TODO: make work for any angle
