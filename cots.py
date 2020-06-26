@@ -105,25 +105,48 @@ def bearing_pillow_block_ucp201():
 def bearing_pillow_block_ucp204():
     return color(BlackPaint) (import_stl("cots/ucp204.stl"))
 
-# waiting on revised 3D model
-#@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
-def linear_actuator_pa12t(actuator_small_dist_to_mount = 4.85):
-    return color(BlackPaint) (translate([0, -actuator_small_dist_to_mount, 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/PA-12-1.06.stl")))))
+@bom_part("Linear Actuator (PA-14P)", 138.99)
+def linear_actuator_pa14p(size = 2.0 * inch_to_mm, stroke = 0.0, actuator_dist_to_mount = 0.78 * inch_to_mm, actuator_dist_to_mount2 = 0.4 * inch_to_mm, actuator_width = 1.57 * inch_to_mm):
+    # TODO: make stroke work - requires replacing STL files with custom OpenSCAD model
+    # until then, we can hack it via using size
+    size += stroke
+    p = import_stl("cots/PA-14P-2.stl")
+    if size == 4.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-4.stl")
+    if size == 6.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-6.stl")
+    if size == 8.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-8.stl")
+    if size == 10.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-10.stl")
+    if size == 12.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-12.stl")
+    if size == 18.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-18.stl")
+    if size == 24.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-24.stl")
+    if size == 30.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-30.stl")
+    if size == 40.0 * inch_to_mm:
+        p = import_stl("cots/PA-14P-40.stl")
+    return color(BlackPaint) (translate([-actuator_dist_to_mount, actuator_dist_to_mount2, actuator_width / 2.0]) (p))
 
-# waiting on revised 3D model
-@bom_part("Linear Actuator (PA-14P-18-150)", 138.99)
-def linear_actuator_pa14p(actuator_dist_to_mount = 19.75, actuator_dist_to_mount2 = 10.16, actuator_width = 39.878):
-    return color(BlackPaint) (translate([-actuator_dist_to_mount, actuator_dist_to_mount2, actuator_width / 2.0]) (import_stl("cots/PA-14P.stl")))
-
-# waiting on revised 3D model
 @bom_part("Linear Actuator Mounting Bracket (BRK-14)", 8.5)
-def linear_actuator_mounting_bracket_brk14(actuator_mounting_bracket_length = 55.88):
-    return color(BlackPaint) (rotate(90, [0, 1, 0]) (rotate(-90, [0, 0, 1]) (translate([actuator_mounting_bracket_length / 2.0 - 0.02 - 7.9, - 1.518, - 0.458 - 32.1]) (import_stl("cots/BRK-14-bracket.stl")))))
+def linear_actuator_mounting_bracket_brk14(actuator_mounting_bracket_width = 1.04 * inch_to_mm, actuator_mounting_bracket_length = 2.3 * inch_to_mm, actuator_mounting_bracket_length_to_axle = 0.32 * inch_to_mm, actuator_mounting_bracket_height_to_axle = 1.43 * inch_to_mm):
+    return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - actuator_mounting_bracket_width / 2.0, 11.899 - actuator_mounting_bracket_height_to_axle, actuator_mounting_bracket_length - actuator_mounting_bracket_length_to_axle]) (import_stl("cots/BRK-14.stl")))))
 
 # waiting on revised 3D model
 @bom_part("Linear Actuator Mounting Bracket (BRK-03)", 9.5)
 def linear_actuator_mounting_bracket_brk03(actuator_mounting_bracket_length = 55.88):
     return color(BlackPaint) (translate([10.0, (0.79 + 0.75 / 2.0 + 5.16 + 0.11) * inch_to_mm + 1, 0]) (rotate(90, [1, 0, 0]) (rotate(90, [0, 0, 1]) (scale(20.066/50.8386) (import_stl("cots/BRK-03.stl"))))))
+
+# waiting on revised 3D model
+#@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
+def linear_actuator_pa12t(actuator_small_dist_to_mount = 4.85):
+    return color(BlackPaint) (translate([0, -actuator_small_dist_to_mount, 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/PA-12-1.06.stl")))))
+
+def linear_actuator_and_bracket(size, stroke, angle, explode_dist):
+    return rotate(angle, [0, 0, 1]) (linear_actuator_pa14p(size, stroke)) + translate([0, -explode_dist, 0]) (linear_actuator_mounting_bracket_brk14())
 
 def door(door_width, door_thickness, door_height):
     p = cube([door_width, door_thickness, door_height], center = True)

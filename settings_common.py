@@ -128,6 +128,9 @@ m4_head_or_nut_depth = 5.0
 m4_nut_size = 7.0
 m4_nut_height = 3.0
 
+m5_tap_hole_size = 4.2
+m5_clearance_hole = 5.5
+
 m10_tap_hole_size = 8.5 # fine
 m10_die_rod_size = 10.0
 m10_clearance_hole = 11
