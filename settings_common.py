@@ -3,12 +3,12 @@
 #
 
 # low res
-#bezier_step = 0.05
-#segments_count = None
+bezier_step = 0.05
+segments_count = None
 
 # high res
-bezier_step = 0.01
-segments_count = 100
+#bezier_step = 0.01
+#segments_count = 50
 
 # export res
 #bezier_step = 0.01

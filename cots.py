@@ -105,6 +105,10 @@ def bearing_pillow_block_ucp201():
 def bearing_pillow_block_ucp204():
     return color(BlackPaint) (import_stl("cots/ucp204.stl"))
 
+@bom_part("Bearing 2 Bolt Flange (UCFL204)", 19.76, 'A$')
+def bearing_2_bolt_flange_ucfl204():
+    return color(BlackPaint) (import_stl("cots/ucfl204.stl"))
+
 @bom_part("Linear Actuator (PA-14P)", 138.99)
 def linear_actuator_pa14p(size = 2.0 * inch_to_mm, stroke = 0.0, actuator_dist_to_mount = 0.78 * inch_to_mm, actuator_dist_to_mount2 = 0.4 * inch_to_mm, actuator_width = 1.57 * inch_to_mm):
     # TODO: make stroke work - requires replacing STL files with custom OpenSCAD model
