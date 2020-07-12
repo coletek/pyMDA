@@ -539,7 +539,7 @@ def shs(width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0
 
     if display_size_text:
         txt = "%.1fx%.0fx%.0fmm" % (thickness, width, length)
-        p += translate([0, 0, width / 2.0]) (rotate(90, [0, 0, 1]) (color(Black) (text(txt))))
+        p += translate([width / 4.0, 0, width / 2.0]) (rotate(90, [0, 0, 1]) (color(Black) (text(txt, size=20))))
 
     return p
 
@@ -575,7 +575,7 @@ def sheet(width = 600, length = 2400, thickness = 1.2, display_size_text = False
         axis = 0
         l = 1000000.0
         if thickness < l:
-            a = [0, 0, l / 2.0]
+            a = [0, 0, thickness / 2.0]
             r = [0, 0, 1]
             l = thickness
             if width > length:
@@ -605,6 +605,6 @@ def sheet(width = 600, length = 2400, thickness = 1.2, display_size_text = False
                 l2 = length
                 l3 = thickness
         txt = "%.1fx%.0fx%.0fmm" % (l, l2, l3)
-        p += translate(a) (rotate(90, r) (color(Black) (text(txt))))
+        p += translate(a) (rotate(90, r) (color(Black) (text(txt, size = 20))))
     
     return p
