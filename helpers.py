@@ -513,7 +513,7 @@ def matrix_copy(feature, part, space, x_length, y_length, x_count, y_count):
 
     return p
 
-def shs(width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0.0):
+def shs(width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0.0, display_size_text = False):
     # works for -45 and 45.0
     # TODO: make work for any angle
     
@@ -536,6 +536,11 @@ def shs(width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0
         p -= translate([0, -length / 2.0, 0]) (c)
 
     p = color(Aluminum) (p)
+
+    if display_size_text:
+        txt = "%.1fx%.0fx%.0fmm" % (thickness, width, length)
+        p += translate([width / 4.0, 0, width / 2.0]) (rotate(90, [0, 0, 1]) (color(Black) (text(txt, size=20))))
+
     return p
 
 def cs(width, thickness, length):
@@ -562,7 +567,44 @@ def sb(width, length):
 def rod(dia, length, segments_count):
     return color(Aluminum) (cylinder(d = dia, h = length, center = True, segments = segments_count))
 
-def sheet(width = 600, length = 2400, thickness = 1.2):
+def sheet(width = 600, length = 2400, thickness = 1.2, display_size_text = False):
     p = cube([width, length, thickness], center = True)
     p = color(Aluminum) (p)
+
+    if display_size_text:
+        axis = 0
+        l = 1000000.0
+        if thickness < l:
+            a = [0, 0, thickness / 2.0]
+            r = [0, 0, 1]
+            l = thickness
+            if width > length:
+                l2 = length
+                l3 = width
+            else:
+                l2 = width
+                l3 = length
+        if length < l:
+            a = [0, -length / 2.0, 0]
+            r = [1, 0, 0]
+            l = length
+            if width > thickness:
+                l2 = thickness
+                l3 = width
+            else:
+                l2 = width
+                l3 = thickness
+        if width < l:
+            a = [width / 2.0, 0, 0]
+            r = [0, 1, 0]
+            l = width
+            if length > thickness:
+                l2 = thickness
+                l3 = length
+            else:
+                l2 = length
+                l3 = thickness
+        txt = "%.1fx%.0fx%.0fmm" % (l, l2, l3)
+        p += translate(a) (rotate(90, r) (color(Black) (text(txt, size = 20))))
+    
     return p
