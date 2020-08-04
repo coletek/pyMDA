@@ -107,8 +107,8 @@ def cube_curved_edges(x, y, z, corner_radius, segments_count, center):
             translate([corner_radius, y - corner_radius, z - corner_radius]) (sphere(segments = segments_count, r = corner_radius)),
         )
 
-def ring(r, thickness, segments_count):
-    return rotate_extrude(convexity = 10, segments = segments_count) (translate([r, 0, 0]) (circle(d = thickness, segments = segments_count)))
+def ring(r, thickness, segments_count, rotate_extrude_segments_count):
+    return rotate_extrude(convexity = 10, segments = rotate_extrude_segments_count) (translate([r, 0, 0]) (circle(d = thickness, segments = segments_count)))
 
 def cylinder_curved_edges(r, h, corner_radius, both_sides, segments_count):
 

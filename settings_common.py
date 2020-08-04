@@ -5,14 +5,17 @@
 # low res
 bezier_step = 0.05
 segments_count = None
+rotate_extrude_segments_count = None
 
 # high res
-#bezier_step = 0.01
-#segments_count = 50
+bezier_step = 0.01
+segments_count = 50
+rotate_extrude_segments_count = 150
 
 # export res
-#bezier_step = 0.01
-#segments_count = 500
+bezier_step = 0.01
+segments_count = 100
+rotate_extrude_segments_count = 300
 
 #
 # magic numbers
