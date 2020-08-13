@@ -608,3 +608,18 @@ def sheet(width = 600, length = 2400, thickness = 1.2, display_size_text = False
         p += translate(a) (rotate(90, r) (color(Black) (text(txt, size = 20))))
     
     return p
+
+
+def wedge(r, h, sa, ea, segments):
+    # TODO make work for larger then 180deg
+    
+    c = cylinder(r = r, h = h, center = True, segments = segments)
+
+    l = r * 2.0 + 2.0
+    cut = cube([l, l, h + 2.0], center = True)
+
+    p = c - \
+        rotate(math.degrees(sa), [0, 0, 1]) (translate([0, -l / 2.0, 0]) (cut)) - \
+        rotate(math.degrees(ea) + 180, [0, 0, 1]) (translate([0, -l / 2.0, 0]) (cut))
+    
+    return p

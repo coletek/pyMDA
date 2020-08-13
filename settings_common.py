@@ -8,14 +8,19 @@ segments_count = None
 rotate_extrude_segments_count = None
 
 # high res
-bezier_step = 0.01
-segments_count = 50
-rotate_extrude_segments_count = 150
+#bezier_step = 0.01
+#segments_count = 50
+#rotate_extrude_segments_count = 150
 
 # export res
-bezier_step = 0.01
-segments_count = 100
-rotate_extrude_segments_count = 300
+#bezier_step = 0.01
+#segments_count = 100
+#rotate_extrude_segments_count = 300
+
+# temp
+#bezier_step = 0.01
+#segments_count = 200
+#rotate_extrude_segments_count = 300
 
 #
 # magic numbers
