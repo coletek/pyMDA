@@ -623,3 +623,30 @@ def wedge(r, h, sa, ea, segments):
         rotate(math.degrees(ea) + 180, [0, 0, 1]) (translate([0, -l / 2.0, 0]) (cut))
     
     return p
+
+def hinge(d, axle_d, h, hinge_segments, l, tolerance, is_left, segments):
+
+    c = cylinder(d = d, h = h, center = True, segments = segments)
+    axle = cylinder(d = axle_d + tolerance, h = h + 2.0, center = True, segments = segments)
+    a = cube([l, d / 2.0, h], center = True)
+
+    cc_h = h / hinge_segments
+    cc = cylinder(d = d + 2.0, h = cc_h + tolerance * 2.0, center = True, segments = segments)
+
+    p = c    
+    if is_left:
+        start_idx = 0
+    else:
+        start_idx = 1
+    
+    for i in range(start_idx, hinge_segments, 2):
+        p -= translate([0, 0, -h / 2.0 + cc_h / 2.0 + cc_h * i]) (cc)
+
+    offset = d / 4.0
+    if is_left:
+        offset = -offset
+    p += translate([l / 2.0, offset, 0]) (a)
+
+    p -= axle
+     
+    return p

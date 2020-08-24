@@ -1,11 +1,12 @@
 #
 # rendering settings:
+# do locally
 #
 
 # low res
-bezier_step = 0.05
-segments_count = None
-rotate_extrude_segments_count = None
+#bezier_step = 0.05
+#segments_count = None
+#rotate_extrude_segments_count = None
 
 # high res
 #bezier_step = 0.01
