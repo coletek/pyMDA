@@ -129,6 +129,7 @@ m2_5_head_or_nut_depth = 2.36
 m3_tap_hole_size = 2.5
 m3_clearance_hole = 3.4
 m3_head_size = 6.0
+m3_head_or_nut_depth = 5.68
 
 m4_tap_hole_size = 3.3
 m4_clearance_hole = 4.5

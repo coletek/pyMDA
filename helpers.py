@@ -473,6 +473,28 @@ def plate(width, height, thickness, top_mounting_hole_depth = 0, bottom_mounting
                 
     return p
 
+def plate_with_fillets(width, length, thickness, fillet_radius, segments):
+    # could be done with hull(), but done this way to support FreeCAD STEP exporting
+
+    x = width - fillet_radius * 2.0
+    y = length - fillet_radius * 2.0
+
+    p = []
+    
+    if x != 0:
+        p += cube([x, length, thickness], center = True)
+
+    if y != 0:
+        p += cube([width, y, thickness], center = True)
+    
+    f = cylinder(r = fillet_radius, h = thickness, center = True, segments = segments)
+    p += translate([x / 2.0, y / 2.0, 0]) (f) + \
+         translate([x / 2.0, -y / 2.0, 0]) (f) + \
+         translate([-x / 2.0, y / 2.0, 0]) (f) + \
+         translate([-x / 2.0, -y / 2.0, 0]) (f)
+
+    return p
+
 def rubber_button(radius, length, support_radius, support_length, segments_count):
 
     main = cylinder(r = radius, h = length, segments = segments_count)
@@ -631,21 +653,22 @@ def hinge(d, axle_d, h, hinge_segments, l, tolerance, is_left, segments):
     a = cube([l, d / 2.0, h], center = True)
 
     cc_h = h / hinge_segments
-    cc = cylinder(d = d + 2.0, h = cc_h + tolerance * 2.0, center = True, segments = segments)
-
-    p = c    
-    if is_left:
-        start_idx = 0
-    else:
-        start_idx = 1
-    
-    for i in range(start_idx, hinge_segments, 2):
-        p -= translate([0, 0, -h / 2.0 + cc_h / 2.0 + cc_h * i]) (cc)
+    cc = cylinder(d = d + tolerance * 2.0, h = cc_h + tolerance * 2.0, center = True, segments = segments)
 
     offset = d / 4.0
     if is_left:
         offset = -offset
-    p += translate([l / 2.0, offset, 0]) (a)
+    p = translate([l / 2.0, offset, 0]) (a)
+
+    p += c    
+    if is_left:
+        start_idx = 0
+    else:
+        start_idx = 1
+
+    # odd set
+    for i in range(start_idx, hinge_segments, 2):
+        p -= translate([0, 0, -h / 2.0 + cc_h / 2.0 + cc_h * i]) (cc)
 
     p -= axle
      
