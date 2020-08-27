@@ -11,8 +11,8 @@ segments_count = None
 #segments_count = 50
 
 # export res
-#bezier_step = 0.01
-#segments_count = 500
+bezier_step = 0.01
+segments_count = 200
 
 #
 # magic numbers
