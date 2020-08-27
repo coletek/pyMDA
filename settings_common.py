@@ -1,18 +1,27 @@
 #
 # rendering settings:
+# do locally
 #
 
 # low res
-bezier_step = 0.05
-segments_count = None
+#bezier_step = 0.05
+#segments_count = None
+#rotate_extrude_segments_count = None
 
 # high res
 #bezier_step = 0.01
 #segments_count = 50
+#rotate_extrude_segments_count = 150
 
 # export res
-bezier_step = 0.01
-segments_count = 200
+#bezier_step = 0.01
+#segments_count = 100
+#rotate_extrude_segments_count = 300
+
+# temp
+#bezier_step = 0.01
+#segments_count = 200
+#rotate_extrude_segments_count = 300
 
 #
 # magic numbers
@@ -120,6 +129,7 @@ m2_5_head_or_nut_depth = 2.36
 m3_tap_hole_size = 2.5
 m3_clearance_hole = 3.4
 m3_head_size = 6.0
+m3_head_or_nut_depth = 5.68
 
 m4_tap_hole_size = 3.3
 m4_clearance_hole = 4.5

@@ -107,8 +107,8 @@ def cube_curved_edges(x, y, z, corner_radius, segments_count, center):
             translate([corner_radius, y - corner_radius, z - corner_radius]) (sphere(segments = segments_count, r = corner_radius)),
         )
 
-def ring(r, thickness, segments_count):
-    return rotate_extrude(convexity = 10, segments = segments_count) (translate([r, 0, 0]) (circle(d = thickness, segments = segments_count)))
+def ring(r, thickness, segments_count, rotate_extrude_segments_count):
+    return rotate_extrude(convexity = 10, segments = rotate_extrude_segments_count) (translate([r, 0, 0]) (circle(d = thickness, segments = segments_count)))
 
 def cylinder_curved_edges(r, h, corner_radius, both_sides, segments_count):
 
@@ -473,6 +473,28 @@ def plate(width, height, thickness, top_mounting_hole_depth = 0, bottom_mounting
                 
     return p
 
+def plate_with_fillets(width, length, thickness, fillet_radius, segments):
+    # could be done with hull(), but done this way to support FreeCAD STEP exporting
+
+    x = width - fillet_radius * 2.0
+    y = length - fillet_radius * 2.0
+
+    p = []
+    
+    if x != 0:
+        p += cube([x, length, thickness], center = True)
+
+    if y != 0:
+        p += cube([width, y, thickness], center = True)
+    
+    f = cylinder(r = fillet_radius, h = thickness, center = True, segments = segments)
+    p += translate([x / 2.0, y / 2.0, 0]) (f) + \
+         translate([x / 2.0, -y / 2.0, 0]) (f) + \
+         translate([-x / 2.0, y / 2.0, 0]) (f) + \
+         translate([-x / 2.0, -y / 2.0, 0]) (f)
+
+    return p
+
 def rubber_button(radius, length, support_radius, support_length, segments_count):
 
     main = cylinder(r = radius, h = length, segments = segments_count)
@@ -607,4 +629,47 @@ def sheet(width = 600, length = 2400, thickness = 1.2, display_size_text = False
         txt = "%.1fx%.0fx%.0fmm" % (l, l2, l3)
         p += translate(a) (rotate(90, r) (color(Black) (text(txt, size = 20))))
     
+    return p
+
+
+def wedge(r, h, sa, ea, segments):
+    # TODO make work for larger then 180deg
+    
+    c = cylinder(r = r, h = h, center = True, segments = segments)
+
+    l = r * 2.0 + 2.0
+    cut = cube([l, l, h + 2.0], center = True)
+
+    p = c - \
+        rotate(math.degrees(sa), [0, 0, 1]) (translate([0, -l / 2.0, 0]) (cut)) - \
+        rotate(math.degrees(ea) + 180, [0, 0, 1]) (translate([0, -l / 2.0, 0]) (cut))
+    
+    return p
+
+def hinge(d, axle_d, h, hinge_segments, l, tolerance, is_left, segments):
+
+    c = cylinder(d = d, h = h, center = True, segments = segments)
+    axle = cylinder(d = axle_d + tolerance, h = h + 2.0, center = True, segments = segments)
+    a = cube([l, d / 2.0, h], center = True)
+
+    cc_h = h / hinge_segments
+    cc = cylinder(d = d + tolerance * 2.0, h = cc_h + tolerance * 2.0, center = True, segments = segments)
+
+    offset = d / 4.0
+    if is_left:
+        offset = -offset
+    p = translate([l / 2.0, offset, 0]) (a)
+
+    p += c    
+    if is_left:
+        start_idx = 0
+    else:
+        start_idx = 1
+
+    # odd set
+    for i in range(start_idx, hinge_segments, 2):
+        p -= translate([0, 0, -h / 2.0 + cc_h / 2.0 + cc_h * i]) (cc)
+
+    p -= axle
+     
     return p
