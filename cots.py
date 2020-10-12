@@ -60,7 +60,7 @@ def bearing(id, od, thickness):
     p = outter - translate([0, 0, -1]) (inner)
     return p
 
-def collar(id, thickness, width, connection_gap, connection_hole_dia, connection_thickness, connection_height = 0.0, connection_gap_closed = 0.0):
+def collar(id, thickness, width, connection_gap, connection_hole_dia, connection_thickness, connection_height = 0.0, connection_gap_closed = 0.0, segments_count = None):
 
     od = id + thickness * 2.0
 
