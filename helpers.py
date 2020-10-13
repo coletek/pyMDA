@@ -317,12 +317,36 @@ def slot_curve(width, height, radius, start_angle, end_angle, step, segments_cou
     p = []
     
     if use_holes:
+
+        y = radius * math.cos(start_angle)
+        x = radius * math.sin(start_angle)
+        p += translate([x, y, 0]) (hole)
+
+        y = radius * math.cos(end_angle)
+        x = radius * math.sin(end_angle)
+        p += translate([x, y, 0]) (hole)
+            
         for a in np.arange(start_angle, end_angle, step):
             y = radius * math.cos(a)
             x = radius * math.sin(a)
             #print (radius, x, y, a)
             p += translate([x, y, 0]) (hole)
 
+    else:
+        
+        p = cylinder(r = radius + width / 2.0, h = height + 2.0, center = True, segments = segments_count) - cylinder(r = radius - width / 2.0, h = height + 3.0, center = True, segments = segments_count)
+        
+        p -= rotate(-math.degrees(start_angle), [0, 0, 1]) (translate([-(radius + width) / 2.0, 0, 0]) (cube([radius + width, radius * 2.0 + width * 2.0, height * 2.0], center = True)))
+        p -= rotate(-math.degrees(end_angle), [0, 0, 1]) (translate([(radius + width) / 2.0, 0, 0]) (cube([radius + width, radius * 2.0 + width * 2.0, height * 2.0], center = True)))
+
+        y = radius * math.cos(start_angle)
+        x = radius * math.sin(start_angle)
+        p += translate([x, y, 0]) (hole)
+
+        y = radius * math.cos(end_angle)
+        x = radius * math.sin(end_angle)
+        p += translate([x, y, 0]) (hole)
+        
     return p
 
 def slot_array(length, slot_width, slot_length, slot_count, height, segments_count, use_hull):
