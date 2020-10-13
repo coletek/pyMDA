@@ -294,23 +294,45 @@ def boss_dual_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, 
 
     return p
 
-def slot(width, length, height, segments_count):
+def slot(width, length, height, segments_count, use_hull):
     
     hole = translate([0, 0, -(height + 2.0) / 2.0]) (cylinder(segments = segments_count, r = width / 2.0, h = height + 2.0))
-    
-    return hull() (
-        translate([0, -length / 2.0, 0]) (hole),
-        translate([0, length / 2.0, 0]) (hole),
-    )
 
-def slot_array(length, slot_width, slot_length, slot_count, height, segments_count):
+    if use_hull:
+        p = hull() (
+            translate([0, -length / 2.0, 0]) (hole),
+            translate([0, length / 2.0, 0]) (hole),
+        )
+    else:
+        p = translate([0, -length / 2.0, 0]) (hole) + \
+            translate([0, length / 2.0, 0]) (hole) + \
+            cube([width, length, height + 2], center = True)
+
+    return p
+
+def slot_curve(width, height, radius, start_angle, end_angle, step, segments_count, use_holes):
+    
+    hole = translate([0, 0, -(height + 2.0) / 2.0]) (cylinder(segments = segments_count, r = width / 2.0, h = height + 2.0))
+
+    p = []
+    
+    if use_holes:
+        for a in np.arange(start_angle, end_angle, step):
+            y = radius * math.cos(a)
+            x = radius * math.sin(a)
+            #print (radius, x, y, a)
+            p += translate([x, y, 0]) (hole)
+
+    return p
+
+def slot_array(length, slot_width, slot_length, slot_count, height, segments_count, use_hull):
     gap = (length - slot_count * (slot_length + slot_width)) / (slot_count + 1.0)
 
     y = - length / 2.0 + gap + (slot_length + slot_width) / 2.0
     p = translate([0, y, 0]) (slot(slot_width, slot_length, height, segments_count))
     for i in range(slot_count - 1):
         y += gap + (slot_length + slot_width)
-        p += translate([0, y, 0]) (slot(slot_width, slot_length, height, segments_count))
+        p += translate([0, y, 0]) (slot(slot_width, slot_length, height, segments_count, use_hull))
     return p
         
 def stepper_mounting_plate(width, height, thickness, slot_dia, slot_height = 0, mounting_hole_depth = 0, mounting_hole_size = 0, segments_count = None):
