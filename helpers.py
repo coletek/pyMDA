@@ -3,6 +3,7 @@ from solid import *
 from solid.utils import *
 import math
 import numpy as np
+from settings_common import *
 
 def prism(l, w, h):
     return polyhedron(
@@ -53,7 +54,6 @@ def cube_curved_sides(x, y, z, corner_radius, side_count, segments_count):
     # TODO: support non-center option
     # using hull() still requires high segments - perhaps use rotate_extrude instead
 
-    corner_sq = cube([corner_radius, corner_radius, z], center = True)
     corner_round = translate([0, 0, -z / 2.0]) (cylinder(segments = segments_count, r = corner_radius, h = z))
 
     if side_count == 4:
@@ -64,6 +64,7 @@ def cube_curved_sides(x, y, z, corner_radius, side_count, segments_count):
             translate([-x / 2.0 + corner_radius, -y / 2.0 + corner_radius, 0]) (corner_round),
         )
     elif side_count == 2:
+        corner_sq = cube([corner_radius, corner_radius, z], center = True)
         # FIXME
         #return translate([x / 2.0 - corner_radius, y / 2.0 - corner_radius, 0]) (corner_round) + \
         #    translate([x / 2.0 - corner_radius + corner_radius / 2.0, y / 2.0 - corner_radius + corner_radius / 2.0, 0]) (corner_sq) + \
@@ -253,7 +254,7 @@ def fixture_countersunk(d, dk, L, a, segments_count):
     # https://image.pushauction.com/0/0/f2c27552-fb37-436a-9369-5b4293c5087b/eda41698-7b80-41de-b5b8-98625f130e93.jpg
 
     angle = (math.radians(180) - a) / 2.0
-
+    
     countersunk_h = math.tan(angle) * dk / 2.0
     
     p = cylinder(d1 = dk, d2 = 0, h = countersunk_h, segments = segments_count, center = False) + \
@@ -268,6 +269,16 @@ def fixture_socket(d, dk, L, k, segments_count):
                      cylinder(d = dk, h = k, segments = segments_count, center = False)
     
     return p
+
+def fixture_countersunk_clearance_hole(d, dk, L, a, segments_count):
+    # NOTE: still need to pass through the clearance hole size for 'd', otherwise everything is automatic based on countersunk dimensions
+    
+    angle = (math.radians(180) - a) / 2.0
+    dk = dk + sls_cots_clearance * 2.0
+    countersunk_h = math.tan(angle) * dk / 2.0 + 1.0
+    dk2 = countersunk_h / math.tan(angle) * 2.0
+
+    return fixture_countersunk(d, dk2, L + 2.0, a, segments_count)
 
 
 def washer(dia, hole_dia, thickness, segments_count, is_center = True):
