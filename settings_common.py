@@ -141,11 +141,19 @@ m4_nut_height = 3.0
 m5_tap_hole_size = 4.2
 m5_clearance_hole = 5.5
 
-m10_tap_hole_size = 8.5 # fine
+m6_tap_hole_size = 5.0
+m6_clearance_hole = 6.6
+
+m8_tap_hole_size = 6.8
+m8_clearance_hole = 9.0
+
+m10_tap_hole_size = 8.5
+m10_tap_hole_size_fine = 8.8
 m10_die_rod_size = 10.0
 m10_clearance_hole = 11
 
-m20_tap_hole_size = 17.5 # fine
+m20_tap_hole_size = 17.5
+m20_tap_hole_size_fine = 18.5
 m20_clearance_hole = 22.0
 
 #

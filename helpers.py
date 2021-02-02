@@ -1,3 +1,4 @@
+
 from solid import *
 from solid.utils import *
 import math
@@ -9,7 +10,7 @@ def prism(l, w, h):
         faces=[[0,1,2,3],[5,4,3,2],[0,4,5,1],[0,3,4],[5,2,1]]
     )
 
-def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increment = 0.01, center = True):
+def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increment = 0.01, is_center = True):
 
     points = []
 
@@ -25,7 +26,7 @@ def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increm
         points.append(pt)
         radius += radius_step
 
-    return linear_extrude(height, center = center) (polygon(points=points))
+    return linear_extrude(height, center = is_center) (polygon(points=points))
 
 def cam_profile_find_radius(target_angle, start_radius, start_angle, end_radius, end_angle, increment = 0.01):
 
@@ -76,12 +77,12 @@ def cube_curved_sides(x, y, z, corner_radius, side_count, segments_count):
             )
 
 
-def cube_curved_edges(x, y, z, corner_radius, segments_count, center):
+def cube_curved_edges(x, y, z, corner_radius, segments_count, is_center = True):
 
     # alternative approach to minkowski, so it imports into OpenSCAD and export as STEP
     # using hull() still requires high segments - perhaps use rotate_extrude instead
     
-    if center:
+    if is_center:
         return hull() (
             translate([-x / 2.0 + corner_radius, -y / 2.0 + corner_radius, -z / 2.0 + corner_radius]) (sphere(segments = segments_count, r = corner_radius)),
             translate([x / 2.0 - corner_radius, -y / 2.0 + corner_radius, -z / 2.0 + corner_radius]) (sphere(segments = segments_count, r = corner_radius)),
@@ -248,14 +249,38 @@ def hexagon(cle, h):
     
     return p
 
-def washer(dia, hole_dia, thickness, segments_count, center):
-    rod = cylinder(segments = segments_count, d = dia, h = thickness, center = center)
-    hole = cylinder(segments = segments_count, d = hole_dia, h = thickness + 2, center = center)
-    if center:
+def fixture_countersunk(d, dk, L, a, segments_count):
+    # https://image.pushauction.com/0/0/f2c27552-fb37-436a-9369-5b4293c5087b/eda41698-7b80-41de-b5b8-98625f130e93.jpg
+
+    angle = (math.radians(180) - a) / 2.0
+
+    countersunk_h = math.tan(angle) * dk / 2.0
+    
+    p = cylinder(d1 = dk, d2 = 0, h = countersunk_h, segments = segments_count, center = False) + \
+                      cylinder(d = d, h = L, segments = segments_count, center = False)
+    
+    return p
+
+def fixture_socket(d, dk, L, k, segments_count):
+    # https://ae01.alicdn.com/kf/HTB1hoF9LVXXXXczXXXXq6xXFXXXt/222055624/HTB1hoF9LVXXXXczXXXXq6xXFXXXt.jpg
+
+    p = cylinder(d = d, h = L + k, segments = segments_count, center = False) + \
+                     cylinder(d = dk, h = k, segments = segments_count, center = False)
+    
+    return p
+
+
+def washer(dia, hole_dia, thickness, segments_count, is_center = True):
+    rod = cylinder(segments = segments_count, d = dia, h = thickness, center = is_center)
+    hole = cylinder(segments = segments_count, d = hole_dia, h = thickness + 2, center = is_center)
+    if is_center:
         return rod - translate([0, 0, 0]) (hole)
     else:
         return rod - translate([0, 0, -1]) (hole)
 
+def boss(dia, hole_dia, thickness, segments_count, is_center = True):
+    return washer(dia, hole_dia, thickness, segments_count, is_center)
+    
 def boss_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, height, segments_count):
 
     plate = cube([length, width, thickness], center = True)
@@ -294,7 +319,7 @@ def boss_dual_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, 
 
     return p
 
-def slot(width, length, height, segments_count, use_hull):
+def slot(width, length, height, segments_count, use_hull = False):
     
     hole = translate([0, 0, -(height + 2.0) / 2.0]) (cylinder(segments = segments_count, r = width / 2.0, h = height + 2.0))
 
@@ -349,7 +374,7 @@ def slot_curve(width, height, radius, start_angle, end_angle, step, segments_cou
         
     return p
 
-def slot_array(length, slot_width, slot_length, slot_count, height, segments_count, use_hull):
+def slot_array(length, slot_width, slot_length, slot_count, height, segments_count, use_hull = False):
     gap = (length - slot_count * (slot_length + slot_width)) / (slot_count + 1.0)
 
     y = - length / 2.0 + gap + (slot_length + slot_width) / 2.0
