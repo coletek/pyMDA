@@ -308,6 +308,8 @@ def boss_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, heigh
                          translate([-length / 3.0, 0, 0]) (mounting_hole)
         p -= mounting_holes
 
+    p = translate([0, 0, thickness / 2.0]) (p)
+        
     return p
 
 def boss_dual_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, height, pitch, segments_count):
@@ -328,6 +330,8 @@ def boss_dual_plate(width, length, thickness, mounting_hole_dia, dia, hole_dia, 
                          translate([-length / 3.0, 0, 0]) (mounting_hole)
         p -= mounting_holes
 
+    p = translate([0, 0, thickness / 2.0]) (p)
+        
     return p
 
 def slot(width, length, height, segments_count, use_hull = False):
@@ -394,7 +398,30 @@ def slot_array(length, slot_width, slot_length, slot_count, height, segments_cou
         y += gap + (slot_length + slot_width)
         p += translate([0, y, 0]) (slot(slot_width, slot_length, height, segments_count, use_hull))
     return p
-        
+
+def speaker_holes(enclosure_speaker_holes_outer_dia, enclosure_speaker_pitch, enclosure_speaker_hole_dia, enclosure_wall_thickness, segments_count):
+
+    speaker_hole = cylinder(d = enclosure_speaker_hole_dia, h = enclosure_wall_thickness, segments = segments_count, center = True)
+
+    l = int(enclosure_speaker_holes_outer_dia / 2.0 / enclosure_speaker_pitch)
+
+    p = speaker_hole
+
+    for j in range(l):
+        c = 2 * math.pi * (enclosure_speaker_pitch * j + enclosure_speaker_pitch)
+        num = int(c / enclosure_speaker_pitch)
+        angle_diff = 2.0 * math.pi / num
+        #print c, num
+        angle = 0.0
+        for i in range(num):
+            x = ((enclosure_speaker_pitch * j) + enclosure_speaker_pitch) * math.cos(angle)
+            y = ((enclosure_speaker_pitch * j) + enclosure_speaker_pitch) * math.sin(angle)
+            p += translate([x, y, 0]) (speaker_hole)
+            #print angle, x, y
+            angle += angle_diff
+
+    return p
+
 def stepper_mounting_plate(width, height, thickness, slot_dia, slot_height = 0, mounting_hole_depth = 0, mounting_hole_size = 0, segments_count = None):
 
     mounting_hole_gap = 31 # NEMA17
@@ -577,6 +604,90 @@ def plate_with_fillets(width, length, thickness, fillet_radius, segments):
 
     return p
 
+def shaft_with_key(dia, length, key_cut, key_length, segments_count):
+
+    k = translate([-dia / 2.0 - 1.0, dia / 2.0 - key_cut, length - key_length]) (cube([dia + 2.0, dia, key_length + 1.0]))
+    s = cylinder(d = dia, h = length, segments = segments_count)
+
+    p = s - k
+
+    p = color(Steel) (p)
+    
+    return p
+
+# https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828
+def dc_motor(dia, length, shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count):
+
+    m = cylinder(d = dia, h = length, segments = segments_count)
+
+    m = color(Aluminum) (m)
+    
+    s = shaft_with_key(shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count)
+    
+    p = m + translate([0, 0, length]) (s)
+
+    p = translate([0, 0, -length]) (p)
+
+    return p
+
+# https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828
+def gearbox_worm(width, length, height, width_pitch, length_pitch, length_pitch_pos, shaft_pos, shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count):
+    
+    b = cube([width, length, height])
+
+    b = color(Aluminum) (b)
+    
+    s = shaft_with_key(shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count)
+
+    h = cylinder(d = m3_tap_hole_size, h = height / 2.0, segments = segments_count)
+
+    hp = translate([-width_pitch / 2.0, -length_pitch / 2.0, 0]) (h) + \
+        translate([width_pitch / 2.0, -length_pitch / 2.0, 0]) (h) + \
+        translate([-width_pitch / 2.0, length_pitch / 2.0, 0]) (h) + \
+        translate([width_pitch / 2.0, length_pitch / 2.0, 0]) (h)
+
+    y = length_pitch / 2.0 - shaft_pos + length_pitch_pos
+    p = translate([-width / 2.0, -shaft_pos, 0]) (b) + \
+        translate([0, 0, height]) (s) - \
+        translate([0, y, height / 2.0 + 1.0]) (hp)
+
+    p = translate([0, 0, -height]) (p)
+
+    return p
+
+# https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828
+def dc_motor_with_gearbox(motor_dia,
+                          motor_length,
+                          motor_shaft_dia,
+                          motor_shaft_length,
+                          motor_shaft_key_cut,
+                          motor_shaft_key_length,
+                          motor_worm_gearbox_width,
+                          motor_worm_gearbox_length,
+                          motor_worm_gearbox_height,
+                          motor_worm_gearbox_width_pitch,
+                          motor_worm_gearbox_length_pitch,
+                          motor_worm_gearbox_length_pitch_pos,
+                          motor_worm_gearbox_shaft_pos,
+                          motor_worm_gearbox_shaft_dia,
+                          motor_worm_gearbox_shaft_length,
+                          motor_worm_gearbox_shaft_key_cut,
+                          motor_worm_gearbox_shaft_key_length,
+                          segments_count):
+
+    m = dc_motor(motor_dia, motor_length, motor_shaft_dia, motor_shaft_length, motor_shaft_key_cut, motor_shaft_key_length, segments_count)
+
+    g = gearbox_worm(motor_worm_gearbox_width, motor_worm_gearbox_length, motor_worm_gearbox_height,
+                     motor_worm_gearbox_width_pitch, motor_worm_gearbox_length_pitch, motor_worm_gearbox_length_pitch_pos,
+                     motor_worm_gearbox_shaft_pos, motor_worm_gearbox_shaft_dia, motor_worm_gearbox_shaft_length,
+                     motor_worm_gearbox_shaft_key_cut, motor_worm_gearbox_shaft_key_length, segments_count)
+
+    p = g + translate([-motor_shaft_dia / 2.0,
+                       motor_worm_gearbox_length - motor_worm_gearbox_shaft_pos,
+                       -motor_worm_gearbox_height / 2.0]) (rotate(90, [1, 0, 0]) (m))
+
+    return p
+
 def rubber_button(radius, length, support_radius, support_length, segments_count):
 
     main = cylinder(r = radius, h = length, segments = segments_count)
@@ -755,3 +866,220 @@ def hinge(d, axle_d, h, hinge_segments, l, tolerance, is_left, segments):
     p -= axle
      
     return p
+
+
+
+#function polyRound(radiipoints,fn=5,mode=0)=
+#  /*Takes a list of radii points of the format [x,y,radius] and rounds each point
+#    with fn resolution
+#    mode=0 - automatic radius limiting - DEFAULT
+#    mode=1 - Debug, output radius reduction for automatic radius limiting
+#    mode=2 - No radius limiting*/
+#  let(
+#    p=getpoints(radiipoints), //make list of coordinates without radii
+#    Lp=len(p),
+#    //remove the middle point of any three colinear points, otherwise adding a radius to the middle of a straigh line causes problems
+#    radiiPointsWithoutTrippleColinear=[
+#      for(i=[0:len(p)-1]) if(
+#        // keep point if it isn't colinear or if the radius is 0
+#        !isColinear(
+#          p[listWrap(i-1,Lp)],
+#          p[listWrap(i+0,Lp)],
+#          p[listWrap(i+1,Lp)]
+#        )||
+#        p[listWrap(i+0,Lp)].z!=0
+#      ) radiipoints[listWrap(i+0,Lp)] 
+#    ],
+#    newrp2=processRadiiPoints(radiiPointsWithoutTrippleColinear),
+#    plusMinusPointRange=mode==2?1:2,
+#    temp=[
+#      for(i=[0:len(newrp2)-1]) //for each point in the radii array
+#      let(
+#        thepoints=[for(j=[-plusMinusPointRange:plusMinusPointRange])newrp2[listWrap(i+j,len(newrp2))]],//collect 5 radii points
+#        temp2=mode==2?round3points(thepoints,fn):round5points(thepoints,fn,mode)
+#      )
+#      mode==1?temp2:newrp2[i][2]==0?
+#        [[newrp2[i][0],newrp2[i][1]]]: //return the original point if the radius is 0
+#        CentreN2PointsArc(temp2[0],temp2[1],temp2[2],0,fn) //return the arc if everything is normal
+#    ]
+#  )
+#  [for (a = temp) for (b = a) b];//flattern and return the array
+
+#function getpoints(p)=[for(i=[0:len(p)-1])[p[i].x,p[i].y]];// gets [x,y]list of[x,y,r]list
+
+#function isColinear(p1,p2,p3)=getGradient(p1,p2)==getGradient(p2,p3)?1:0;//return 1 if 3 points are colinear
+
+#function getGradient(p1,p2)=(p2.y-p1.y)/(p2.x-p1.x);
+
+#function processRadiiPoints(rp)=
+#  [for(i=[0:len(rp)-1])
+#    processRadiiPoints2(rp,i)
+#  ];
+
+#function processRadiiPoints2(list,end=0,idx=0,result=0)=
+#  idx>=end+1?result:
+#  processRadiiPoints2(list,end,idx+1,relationalRadiiPoints(result,list[idx]));
+
+#function relationalRadiiPoints(po,pi)=
+#  let(
+#    p0=pi[0],
+#    p1=pi[1],
+#    p2=pi[2],
+#    pv0=pi[3][0],
+#    pv1=pi[3][1],
+#    pt0=pi[3][2],
+#    pt1=pi[3][3],
+#    pn=
+#      (pv0=="y"&&pv1=="x")||(pv0=="r"&&pv1=="a")||(pv0=="y"&&pv1=="a")||(pv0=="x"&&pv1=="a")||(pv0=="y"&&pv1=="r")||(pv0=="x"&&pv1=="r")?
+#        [p1,p0,p2,concat(pv1,pv0,pt1,pt0)]:
+#        [p0,p1,p2,concat(pv0,pv1,pt0,pt1)],
+#    n0=pn[0],
+#    n1=pn[1],
+#    n2=pn[2],
+#    nv0=pn[3][0],
+#    nv1=pn[3][1],
+#    nt0=pn[3][2],
+#    nt1=pn[3][3],
+#    temp=
+#      pn[0]=="l"?
+#        [po[0],pn[1],pn[2]]
+#      :pn[1]=="l"?
+#        [pn[0],po[1],pn[2]]
+#      :nv0==undef?
+#        [pn[0],pn[1],pn[2]]//abs x, abs y as default when undefined
+#      :nv0=="a"?
+#        nv1=="r"?
+#          nt0=="a"?
+#            nt1=="a"||nt1==undef?
+#              [cos(n0)*n1,sin(n0)*n1,n2]//abs angle, abs radius
+#            :absArelR(po,pn)//abs angle rel radius
+#          :nt1=="r"||nt1==undef?
+#            [po[0]+cos(pn[0])*pn[1],po[1]+sin(pn[0])*pn[1],pn[2]]//rel angle, rel radius 
+#          :[pn[0],pn[1],pn[2]]//rel angle, abs radius
+#        :nv1=="x"?
+#          nt0=="a"?
+#            nt1=="a"||nt1==undef?
+#              [pn[1],pn[1]*tan(pn[0]),pn[2]]//abs angle, abs x
+#            :[po[0]+pn[1],(po[0]+pn[1])*tan(pn[0]),pn[2]]//abs angle rel x
+#            :nt1=="r"||nt1==undef?
+#              [po[0]+pn[1],po[1]+pn[1]*tan(pn[0]),pn[2]]//rel angle, rel x 
+#            :[pn[1],po[1]+(pn[1]-po[0])*tan(pn[0]),pn[2]]//rel angle, abs x
+#          :nt0=="a"?
+#            nt1=="a"||nt1==undef?
+#              [pn[1]/tan(pn[0]),pn[1],pn[2]]//abs angle, abs y
+#            :[(po[1]+pn[1])/tan(pn[0]),po[1]+pn[1],pn[2]]//abs angle rel y
+#          :nt1=="r"||nt1==undef?
+#            [po[0]+(pn[1]-po[0])/tan(90-pn[0]),po[1]+pn[1],pn[2]]//rel angle, rel y 
+#          :[po[0]+(pn[1]-po[1])/tan(pn[0]),pn[1],pn[2]]//rel angle, abs y
+#      :nv0=="r"?
+#        nv1=="x"?
+#          nt0=="a"?
+#            nt1=="a"||nt1==undef?
+#              [pn[1],sign(pn[0])*sqrt(sq(pn[0])-sq(pn[1])),pn[2]]//abs radius, abs x
+#            :[po[0]+pn[1],sign(pn[0])*sqrt(sq(pn[0])-sq(po[0]+pn[1])),pn[2]]//abs radius rel x
+#          :nt1=="r"||nt1==undef?
+#            [po[0]+pn[1],po[1]+sign(pn[0])*sqrt(sq(pn[0])-sq(pn[1])),pn[2]]//rel radius, rel x 
+#          :[pn[1],po[1]+sign(pn[0])*sqrt(sq(pn[0])-sq(pn[1]-po[0])),pn[2]]//rel radius, abs x
+#        :nt0=="a"?
+#          nt1=="a"||nt1==undef?
+#            [sign(pn[0])*sqrt(sq(pn[0])-sq(pn[1])),pn[1],pn[2]]//abs radius, abs y
+#          :[sign(pn[0])*sqrt(sq(pn[0])-sq(po[1]+pn[1])),po[1]+pn[1],pn[2]]//abs radius rel y
+#        :nt1=="r"||nt1==undef?
+#          [po[0]+sign(pn[0])*sqrt(sq(pn[0])-sq(pn[1])),po[1]+pn[1],pn[2]]//rel radius, rel y 
+#        :[po[0]+sign(pn[0])*sqrt(sq(pn[0])-sq(pn[1]-po[1])),pn[1],pn[2]]//rel radius, abs y
+#      :nt0=="a"?
+#        nt1=="a"||nt1==undef?
+#          [pn[0],pn[1],pn[2]]//abs x, abs y
+#        :[pn[0],po[1]+pn[1],pn[2]]//abs x rel y
+#      :nt1=="r"||nt1==undef?
+#        [po[0]+pn[0],po[1]+pn[1],pn[2]]//rel x, rel y 
+#      :[po[0]+pn[0],pn[1],pn[2]]//rel x, abs y
+#  )
+#  temp;
+
+#function round5points(rp,fn,debug=0)=
+#	rp[2][2]==0&&debug==0?[[rp[2][0],rp[2][1]]]://return the middle point if the radius is 0
+#	rp[2][2]==0&&debug==1?0://if debug is enabled and the radius is 0 return 0
+#	let(
+#    p=getpoints(rp), //get list of points
+#    r=[for(i=[1:3]) abs(rp[i][2])],//get the centre 3 radii
+#    //start by determining what the radius should be at point 3
+#    //find angles at points 2 , 3 and 4
+#    a2=cosineRuleAngle(p[0],p[1],p[2]),
+#    a3=cosineRuleAngle(p[1],p[2],p[3]),
+#    a4=cosineRuleAngle(p[2],p[3],p[4]),
+#    //find the distance between points 2&3 and between points 3&4
+#    d23=pointDist(p[1],p[2]),
+#    d34=pointDist(p[2],p[3]),
+#    //find the radius factors
+#    F23=(d23*tan(a2/2)*tan(a3/2))/(r[0]*tan(a3/2)+r[1]*tan(a2/2)),
+#    F34=(d34*tan(a3/2)*tan(a4/2))/(r[1]*tan(a4/2)+r[2]*tan(a3/2)),
+#    newR=min(r[1],F23*r[1],F34*r[1]),//use the smallest radius
+#    //now that the radius has been determined, find tangent points and circle centre
+#    tangD=newR/tan(a3/2),//distance to the tangent point from p3
+#      circD=newR/sin(a3/2),//distance to the circle centre from p3
+#    //find the angle from the p3
+#    an23=getAngle(p[1],p[2]),//angle from point 3 to 2
+#    an34=getAngle(p[3],p[2]),//angle from point 3 to 4
+#    //find tangent points
+#    t23=[p[2][0]-cos(an23)*tangD,p[2][1]-sin(an23)*tangD],//tangent point between points 2&3
+#    t34=[p[2][0]-cos(an34)*tangD,p[2][1]-sin(an34)*tangD],//tangent point between points 3&4
+#    //find circle centre
+#    tmid=getMidpoint(t23,t34),//midpoint between the two tangent points
+#    anCen=getAngle(tmid,p[2]),//angle from point 3 to circle centre
+#    cen=[p[2][0]-cos(anCen)*circD,p[2][1]-sin(anCen)*circD]
+#  )
+#    //circle center by offseting from point 3
+#    //determine the direction of rotation
+#	debug==1?//if debug in disabled return arc (default)
+#    (newR-r[1]):
+#	[t23,t34,cen];
+
+#function round3points(rp,fn)=
+#  rp[1][2]==0?[[rp[1][0],rp[1][1]]]://return the middle point if the radius is 0
+#	let(
+#    p=getpoints(rp), //get list of points
+#	  r=rp[1][2],//get the centre 3 radii
+#    ang=cosineRuleAngle(p[0],p[1],p[2]),//angle between the lines
+#    //now that the radius has been determined, find tangent points and circle centre
+#	  tangD=r/tan(ang/2),//distance to the tangent point from p2
+#    circD=r/sin(ang/2),//distance to the circle centre from p2
+#    //find the angles from the p2 with respect to the postitive x axis
+#    angleFromPoint1ToPoint2=getAngle(p[0],p[1]),
+#    angleFromPoint2ToPoint3=getAngle(p[2],p[1]),
+#    //find tangent points
+#    t12=[p[1][0]-cos(angleFromPoint1ToPoint2)*tangD,p[1][1]-sin(angleFromPoint1ToPoint2)*tangD],//tangent point between points 1&2
+#    t23=[p[1][0]-cos(angleFromPoint2ToPoint3)*tangD,p[1][1]-sin(angleFromPoint2ToPoint3)*tangD],//tangent point between points 2&3
+#    //find circle centre
+#    tmid=getMidpoint(t12,t23),//midpoint between the two tangent points
+#    angCen=getAngle(tmid,p[1]),//angle from point 2 to circle centre
+#    cen=[p[1][0]-cos(angCen)*circD,p[1][1]-sin(angCen)*circD] //circle center by offseting from point 2 
+#  )
+#	[t12,t23,cen];
+
+#function CentreN2PointsArc(p1,p2,cen,mode=0,fn)=
+#  /* This function plots an arc from p1 to p2 with fn increments using the cen as the centre of the arc.
+#  the mode determines how the arc is plotted
+#  mode==0, shortest arc possible 
+#  mode==1, longest arc possible
+#  mode==2, plotted clockwise
+#  mode==3, plotted counter clockwise
+#  */
+#	let(
+#    isCWorCCW=CWorCCW([cen,p1,p2]),//determine the direction of rotation
+#    //determine the arc angle depending on the mode
+#    p1p2Angle=cosineRuleAngle(p2,cen,p1),
+#    arcAngle=
+#      mode==0?p1p2Angle:
+#      mode==1?p1p2Angle-360:
+#      mode==2&&isCWorCCW==-1?p1p2Angle:
+#      mode==2&&isCWorCCW== 1?p1p2Angle-360:
+#      mode==3&&isCWorCCW== 1?p1p2Angle:
+#      mode==3&&isCWorCCW==-1?p1p2Angle-360:
+#      cosineRuleAngle(p2,cen,p1),
+#    r=pointDist(p1,cen),//determine the radius
+#	  p1Angle=getAngle(cen,p1) //angle of line 1
+#  )
+#  [for(i=[0:fn])
+#  let(angleIncrement=(arcAngle/fn)*i*isCWorCCW)
+#  [cos(p1Angle+angleIncrement)*r+cen.x,sin(p1Angle+angleIncrement)*r+cen.y]];
