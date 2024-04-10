@@ -1,9 +1,10 @@
-
 from solid import *
 from solid.utils import *
 import math
 import numpy as np
 from settings_common import *
+
+# colours found at https://github.com/SolidCode/SolidPython/blob/master/solid/utils.py
 
 def prism(l, w, h):
     return polyhedron(
@@ -281,6 +282,17 @@ def fixture_countersunk_clearance_hole(d, dk, L, a, segments_count):
     return fixture_countersunk(d, dk2, L + 2.0, a, segments_count)
 
 
+def shaft_with_key(dia, length, key_cut, key_length, segments_count):
+
+    k = translate([-dia / 2.0 - 1.0, dia / 2.0 - key_cut, length - key_length]) (cube([dia + 2.0, dia, key_length + 1.0]))
+    s = cylinder(d = dia, h = length, segments = segments_count)
+
+    p = s - k
+
+    p = color(Steel) (p)
+    
+    return p
+
 def washer(dia, hole_dia, thickness, segments_count, is_center = True):
     rod = cylinder(segments = segments_count, d = dia, h = thickness, center = is_center)
     hole = cylinder(segments = segments_count, d = hole_dia, h = thickness + 2, center = is_center)
@@ -537,7 +549,26 @@ def stepper_mounting_plate(width, height, thickness, slot_dia, slot_height = 0, 
 
     return p
     
-	
+
+def plate_width_mounting_holes(width, length, thickness,
+                               mounting_hole_dia, mounting_hole_pitch_width, mounting_hole_pitch_length,
+                               mounting_hole_offset_width, mounting_hole_offset_length, segments_count):
+    
+    b = cube([width, length, thickness], center = True)
+
+    h = cylinder(d = mounting_hole_dia, h = thickness + 2.0, segments = segments_count, center = True)
+
+    hh = translate([mounting_hole_pitch_width / 2.0, mounting_hole_pitch_length / 2.0, 0]) (h) + \
+        translate([-mounting_hole_pitch_width / 2.0, mounting_hole_pitch_length / 2.0, 0]) (h) + \
+        translate([mounting_hole_pitch_width / 2.0, -mounting_hole_pitch_length / 2.0, 0]) (h) + \
+        translate([-mounting_hole_pitch_width / 2.0, -mounting_hole_pitch_length / 2.0, 0]) (h)
+
+    hh = translate([mounting_hole_offset_width, mounting_hole_offset_length, 0]) (hh)
+    
+    p = b - hh
+    
+    return p
+
 def plate(width, height, thickness, top_mounting_hole_depth = 0, bottom_mounting_hole_depth = 0, mounting_hole_size = 0, segments_count = None):
 
     p = translate([-thickness / 2.0, -width / 2.0, -height / 2.0]) (
@@ -604,90 +635,6 @@ def plate_with_fillets(width, length, thickness, fillet_radius, segments):
 
     return p
 
-def shaft_with_key(dia, length, key_cut, key_length, segments_count):
-
-    k = translate([-dia / 2.0 - 1.0, dia / 2.0 - key_cut, length - key_length]) (cube([dia + 2.0, dia, key_length + 1.0]))
-    s = cylinder(d = dia, h = length, segments = segments_count)
-
-    p = s - k
-
-    p = color(Steel) (p)
-    
-    return p
-
-# https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828
-def dc_motor(dia, length, shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count):
-
-    m = cylinder(d = dia, h = length, segments = segments_count)
-
-    m = color(Aluminum) (m)
-    
-    s = shaft_with_key(shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count)
-    
-    p = m + translate([0, 0, length]) (s)
-
-    p = translate([0, 0, -length]) (p)
-
-    return p
-
-# https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828
-def gearbox_worm(width, length, height, width_pitch, length_pitch, length_pitch_pos, shaft_pos, shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count):
-    
-    b = cube([width, length, height])
-
-    b = color(Aluminum) (b)
-    
-    s = shaft_with_key(shaft_dia, shaft_length, shaft_key_cut, shaft_key_length, segments_count)
-
-    h = cylinder(d = m3_tap_hole_size, h = height / 2.0, segments = segments_count)
-
-    hp = translate([-width_pitch / 2.0, -length_pitch / 2.0, 0]) (h) + \
-        translate([width_pitch / 2.0, -length_pitch / 2.0, 0]) (h) + \
-        translate([-width_pitch / 2.0, length_pitch / 2.0, 0]) (h) + \
-        translate([width_pitch / 2.0, length_pitch / 2.0, 0]) (h)
-
-    y = length_pitch / 2.0 - shaft_pos + length_pitch_pos
-    p = translate([-width / 2.0, -shaft_pos, 0]) (b) + \
-        translate([0, 0, height]) (s) - \
-        translate([0, y, height / 2.0 + 1.0]) (hp)
-
-    p = translate([0, 0, -height]) (p)
-
-    return p
-
-# https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828
-def dc_motor_with_gearbox(motor_dia,
-                          motor_length,
-                          motor_shaft_dia,
-                          motor_shaft_length,
-                          motor_shaft_key_cut,
-                          motor_shaft_key_length,
-                          motor_worm_gearbox_width,
-                          motor_worm_gearbox_length,
-                          motor_worm_gearbox_height,
-                          motor_worm_gearbox_width_pitch,
-                          motor_worm_gearbox_length_pitch,
-                          motor_worm_gearbox_length_pitch_pos,
-                          motor_worm_gearbox_shaft_pos,
-                          motor_worm_gearbox_shaft_dia,
-                          motor_worm_gearbox_shaft_length,
-                          motor_worm_gearbox_shaft_key_cut,
-                          motor_worm_gearbox_shaft_key_length,
-                          segments_count):
-
-    m = dc_motor(motor_dia, motor_length, motor_shaft_dia, motor_shaft_length, motor_shaft_key_cut, motor_shaft_key_length, segments_count)
-
-    g = gearbox_worm(motor_worm_gearbox_width, motor_worm_gearbox_length, motor_worm_gearbox_height,
-                     motor_worm_gearbox_width_pitch, motor_worm_gearbox_length_pitch, motor_worm_gearbox_length_pitch_pos,
-                     motor_worm_gearbox_shaft_pos, motor_worm_gearbox_shaft_dia, motor_worm_gearbox_shaft_length,
-                     motor_worm_gearbox_shaft_key_cut, motor_worm_gearbox_shaft_key_length, segments_count)
-
-    p = g + translate([-motor_shaft_dia / 2.0,
-                       motor_worm_gearbox_length - motor_worm_gearbox_shaft_pos,
-                       -motor_worm_gearbox_height / 2.0]) (rotate(90, [1, 0, 0]) (m))
-
-    return p
-
 def rubber_button(radius, length, support_radius, support_length, segments_count):
 
     main = cylinder(r = radius, h = length, segments = segments_count)
@@ -710,20 +657,37 @@ def lightpipe_straight(radius, length, support_radius, support_length, support_o
     
     return p
 
+def matrix_copy_simple(part, x_pitch, y_pitch, x_count, y_count):
+
+    p = part
+
+    x = 0
+    y = 0
+    for j in range(y_count):
+        x = 0
+        p += translate([x, y, 0]) (part)
+        for i in range(x_count - 1):
+            x += x_pitch
+            p += translate([x, y, 0]) (part)
+        y += y_pitch
+
+    return p
+
+# TODO: remove this and merge to matrix_copy_simple
 def matrix_copy(feature, part, space, x_length, y_length, x_count, y_count):
     
     x_gap = (x_length - x_count * space) / (x_count + 1.0)
     y_gap = (y_length - y_count * space) / (y_count + 1.0)
 
     p = part
-    
+
     y = - y_length / 2.0 + y_gap + space / 2.0
     for j in range(y_count):
         x = - x_length / 2.0 + x_gap + space / 2.0
-        p -= translate([x, y, 0]) (feature)
+        p += translate([x, y, 0]) (feature)
         for i in range(x_count - 1):
             x += x_gap + space
-            p -= translate([x, y, 0]) (feature)
+            p += translate([x, y, 0]) (feature)
         y += y_gap + space
 
     return p

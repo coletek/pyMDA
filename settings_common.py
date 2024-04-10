@@ -107,6 +107,7 @@ deboss_min_height = 0.3
 
 draft_angle = 1.5
 wall_thickness_min = 1.0
+wall_thickness_typical = 2.0
 wall_thickness_max = 3.0
 
 #
