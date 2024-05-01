@@ -89,6 +89,8 @@ cnc_metal_clearance = 0.1 # if moving
 cnc_plastic_clearance = 0.2 # if moving
 sls_clearance = 0.5 # if moving
 sla_clearance = 0.2 # if moving
+fdm_clearance_free = 0.4 # if moving # https://images.squarespace-cdn.com/content/v1/5e150bd21e02927892f94bf6/a5287282-9ea8-4ae6-b0c8-f827c5719b6d/Design-Guidelines-DMaF2021.jpg
+fdm_clearance_tight = 0.2 # if moving # https://images.squarespace-cdn.com/content/v1/5e150bd21e02927892f94bf6/a5287282-9ea8-4ae6-b0c8-f827c5719b6d/Design-Guidelines-DMaF2021.jpg
 
 # mating clearance between 3D prints and cots parts
 sls_cots_clearance = 0.2 # if moving
