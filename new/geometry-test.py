@@ -18,14 +18,20 @@ def main():
     #    "hexagon": { "dim": {"cle": 10, "h": 20}, "pos": {"x": 10, "y": 10, "z": 10}}#,
     #}
 
-    assembly = Assembly()
-    assembly.add_component('prism', Prism(20, 20, 20), position=(0, 0, 0)) # optional pos,rot
-    assembly.add_component('hexagon', Hexagon(10, 10), position=(0, 0, 0)) # optional pos,rot
+    subassembly = Assembly()
+    subassembly.add('prism', Prism(20, 20, 20), position=(0, 0, 0)) # optional pos,rot
+    subassembly.add('hexagon', Hexagon(10, 10), position=(0, 0, 0)) # optional pos,rot
 
+    assembly = Assembly()
+    assembly.add('assembly1', subassembly, position=(0, 0, 20)) # optional pos,rot
+    assembly.add('assembly2', subassembly, position=(0, 0, -20)) # optional pos,rot
+    
     # example of smarter methods to join components
-    assembly.join_to_surface('hexagon', 'prism', align='top', face_align='bottom')
-    #assembly.join_to_surface('hexagon', 'prism', align='bottom', face_align='top')
-    #assembly.join_to_surface('hexagon', 'prism', align='bottom', face_align='bottom')
+    subassembly.join_to_surface('hexagon', 'prism', align='top', face_align='bottom')
+    #as.join_to_surface('hexagon', 'prism', align='bottom', face_align='top')
+    #as.join_to_surface('hexagon', 'prism', align='bottom', face_align='bottom')
+
+    assembly.join_to_surface('assembly1', 'assembly2', align='top', face_align='bottom')
     
     # Generate the model
     model = assembly.assemble()

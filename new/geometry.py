@@ -29,6 +29,9 @@ class Prism(Component):
         if self.length < 0 or self.width < 0 or self.height < 0:
             return False
         return True
+
+    def get_height(self):
+        return self.height
     
 class Hexagon(Component):
     def __init__(self, cle, h):
@@ -50,6 +53,9 @@ class Hexagon(Component):
         if self.cle < 0 or self.height < 0:
             return False
         return True
+
+    def get_height(self):
+        return self.height
     
 class Ring(Component):
     def create(self, r, thickness, segments_count, rotate_extrude_segments_count):
