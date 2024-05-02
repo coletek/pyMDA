@@ -60,9 +60,10 @@ def pcb_header_dual(pitch = 2.54, number_of_pins = 2):
     return p
 
 # https://www.bourns.com/docs/Product-Datasheets/3306.pdf - 3306K
-def pot_side():
+def pot_side(segments_count):
 
-    pot_width = 6.81
+    pot_wall_thickness = 1.0
+    pot_dia = 6.81
     pot_length = 4.5
     pot_height = 8.4
     pot_pin_width = 0.8
@@ -71,17 +72,22 @@ def pot_side():
     pot_pin_pitch_x = 5.0
     pot_pin_pitch_y = 2.5
 
-    # body
-    p = cube([pot_width, pot_length, pot_height], center = True)
-    
+    # blue body
+    p = rotate(90, [1, 0, 0]) (cylinder(d = pot_dia, h = pot_length, center = True, segments = segments_count))
     # cut cross for aesthetics
     cut_width = 1.0
     cut_length = pot_length / 2.0
     cut_height = 5.0
     c = translate([0, pot_length / 2.0, 0]) (cube([cut_width, cut_length, cut_height], center = True))
     p -= c + rotate(90, [0, 1, 0]) (c)
+    p = color(Blue) (translate([0, 0.01, 0]) (p))
 
-    p = color(Blue) (translate([0, pot_length / 2.0, pot_height / 2.0]) (p))
+    # white backplate
+    p += color(White) (translate([0,
+                                  pot_wall_thickness / 2.0 - pot_length / 2.0,
+                                  pot_dia / 2.0 - pot_height / 2.0]) (cube([pot_dia, pot_wall_thickness, pot_height], center = True)))
+
+    p = (translate([0, pot_length / 2.0, pot_height - pot_dia / 2.0]) (p))
     
     # pins
     l = color(Aluminum) (cube([pot_pin_width, pot_pin_length, pot_pin_height], center = True))
@@ -288,9 +294,9 @@ def collar(id, thickness, width, connection_gap, connection_hole_dia, connection
 #
 #==============================================================================
 
-def bearing(id, od, thickness):
-    outter = cylinder(d = od, h = thickness)
-    inner = cylinder(d = id, h = thickness + 2)
+def bearing_basic(id, od, thickness, segments_count):
+    outter = cylinder(d = od, h = thickness, segments = segments_count)
+    inner = cylinder(d = id, h = thickness + 2, segments = segments_count)
     p = outter - translate([0, 0, -1]) (inner)
     return p
 
@@ -446,7 +452,7 @@ def stepper(nema_type = 17, length = 24.0, segments_count = None):
     if nema_type == 17:
         width = 42
         bore = 5
-        bore_length = 24
+        bore_length = 14#24
         mounting_hole_pitch = 31
         mounting_hole_size = m3_tap_hole_size
         mounting_hole_depth = 4
