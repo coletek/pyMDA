@@ -4,6 +4,39 @@ from solid.utils import *
 from core import *
 from geometry import *
 
+def build(config):
+
+    subassembly = Assembly()
+    subassembly.add('cube', Cube(10, 10, 10), position=([1, 2, 3]))
+    subassembly.add('cylinder', Cylinder(20, 20))
+    subassembly.add('sphere', Sphere(30))
+    subassembly.add('pyramid', Pyramid(30, 30))
+    subassembly.add('cone', Cone(40, 40))
+    subassembly.add('tetrahedron', Tetrahedron(50), position=(0, 0, 0))
+    subassembly.add('torus', Torus(60, 30, 100, 100))
+    subassembly.add('triangular_prism', TriangularPrism(70, 70, 70), position=(0, 0, 0))
+    subassembly.add('hexagonal_prism', HexagonalPrism(80, 80))
+
+    # demo stacking/aligning with margin/pitch
+    #subassembly.stack_x(5)
+    #subassembly.stack_y(0)
+    subassembly.stack_z(5)
+
+    # demo adding component to 
+    assembly = Assembly()
+    assembly.add('assembly', subassembly)
+    assembly.add('cube_big', Cube(50, 50, 50), position=(0, 50, 0), rotation=(0, 0, 45))
+
+    # example of smarter methods to join components - WIP
+    #subassembly.join_to_surface('cube', 'cylinder', align='bottom', face_align='top')
+    #subassembly.join_to_surface('hexagon', 'trianglular_prism', align='front', face_align='back')
+    #subassembly.join_to_surface('hexagon', 'trianglular_prism', align='left', face_align='left')
+    #subassembly.join_to_surface('hexagon', 'trianglular_prism', align='bottom', face_align='bottom')
+
+    #assembly.join_to_surface('assembly1', 'assembly2', align='top', face_align='bottom')
+
+    return assembly
+
 def main():
     parser = argparse.ArgumentParser(description="Controls for 3D printer component assemblies")
     parser.add_argument('--test', action='store_true', help='Run tests on the assembly')
@@ -17,25 +50,10 @@ def main():
     #    "prism": { "dim": {"l": 20, "w": 20, "h": 20}, "pos": {"x": 100, "y": 100, "z": 5}},
     #    "hexagon": { "dim": {"cle": 10, "h": 20}, "pos": {"x": 10, "y": 10, "z": 10}}#,
     #}
+    config = {}
 
-    subassembly = Assembly()
-    subassembly.add('prism', Prism(20, 20, 20), position=(0, 0, 0)) # optional pos,rot
-    subassembly.add('hexagon', Hexagon(10, 10), position=(0, 0, 0)) # optional pos,rot
+    assembly = build(config)
 
-    assembly = Assembly()
-    assembly.add('assembly1', subassembly, position=(0, 0, 20)) # optional pos,rot
-    assembly.add('assembly2', subassembly, position=(0, 0, -20)) # optional pos,rot
-    
-    # example of smarter methods to join components
-    subassembly.join_to_surface('hexagon', 'prism', align='top', face_align='bottom')
-    #as.join_to_surface('hexagon', 'prism', align='bottom', face_align='top')
-    #as.join_to_surface('hexagon', 'prism', align='bottom', face_align='bottom')
-
-    assembly.join_to_surface('assembly1', 'assembly2', align='top', face_align='bottom')
-    
-    # Generate the model
-    model = assembly.assemble()
-    
     if args.test:
         assembly.test_assembly()
 
