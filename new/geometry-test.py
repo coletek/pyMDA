@@ -3,9 +3,11 @@ from solid import *
 from solid.utils import *
 from core import *
 from geometry import *
+from curved import *
 
 def build(config):
 
+    # Fundamental Shapes
     subassembly = Assembly()
     subassembly.add('cube', Cube(10, 10, 10), position=([1, 2, 3]))
     subassembly.add('cylinder', Cylinder(20, 20))
@@ -17,15 +19,25 @@ def build(config):
     subassembly.add('triangular_prism', TriangularPrism(70, 70, 70), position=(0, 0, 0))
     subassembly.add('hexagonal_prism', HexagonalPrism(80, 80))
 
+    # Curved Edges Shapes
+    subassembly.add('cube_curved_sides', CubeCurvedSides(20, 20, 20, 5, 4))
+    #subassembly.add('cube_curved_edges', CubeCurvedEdges(20, 20, 20, 5))
+    subassembly.add('bar_curved_edges', BarCurvedEdges(40, 10, 2))
+    subassembly.add('cylinder_curved_edges', CylinderCurvedEdges(20, 50, 10))
+
+    # Point Based Shapes
+    subassembly.add('line_round_via_hull', LineRoundViaHull((0, 0, 0), (10, 10, 10), 5))
+    #subassembly.add('polyline_round', PolylineRound([(0, 0, 0), (10, 10, 10), (0, 0, 10)], 2))
+    
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)
-    #subassembly.stack_y(0)
-    subassembly.stack_z(5)
+    subassembly.stack_y(5)
+    #subassembly.stack_z(5)
 
     # demo adding component to 
-    assembly = Assembly()
-    assembly.add('assembly', subassembly)
-    assembly.add('cube_big', Cube(50, 50, 50), position=(0, 50, 0), rotation=(0, 0, 45))
+    #assembly = Assembly()
+    #assembly.add('assembly', subassembly)
+    #assembly.add('cube_big', Cube(50, 50, 50), position=(0, 50, 0), rotation=(0, 0, 45))
 
     # example of smarter methods to join components - WIP
     #subassembly.join_to_surface('cube', 'cylinder', align='bottom', face_align='top')
@@ -35,6 +47,8 @@ def build(config):
 
     #assembly.join_to_surface('assembly1', 'assembly2', align='top', face_align='bottom')
 
+    assembly = subassembly
+    
     return assembly
 
 def main():

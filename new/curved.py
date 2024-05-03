@@ -1,37 +1,187 @@
+from solid import *
+from solid.utils import *
+from core import *
+from geometry import *
+
+#
+# This added fillets to 2 or 4 sides, not all 12 sides as done by
+# CubeCurvedEdges - perhaps merge these two functions
+#
+
+class CubeCurvedSides(Component):
     
+    def __init__(self, x, y, z, corner_radius, side_count, is_center = True, segments_count = 100):
+        self.width = x
+        self.length = y
+        self.height = z
+        self.is_center = is_center
+        self.origin = [0, 0, 0]
+        self.x = x
+        self.y = y
+        self.z = z
+        self.corner_radius = corner_radius
+        self.side_count = side_count
+        self.segments_count = segments_count
+        
+    def create(self):
+        
+        # alternative approach to minkowski, so it imports into OpenSCAD and export as STEP
+        # TODO: support non-center option
+        # using hull() still requires high segments - perhaps use rotate_extrude instead
+
+        corner_round = translate([0, 0, -self.z / 2.0]) (cylinder(segments = self.segments_count, r = self.corner_radius, h = self.z))
+
+        if self.side_count == 4:
+            return hull() (
+                translate([self.x / 2.0 - self.corner_radius, self.y / 2.0 - self.corner_radius, 0]) (corner_round),
+                translate([self.x / 2.0 - self.corner_radius, -self.y / 2.0 + self.corner_radius, 0]) (corner_round),
+                translate([-self.x / 2.0 + self.corner_radius, self.y / 2.0 - self.corner_radius, 0]) (corner_round),
+                translate([-self.x / 2.0 + self.corner_radius, -self.y / 2.0 + self.corner_radius, 0]) (corner_round),
+            )
+        elif self.side_count == 2:
+            corner_sq = cube([self.corner_radius, self.corner_radius, self.z], center = True)
+            # FIXME
+            #return translate([self.x / 2.0 - self.corner_radius, self.y / 2.0 - self.corner_radius, 0]) (corner_round) + \
+                #    translate([self.x / 2.0 - self.corner_radius + self.corner_radius / 2.0, self.y / 2.0 - self.corner_radius + self.corner_radius / 2.0, 0]) (corner_sq) + \
+                #    translate([-self.x / 2.0 + self.corner_radius, self.y / 2.0 - self.corner_radius, 0]) (corner_round) + \
+                #    translate([-self.x / 2.0 + self.corner_radius - self.corner_radius / 2.0, self.y / 2.0 - self.corner_radius + self.corner_radius / 2.0, 0]) (corner_sq)
+            return hull() (
+                translate([self.x / 2.0 - self.corner_radius, self.y / 2.0 - self.corner_radius, 0]) (corner_round),
+                translate([self.x / 2.0 - self.corner_radius + self.corner_radius / 2.0, self.y / 2.0 - self.corner_radius + self.corner_radius / 2.0, 0]) (corner_sq),
+                translate([-self.x / 2.0 + self.corner_radius, self.y / 2.0 - self.corner_radius, 0]) (corner_round),
+                translate([-self.x / 2.0 + self.corner_radius - self.corner_radius / 2.0, self.y / 2.0 - self.corner_radius + self.corner_radius / 2.0, 0]) (corner_sq)
+            )
+
+#
+# Curve all 12 sides of a cube - similar to BarCurvedEdges, but not rectangular
+#
+        
+class CubeCurvedEdges():
+    
+    def __init__(self, x, y, z, corner_radius, is_center = True, segments_count = 100):
+        self.width = x
+        self.length = y
+        self.height = z
+        self.is_center = is_center
+        self.origin = [0, 0, 0]
+        self.x = x
+        self.y = y
+        self.z = z
+        self.corner_radius = corner_radius
+        self.segments_count = segments_count
+
+    def create(self):
+        
+    # alternative approach to minkowski, so it imports into OpenSCAD and export as STEP
+    # using hull() still requires high segments - perhaps use rotate_extrude instead
+    
+        if self.is_center:
+            return hull() (
+                translate([-self.x / 2.0 + self.corner_radius, -self.y / 2.0 + self.corner_radius, -self.z / 2.0 + self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x / 2.0 - self.corner_radius, -self.y / 2.0 + self.corner_radius, -self.z / 2.0 + self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x / 2.0 - self.corner_radius, self.y / 2.0 - self.corner_radius, -self.z / 2.0 + self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([-self.x / 2.0 + self.corner_radius, self.y / 2.0 - self.corner_radius, -self.z / 2.0 + self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+            
+                translate([-self.x / 2.0 + self.corner_radius, -self.y / 2.0 + self.corner_radius, self.z / 2.0 - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x / 2.0 - self.corner_radius, -self.y / 2.0 + self.corner_radius, self.z / 2.0 - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x / 2.0 - self.corner_radius, self.y / 2.0 - self.corner_radius, self.z / 2.0 - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([-self.x / 2.0 + self.corner_radius, self.y / 2.0 - self.corner_radius, self.z / 2.0 - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+            )
+    
+        else:
+            return hull() (
+                translate([self.corner_radius, self.corner_radius, self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x - self.corner_radius, self.corner_radius, self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x - self.corner_radius, self.y - self.corner_radius, self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.corner_radius, self.y - self.corner_radius, self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+            
+                translate([self.corner_radius, self.corner_radius, self.z - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x - self.corner_radius, self.corner_radius, self.z - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.x - self.corner_radius, self.y - self.corner_radius, self.z - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+                translate([self.corner_radius, self.y - self.corner_radius, self.z - self.corner_radius]) (sphere(segments = self.segments_count, r = self.corner_radius)),
+            )
+
+#
+# Curve all 12 sides of a bar - similar to CubeCurvedEdges, but not cubic
+#
+        
+class BarCurvedEdges(Component):
+    def __init__(self, length, thickness, corner_radius, segments_count = 100):
+        self.width = thickness
+        self.length = length
+        self.height = thickness
+        self.origin = [0, 0, 0]
+        self.thickness = thickness
+        self.corner_radius = corner_radius
+        self.segments_count = segments_count
+        
+    def create(self):
+        return CubeCurvedEdges(self.thickness, self.length, self.thickness, self.corner_radius, True, self.segments_count).create()
+
+#
+# FIXME: only really works with ideal corner_radius and r selection
+# e.g. CylinderCurvedEdges(20, 50, 10))
+#
+
 class CylinderCurvedEdges(Component):
-    def create(self, r, h, corner_radius, both_sides, segments_count):
-
-        b_height = h - corner_radius
-        if both_sides:
-            b_height = h - corner_radius * 2.0
-        b = cylinder(segments = segments_count, r = r, h = b_height)
-
-        eb = ring(r, corner_radius * 2, segments_count)
-        bb = cylinder(segments = segments_count, r = r - corner_radius, h = corner_radius * 2.0)
-
-        p = translate([0, 0, corner_radius]) (b) + translate([0, 0, corner_radius]) (eb) + translate([0, 0, 0]) (bb)
     
-        if both_sides:
-            et = ring(r, corner_radius * 2, segments_count)
-            bt = cylinder(segments = segments_count, r = r - corner_radius, h = corner_radius * 2.0)
-            p += translate([0, 0, h - corner_radius]) (et) + translate([0, 0, h - corner_radius * 2.0]) (bt)
+    def __init__(self, r, h, corner_radius, both_sides = True, is_center = True, is_add_test = True, segments_count = 100):
+        self.width = self.length = r * 2
+        self.height = h
+        self.origin = [0, 0, 0]
+        self.is_center = is_center
+        self.is_add_test = is_add_test
+        self.origin = [0, 0, self.height / 2.0]
+        self.r = r
+        self.corner_radius = corner_radius
+        self.both_sides = both_sides
+        self.segments_count = segments_count
+        
+    def create(self):
+
+        b_height = self.height - self.corner_radius
+        if self.both_sides:
+            b_height = self.height - self.corner_radius * 2.0
+        b = cylinder(segments = self.segments_count, r = self.r, h = b_height)
+        
+        eb = Torus(self.r, self.corner_radius * 2, self.segments_count, 100).create()
+        bb = cylinder(segments = self.segments_count, r = self.r - self.corner_radius, h = self.corner_radius * 2.0)
+
+        p = translate([0, 0, self.corner_radius]) (b) + translate([0, 0, self.corner_radius]) (eb) + translate([0, 0, 0]) (bb)
     
+        if self.both_sides:
+            et = Torus(self.r, self.corner_radius * 2, self.segments_count, 100).create()
+            bt = cylinder(segments = self.segments_count, r = self.r - self.corner_radius, h = self.corner_radius * 2.0)
+            p += translate([0, 0, self.height - self.corner_radius]) (et) + translate([0, 0, self.height - self.corner_radius * 2.0]) (bt)
+
+        if self.is_center:
+            p = translate([0, 0, -self.origin[2]]) (p)
+            self.origin = [0, 0, 0]
+            
         return p
 
-class RodCurvedEdges(Component):
-    def create(self, length, thickness, corner_radius, segments_count):
-        return cube_curved_edges(thickness, length, thickness, corner_radius, segments_count, True)
-
+# Curved
+    
 class LineRoundViaHull(Component):
-    def create(self, p1, p2, radius, segments_count):
+    
+    def __init__(self, p1, p2, radius, segments_count = 100):
+        self.width = p1[0] - p2[0] + radius * 2
+        self.length = p1[1] - p2[1] + radius * 2
+        self.height = p1[2] - p2[2] + radius * 2
+        self.origin = (p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2])
+        self.p1 = p1
+        self.p2 = p2
+        self.radius = radius
+        self.segments_count = segments_count
+    
+    def create(self):
 
-        s = sphere(r = radius, segments = segments_count)
+        s = sphere(r = self.radius, segments = self.segments_count)
         
-        #s = cube_curved_sides(radius * 2, radius * 2, radius, 2.0, 4, segments_count)
+        #s = cube_curved_sides(self.radius * 2, self.radius * 2, self.radius, 2.0, 4, self.segments_count)
         
-        s1 = translate(p1) (s)
-        s2 = translate(p2) (s)
+        s1 = translate(self.p1) (s)
+        s2 = translate(self.p2) (s)
 
         # TODO: use cylinder instead to avoid mesh
         p = hull() (s1, s2)
@@ -40,50 +190,21 @@ class LineRoundViaHull(Component):
         return p
 
 class PolylineRound(Component):
-    def create(self, pts, radius, segments_count, close):
 
-        if close:
-            p = line_round_via_hull(pts[len(pts) - 1], pts[0], radius, segments_count)
+    def __init__(self, pts, radius, is_close = False, segments_count = 100):
+        self.pts = pts
+        self.radius = radius
+        self.segments_count = segments_count
+        self.is_close = is_close
+    
+    def create(self):
+
+        if self.is_close:
+            p = LineRoundViaHull(self.pts[len(self.pts) - 1], self.pts[0], self.radius, self.segments_count).create()
         else:
             p = 0
         
-        for i in range(len(pts) - 1):
-            p += line_round_via_hull(pts[i], pts[i + 1], radius, segments_count)
+        for i in range(len(self.pts) - 1):
+            p += LineRoundViaHull(self.pts[i], self.pts[i + 1], self.radius, self.segments_count).create()
 
         return p
-    
-#class Cube:
-#    @staticmethod
-#    def create(x, y, z, is_center=True):
-#        """Create a standard cube with specified dimensions."""
-#        return cube([x, y, z], center=is_center)
-    
-#class Cylinder:
-#    # Handles cylinders with options for curved edges
-    
-#class CurvedCube(Cube):
-#    def __init__(self, x, y, z, corner_radius, side_count, segments_count, is_center=True):
-#        self.x = x
-#        self.y = y
-#        self.z = z
-#        self.corner_radius = corner_radius
-#        self.side_count = side_count
-#        self.segments_count = segments_count
-#        self.is_center = is_center
-
-#    def create(self):
-#        """Create a cube with curved sides depending on the side count."""
-#        corner_round = translate([0, 0, -self.z / 2.0])(cylinder(segments=self.segments_count, r=self.corner_radius, h=self.z))
-#        if self.side_count == 4:
-#            return hull()(
-#                translate([self.x / 2.0 - self.corner_radius, self.y / 2.0 - self.corner_radius, 0])(corner_round),
-#                translate([self.x / 2.0 - self.corner_radius, -self.y / 2.0 + self.corner_radius, 0])(corner_round),
-#                translate([-self.x / 2.0 + self.corner_radius, self.y / 2.0 - self.corner_radius, 0])(corner_round),
-#                translate([-self.x / 2.0 + self.corner_radius, -self.y / 2.0 + self.corner_radius, 0])(corner_round),
-#            )
-#        elif self.side_count == 2:
-#            return hull()(
-#                translate([self.x / 2.0 - self.corner_radius, self.y / 2.0 - self.corner_radius, 0])(corner_round),
-#                translate([-self.x / 2.0 + self.corner_radius, self.y / 2.0 - self.corner_radius, 0])(corner_round)
-#            )
-
