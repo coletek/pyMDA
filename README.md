@@ -8,4 +8,4 @@ Overall - it needs a cleanup to organise and explain parts/functions, and perhap
 
 For now, started a new OO based design approach - see new/test.py for an example
 
-![Alt text](new/test.png "Title")
+![Just an example of built-in parts - many more to port to the new framework](new/test.png "Just an example of built-in parts - many more to port to the new framework")
