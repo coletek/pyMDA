@@ -306,3 +306,4 @@ class HexagonalPrism(Component): # 6sides (hexagonal) base with depth
             self.origin = [0, 0, self.height / 2]
             
         return p
+
