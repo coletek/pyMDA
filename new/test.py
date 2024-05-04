@@ -4,6 +4,7 @@ from solid.utils import *
 from core import *
 from geometry import *
 from curved import *
+from stock_materials import *
 
 def build(config):
 
@@ -28,6 +29,17 @@ def build(config):
     # Point Based Shapes
     subassembly.add('line_round_via_hull', LineRoundViaHull((0, 0, 0), (10, 10, 10), 5))
     #subassembly.add('polyline_round', PolylineRound([(0, 0, 0), (10, 10, 10), (0, 0, 10)], 2))
+
+    # Stock Materials
+    subassembly.add('square_hollow_section', SHS(30, 3, 30))
+    subassembly.add('channel_section', CS(30, 3, 30))
+    subassembly.add('l_section', LS(30, 30, 3, 30))
+    subassembly.add('solid_section', SB(30, 30))
+    subassembly.add('rod', Rod(10, 30))
+    subassembly.add('sheet', Sheet(30, 30, 3))
+    #subassembly.add('wedge', Wedge(10, 10, 2, 2))
+    #subassembly.add('hinge', Hinge(3, 10, 20, 100, 100, 1, True, 100))
+    
     
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)

@@ -165,9 +165,9 @@ class CylinderCurvedEdges(Component):
 class LineRoundViaHull(Component):
     
     def __init__(self, p1, p2, radius, segments_count = 100):
-        self.width = p1[0] - p2[0] + radius * 2
-        self.length = p1[1] - p2[1] + radius * 2
-        self.height = p1[2] - p2[2] + radius * 2
+        self.width = p2[0] - p1[0] + radius * 2
+        self.length = p2[1] - p1[1] + radius * 2
+        self.height = p2[2] - p1[2] + radius * 2
         self.origin = (p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2])
         self.p1 = p1
         self.p2 = p2
