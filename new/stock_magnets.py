@@ -6,7 +6,7 @@ from core import *
 class MagnetCoin(Component):
 
     def __init__(self, dia, thickness):
-        super().__init__()  # This calls the constructor of the parent class (Component)
+        super().__init__()
         self.dia = dia
         self.thickness = thickness
     

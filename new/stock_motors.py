@@ -6,6 +6,7 @@ from core import *
 class ShaftKey(Component):
 
     def __init__(self, dia, length, key_cut, key_length):
+        super().__init__()
         self.dia = dia
         self.length = length
         self.key_cut = key_cut
@@ -23,94 +24,64 @@ class ShaftKey(Component):
 class MotorDC(Component):
     ''' https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828 '''
     
-    def __init__(self, dia, length, shaft_dia, shaft_length, shaft_key_cut, shaft_key_length):
-        self.dia = dia
-        self.length = length
-        self.shaft_dia = shaft_dia
-        self.shaft_length = shaft_length
-        self.shaft_key_cut = shaft_key_cut
-        self.shaft_key_length shaft_key_length
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
         
     def create(self):
-        m = cylinder(d = self.dia, h = self.length, segments = self.segments_count)
+        m = cylinder(d = self.config['dia'], h = self.config['length'], segments = self.segments_count)
         m = color(Aluminum) (m)
-        s = ShaftKey(self.shaft_dia, self.shaft_length, self.shaft_key_cut, self.shaft_key_length).create()
-        p = m + translate([0, 0, self.length]) (s)
-        p = translate([0, 0, -self.length]) (p)
+        s = ShaftKey(self.config['shaft_dia'], self.config['shaft_length'], self.config['shaft_key_cut'], self.config['shaft_key_length']).create()
+        p = m + translate([0, 0, self.config['length']]) (s)
+        p = translate([0, 0, -self.config['length']]) (p)
         return p
 
 class GearboxWorm(Component):
     ''' https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828 '''
 
-    def __init__(self, width, length, height, width_pitch, length_pitch, length_pitch_pos, shaft_pos, shaft_dia, shaft_length, shaft_key_cut, shaft_key_length):
-        self.width = width
-        self.length = length
-        self.height = height
-        self.width_pitch = width_pitch
-        self.length_pitch = length_pitch
-        self.length_pitch_pos = length_pitch_pos
-        self.shaft_pos = shaft_pos
-        self.shaft_dia = shaft_dia
-        self.shaft_length = shaft_length
-        self.shaft_key_cut = shaft_key_cut
-        self.shaft_key_length = shaft_key_length
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
 
     def create(self):
-        b = cube([self.width, self.length, self.height])
+        b = cube([self.config['width'], self.config['length'], self.config['height']])
 
         b = color(Aluminum) (b)
         
-        s = ShaftKey(self.shaft_dia, self.shaft_length, self.shaft_key_cut, self.shaft_key_length).create()
-        
-        h = cylinder(d = m3_tap_hole_size, h = self.height / 2.0, segments = self.segments_count)
+        s = ShaftKey(self.config['shaft_dia'], self.config['shaft_length'], self.config['shaft_key_cut'], self.config['shaft_key_length']).create()
+
+        m3_tap_hole_size = 2.5
+        h = cylinder(d = m3_tap_hole_size, h = self.config['height'] / 2.0, segments = self.segments_count)
     
-        hp = translate([-self.width_pitch / 2.0, -self.length_pitch / 2.0, 0]) (h) + \
-            translate([self.width_pitch / 2.0, -self.length_pitch / 2.0, 0]) (h) + \
-            translate([-self.width_pitch / 2.0, self.length_pitch / 2.0, 0]) (h) + \
-            translate([self.width_pitch / 2.0, self.length_pitch / 2.0, 0]) (h)
+        hp = translate([-self.config['width_pitch'] / 2.0, -self.config['length_pitch'] / 2.0, 0]) (h) + \
+            translate([self.config['width_pitch'] / 2.0, -self.config['length_pitch'] / 2.0, 0]) (h) + \
+            translate([-self.config['width_pitch'] / 2.0, self.config['length_pitch'] / 2.0, 0]) (h) + \
+            translate([self.config['width_pitch'] / 2.0, self.config['length_pitch'] / 2.0, 0]) (h)
         
-        y = self.length_pitch / 2.0 - self.shaft_pos + self.length_pitch_pos
-        p = translate([-self.width / 2.0, -self.shaft_pos, 0]) (b) + \
-            translate([0, 0, self.height]) (s) - \
-            translate([0, y, self.height / 2.0 + 1.0]) (hp)
+        y = self.config['length_pitch'] / 2.0 - self.config['shaft_pos'] + self.config['length_pitch_pos']
+        p = translate([-self.config['width'] / 2.0, -self.config['shaft_pos'], 0]) (b) + \
+            translate([0, 0, self.config['height']]) (s) - \
+            translate([0, y, self.config['height'] / 2.0 + 1.0]) (hp)
         
-        p = translate([0, 0, -self.height]) (p)
+        p = translate([0, 0, -self.config['height']]) (p)
         
         return p
 
-class MotorDCwGearbox(Assembly):
+class MotorDCwGearboxWorm(Assembly):
     ''' https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828 '''
-
     
-    def __init__(self, motor_dia,
-                 motor_length,
-                 motor_shaft_dia,
-                 motor_shaft_length,
-                 motor_shaft_key_cut,
-                 motor_shaft_key_length,
-                 motor_worm_gearbox_width,
-                 motor_worm_gearbox_length,
-                 motor_worm_gearbox_height,
-                 motor_worm_gearbox_width_pitch,
-                 motor_worm_gearbox_length_pitch,
-                 motor_worm_gearbox_length_pitch_pos,
-                 motor_worm_gearbox_shaft_pos,
-                 motor_worm_gearbox_shaft_dia,
-                 motor_worm_gearbox_shaft_length,
-                 motor_worm_gearbox_shaft_key_cut,
-                 motor_worm_gearbox_shaft_key_length):
-
-    def create(self):
-        m = MotorDc(motor_dia, motor_length, motor_shaft_dia, motor_shaft_length, motor_shaft_key_cut, motor_shaft_key_length).create()
-    
-        g = GearboxWorm(motor_worm_gearbox_width, motor_worm_gearbox_length, motor_worm_gearbox_height,
-                         motor_worm_gearbox_width_pitch, motor_worm_gearbox_length_pitch, motor_worm_gearbox_length_pitch_pos,
-                         motor_worm_gearbox_shaft_pos, motor_worm_gearbox_shaft_dia, motor_worm_gearbox_shaft_length,
-                         motor_worm_gearbox_shaft_key_cut, motor_worm_gearbox_shaft_key_length).create()
+    def __init__(self, motor_config, gearbox_config):
+        self.motor_config = motor_config
+        self.gearbox_config = gearbox_config
         
-        p = g + translate([-motor_shaft_dia / 2.0,
-                           motor_worm_gearbox_length - motor_worm_gearbox_shaft_pos,
-                           -motor_worm_gearbox_height / 2.0]) (rotate(90, [1, 0, 0]) (m))
+    def create(self):
+        m = MotorDC(self.motor_config).create()
+    
+        g = GearboxWorm(self.gearbox_config).create()
+        
+        p = g + translate([-self.motor_config['shaft_dia'] / 2.0,
+                           self.gearbox_config['length'] - self.gearbox_config['shaft_pos'],
+                           -self.gearbox_config['height'] / 2.0]) (rotate(90, [1, 0, 0]) (m))
         
         return p
 
@@ -167,7 +138,6 @@ class ServoRDS3225(Component):
 #==============================================================================
 
 class StepperDriver(Component):
-    def __init__(self):
 
     def create(self):
         return translate([-86.0 / 2.0, -55.0 / 2.0, -20.0 / 2.0]) (
@@ -248,9 +218,12 @@ class LinearActuatorPA14P(Component):
     ''' TODO: make stroke work - requires replacing STL files with custom OpenSCAD model until then, we can hack it via using size'''
     
     
-    def __init__(self, size = 2.0 * inch_to_mm, stroke = 0.0, actuator_dist_to_mount = 0.78 * inch_to_mm, actuator_dist_to_mount2 = 0.4 * inch_to_mm, actuator_width = 1.57 * inch_to_mm):
-
+    #def __init__(self, size = 2.0 * inch_to_mm, stroke = 0.0, actuator_dist_to_mount = 0.78 * inch_to_mm, actuator_dist_to_mount2 = 0.4 * inch_to_mm, actuator_width = 1.57 * inch_to_mm):
+    #    self.size = size
+        # etc
+        
     def create(self):
+        self.inch_to_mm = 25.4
         size += stroke
         p = import_stl("cots/PA-14P-2.stl")
         if size == 4.0 * inch_to_mm:
@@ -276,8 +249,9 @@ class LinearActuatorPA14P(Component):
 class LinearActuatorMountingBracketBRK14(Component):
     '''@bom_part("Linear Actuator Mounting Bracket (BRK-14)", 8.5)'''
     
-    def __init__(actuator_mounting_bracket_width = 1.04 * inch_to_mm, actuator_mounting_bracket_length = 2.3 * inch_to_mm, actuator_mounting_bracket_length_to_axle = 0.32 * inch_to_mm, actuator_mounting_bracket_height_to_axle = 1.43 * inch_to_mm):
-        return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - actuator_mounting_bracket_width / 2.0, 11.899 - actuator_mounting_bracket_height_to_axle, actuator_mounting_bracket_length - actuator_mounting_bracket_length_to_axle]) (import_stl("cots/BRK-14.stl")))))
+    #def __init__(actuator_mounting_bracket_width = 1.04 * inch_to_mm, actuator_mounting_bracket_length = 2.3 * inch_to_mm, actuator_mounting_bracket_length_to_axle = 0.32 * inch_to_mm, actuator_mounting_bracket_height_to_axle = 1.43 * inch_to_mm):
+        
+    #return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - actuator_mounting_bracket_width / 2.0, 11.899 - actuator_mounting_bracket_height_to_axle, actuator_mounting_bracket_length - actuator_mounting_bracket_length_to_axle]) (import_stl("cots/BRK-14.stl")))))
 
 class LinearActuatorMountingBracketBRK03(Component):
     # waiting on revised 3D model

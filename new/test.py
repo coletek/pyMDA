@@ -6,7 +6,9 @@ from core import *
 from geometry import *
 from curved import *
 from stock_materials import *
+from bezier_curve import *
 from stock_magnets import *
+from stock_motors import *
 from scotch_yoke import *
 
 def build(config):
@@ -26,6 +28,10 @@ def build(config):
     # * Each compnonent has a bounding box width, length, heights, and orign - for features like stacking in 3D space
     #
     # * stock_motors could perhaps be more advanced OO of motor models for example
+    #
+    # * TBC: Stock Bearings, Stock Electronics, Stock Fixtures, Utilites, Cam Profile, Collar, Enclosures, Holes
+    #   and plates (perhaps perhaps should move to stock_materials?)
+    #
     
     # Geometry - Fundamental Shapes
     subassembly = Assembly()
@@ -49,6 +55,16 @@ def build(config):
     subassembly.add('line_round_via_hull', LineRoundViaHull((0, 0, 0), (10, 10, 10), 5))
     #subassembly.add('polyline_round', PolylineRound([(0, 0, 0), (10, 10, 10), (0, 0, 10)], 2))
 
+    # Bezier Curve (also a point based shape)
+    p0 = (0, 0, 0)
+    p1 = (0, 0, 100)
+    p2 = (0, 100, 0)
+    p3 = (100, 100, 100)
+    pts = BezierCurve(0.05, p0, p1, p2, p3).create()
+    for i in pts:
+        print (i)
+    subassembly.add('bezier_curve', PolylineRound(pts, 5))
+    
     # Stock Materials
     subassembly.add('square_hollow_section', SHS(30, 3, 30))
     subassembly.add('channel_section', CS(30, 3, 30))
@@ -59,23 +75,36 @@ def build(config):
     #subassembly.add('wedge', Wedge(10, 10, 2, 2))
     #subassembly.add('hinge', Hinge(3, 10, 20, 100, 100, 1, True, 100))
 
-    # Stock Bearings - TBC
-    # Stock Electronics - TBC
-    # Stock Fixutres - TBC
-    # Stock Motors - TBC
+    # Stock Motors
+    # https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828
+    config['motor_dc'] = {
+        'dia':  24.4,
+        'length':  30.8,
+        'shaft_dia':  6.0, # FYI
+        'shaft_length':  7.0, # FYI
+        'shaft_key_cut':  6.0 - 4.0, # FYI
+        'shaft_key_length':  6.2 # FYI
+    }
+    config['gearbox_worm'] = {
+        'width': 32.0,
+        'length': 46.0,
+        'height': 25.0,
+        'width_pitch': 18.0,
+        'length_pitch': 33.0,
+        'length_pitch_pos': 6.0,
+        'shaft_pos': 9 + 6,
+        'shaft_dia': 6.0,
+        'shaft_length': 7.0,
+        'shaft_key_cut': 6.0 - 4.0,
+        'shaft_key_length': 6.2
+    }
+    subassembly.add('motor_dc', MotorDC(config['motor_dc']))
+    subassembly.add('gearbox_worm', GearboxWorm(config['gearbox_worm']))
+    subassembly.add('dc_motor_and_gearbox_worm', MotorDCwGearboxWorm(config['motor_dc'], config['gearbox_worm']))
 
-    # Stock Magnets - TBC
-
-    #subassembly = Assembly()
+    # Stock Magnets
     subassembly.add('coin_magnet', MagnetCoin(20, 1.0))
     
-    # Utilites - TBC    
-    # Cam Profile - TBC
-    # Collar - TBC
-    # Enclosures - TBC
-    # Holes - TBC
-    # Plates - TBC
-
     # Scotch Yotch
     config = {
         "stroke_length": 40.0,
@@ -95,7 +124,6 @@ def build(config):
     config["slider_y_thickness"] = config["slider_x_thickness"]
     angle = math.pi / 180.0 * 90.0
     subassembly.add('scotch_yoke', ScotchYoke(config, angle))
-
     
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)

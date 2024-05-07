@@ -1,37 +1,40 @@
-class BezierCurve(Component):
+import math
+import numpy as np
+from solid import *
+from solid.utils import *
+from core import *
 
-    def __init__(self, t_step, p0, p1, p2, p3, is_debug = False):
+class BezierCurve:
+
+    def __init__(self, t_step, p0, p1, p2, p3):
         self.t_step = t_step
         self.p0 = p0
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
-        self.is_debug = is_debug
         
     def create(self):
-        
-        p = []
+        pts = []
         for t in np.arange(0, self.t_step + 1, self.t_step):
-            p.append(self.point(t, self.p0, self.p1, self.p2, self.p3))
+            pts.append(self.point(t, self.p0, self.p1, self.p2, self.p3))
+        return pts
 
-        if is_debug:
-            p += color(Red) (translate(self.p0) (sphere(r = 10)))
-            p += color(Red) (translate(self.p1) (sphere(r = 10)))
-            p += color(Red) (translate(self.p2) (sphere(r = 10)))
-            p += color(Red) (translate(self.p3) (sphere(r = 10)))
-        
-            for t in np.arange(0, self.t_step + 1, self.t_step):
-                p += self.point_debug(t, self.p0, self.p1, self.p2, self.p3)
-            
+    def debug(self):
+        p = color(Red) (translate(self.p0) (sphere(r = 10)))
+        p += color(Red) (translate(self.p1) (sphere(r = 10)))
+        p += color(Red) (translate(self.p2) (sphere(r = 10)))
+        p += color(Red) (translate(self.p3) (sphere(r = 10)))
+        for t in np.arange(0, self.t_step + 1, self.t_step):
+            p += self.point_debug(t, self.p0, self.p1, self.p2, self.p3)
         return p
-
-    def coordinate(t, n0, n1, n2, n3):
+            
+    def coordinate(self, t, n0, n1, n2, n3):
         return n0 * math.pow((1 - t), 3) + \
             3 * n1 * t * math.pow((1 - t), 2) + \
             3 * n2 * math.pow(t, 2) * (1 - t) + \
             n3 * math.pow(t, 3)
 
-    def point(t, p0, p1, p2, p3):
+    def point(self, t, p0, p1, p2, p3):
         return [
             self.coordinate(t, p0[0], p1[0], p2[0], p3[0]),
             self.coordinate(t, p0[1], p1[1], p2[1], p3[1]),
@@ -40,7 +43,7 @@ class BezierCurve(Component):
 
     # COULD BE MOVED ELESEWHERE
 
-    def point_debug(t, p0, p1, p2, p3):
+    def point_debug(self, t, p0, p1, p2, p3):
         pos = [
             self.coordinate(t, p0[0], p1[0], p2[0], p3[0]),
             self.coordinate(t, p0[1], p1[1], p2[1], p3[1]),
@@ -50,7 +53,7 @@ class BezierCurve(Component):
 
     # BELOW IS OLD?
     
-    def curve_pts_brace_xyz(pts, pts2):
+    def curve_pts_brace_xyz(self, pts, pts2):
         xx_min = 1000
         xx_max = -1000
         yy_min = 1000
@@ -76,7 +79,7 @@ class BezierCurve(Component):
 
         return [ xx_min, yy_min, zz_min, xx_max, yy_max, zz_max ]
 
-    def curve_pts_brace(t_step, p0, p1, p2, p3, pts):
+    def curve_pts_brace(self, t_step, p0, p1, p2, p3, pts):
         pts_brace = self.create(t_step, p0, p1, p2, p3)
         
         # get new pts
