@@ -4,6 +4,8 @@ from solid.solidpython import scad_render_to_file
 
 class Component:
     def __init__(self):
+        self.config = {}
+        self.segments_count = 100
         self.width = 0
         self.length = 0
         self.height = 0
@@ -16,6 +18,9 @@ class Component:
         if self.width < 0 or self.length < 0 or self.height < 0:
             return False
         return True
+
+    def set_segment_count(self, segments_count):
+        self.segments_count = segments_count
 
     def get_origin(self):
         return self.origin
