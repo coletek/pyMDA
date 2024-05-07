@@ -1,3 +1,8 @@
+import math
+from solid import *
+from solid.utils import *
+from solid.solidpython import scad_render_to_file
+
 def matrix_copy_simple(part, x_pitch, y_pitch, x_count, y_count):
 
     p = part
