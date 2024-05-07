@@ -11,6 +11,7 @@ from stock_magnets import *
 from stock_motors import *
 from stock_bearings import *
 from stock_fixtures import *
+from stock_electronics import *
 from scotch_yoke import *
 from collar import *
 
@@ -32,7 +33,7 @@ def build(config):
     #
     # * stock_motors could perhaps be more advanced OO of motor models for example
     #
-    # * TBC: Stock Electronics, Utilites, Cam Profile, Collar, Enclosures, Holes
+    # * TBC: Utilites, Cam Profile, Enclosures, Holes
     #   and plates (perhaps perhaps should move to stock_materials?)
     #
     
@@ -204,7 +205,12 @@ def build(config):
         "connection_gap_closed": 0.0
     }
     subassembly.add('collar', Collar(config['collar']))
-    
+
+    # Stock Electronics
+    subassembly = Assembly()
+    config['pcb_header_dual'] = {}
+    #subassembly.add('pcb_header', PCBHeader(config['pcb_header'], 2.54, 10))
+    subassembly.add('pcb_header_dual', PCBHeaderDual(config['pcb_header_dual'], 2.54, 10))
     
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)

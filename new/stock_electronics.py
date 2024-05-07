@@ -1,51 +1,68 @@
-# https://app.adam-tech.com/products/download/data_sheet/201605/ph1-xx-ua-data-sheet.pdf
-def pcb_header(pitch = 2.54, number_of_pins = 2):
+import math
+from solid import *
+from solid.utils import *
+from core import *
+from utilties import *
 
-    pcb_header_width = 2.5
-    pcb_header_length = pitch * number_of_pins
-    pcb_header_height = 2.5
-    pcb_header_thickness = (8.85 - 6.35) / 2.0
-    pcb_header_pin_size = 0.64
-    pcb_header_pin_length = 3.05
-    pcb_header_pin_length_overall = pcb_header_pin_length + pcb_header_height + 6.0
-    
-    # enclosure
-    p = color(BlackPaint) (cube([pcb_header_width, pcb_header_length, pcb_header_height], center = True))
-    p = translate([0, 0, pcb_header_height / 2.0]) (p)
-    
-    # pins
-    l = color(Aluminum) (cube([pcb_header_pin_size, pcb_header_pin_size, pcb_header_pin_length_overall], center = True))
-    l = matrix_copy_simple(l, 0, pitch, 1, number_of_pins)
-    p += translate([0, -(number_of_pins - 1) / 2.0 * pitch, pcb_header_pin_length_overall / 2.0 - pcb_header_pin_length]) (l)
-    
-    return p
+class PCBHeader(Component):
+    ''' https://app.adam-tech.com/products/download/data_sheet/201605/ph1-xx-ua-data-sheet.pdf '''
 
-# https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/6025/302-S.pdf
-def pcb_header_dual(pitch = 2.54, number_of_pins = 2):
+    def __init__(self, config, pitch = 2.54, number_of_pins = 2):
+        self.config = config
+        self.config['width'] = 2.5
+        self.config['length'] = pitch * number_of_pins
+        self.config['height'] = 2.5
+        self.config['thickness'] = (8.85 - 6.35) / 2.0
+        self.config['pin_size'] = 0.64
+        self.config['pin_length'] = 3.05
+        self.config['pin_length_overall'] = self.config['pin_length'] + self.config['height'] + 6.0
+        self.pitch = pitch
+        self.number_of_pins = number_of_pins
 
-    pcb_header_dual_width = 8.85
-    pcb_header_dual_length = pitch * (number_of_pins / 2 - 1) + 7.66
-    pcb_header_dual_height = 8.85
-    pcb_header_thickness = (8.85 - 6.35) / 2.0
-    pcb_header_pin_size = 0.64
-    pcb_header_pin_length = 3.0
-    pcb_header_pin_length_overall = pcb_header_pin_length + pcb_header_dual_height
+    def create(self):
+            
+        # enclosure
+        p = color(BlackPaint) (cube([self.config['width'], self.config['length'], self.config['height']], center = True))
+        p = translate([0, 0, self.config['height'] / 2.0]) (p)
     
-    # enclosure
-    o = cube([pcb_header_dual_width, pcb_header_dual_length, pcb_header_dual_height], center = True)
-    i = cube([pcb_header_dual_width - pcb_header_thickness * 2.0,
-              pcb_header_dual_length - pcb_header_thickness * 2.0, pcb_header_dual_height], center = True)
-    p = o - translate([0, 0, pcb_header_thickness]) (i)
-    p = color(BlackPaint) (p)
+        # pins
+        l = color(Aluminum) (cube([self.config['pin_size'], self.config['pin_size'], self.config['pin_length_overall']], center = True))
+        l = matrix_copy_simple(l, 0, self.pitch, 1, self.number_of_pins)
+        p += translate([0, -(self.number_of_pins - 1) / 2.0 * self.pitch, self.config['pin_length_overall'] / 2.0 - self.config['pin_length']]) (l)
     
-    # pins
-    l = color(Aluminum) (cube([pcb_header_pin_size, pcb_header_pin_size, pcb_header_pin_length_overall], center = True))
-    l = matrix_copy_simple(l, pitch, pitch, 2, int(number_of_pins / 2))
-    p += translate([-pitch / 2.0,
-                    -(number_of_pins / 2.0 - 1) / 2.0 * pitch,
-                    pcb_header_pin_length_overall / 2.0 - pcb_header_dual_height / 2.0 - pcb_header_pin_length]) (l)
+        return p
+
+class PCBHeaderDual(Component):
+    ''' https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/6025/302-S.pdf '''
+
+    def __init__(self, config, pitch = 2.54, number_of_pins = 2):
+        self.config = config
+        self.pitch = pitch
+        self.number_of_pins = number_of_pins
+        self.config['dual_width'] = 8.85
+        self.config['dual_length'] = pitch * (number_of_pins / 2 - 1) + 7.66
+        self.config['dual_height'] = 8.85
+        self.config['thickness'] = (8.85 - 6.35) / 2.0
+        self.config['pin_size'] = 0.64
+        self.config['pin_length'] = 3.0
+        self.config['pin_length_overall'] = self.config['pin_length'] + self.config['dual_height']
+
+    def create(self):
+        # enclosure
+        o = cube([self.config['dual_width'], self.config['dual_length'], self.config['dual_height']], center = True)
+        i = cube([self.config['dual_width'] - self.config['thickness'] * 2.0,
+                  self.config['dual_length'] - self.config['thickness'] * 2.0, self.config['dual_height']], center = True)
+        p = o - translate([0, 0, self.config['thickness']]) (i)
+        p = color(BlackPaint) (p)
     
-    return p
+        # pins
+        l = color(Aluminum) (cube([self.config['pin_size'], self.config['pin_size'], self.config['pin_length_overall']], center = True))
+        l = matrix_copy_simple(l, self.pitch, self.pitch, 2, int(self.number_of_pins / 2))
+        p += translate([-self.pitch / 2.0,
+                        -(self.number_of_pins / 2.0 - 1) / 2.0 * self.pitch,
+                        self.config['pin_length_overall'] / 2.0 - self.config['dual_height'] / 2.0 - self.config['pin_length']]) (l)
+        
+        return p
 
 # https://www.bourns.com/docs/Product-Datasheets/3306.pdf - 3306K
 def pot_side(segments_count):
