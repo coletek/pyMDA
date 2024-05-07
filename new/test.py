@@ -1,14 +1,31 @@
 import argparse
 from solid import *
 from solid.utils import *
+
 from core import *
 from geometry import *
 from curved import *
 from stock_materials import *
+from scotch_yoke import *
 
 def build(config):
 
-    # Fundamental Shapes
+    #
+    # NOTES:
+    #
+    # * At this stage, just demo each of the shapes, features, helpers
+    # of this repositories. Shapes/features/helpers are likely to
+    # envolve/merge moving forward with this OO approach - allowing
+    # easier management of the wide range of features
+    #
+    # * cube_curved_sides, cube_curved_edges and perhaps bar_curved_edges could be merged
+    #
+    # * Scotch Yotch is perhaps the better example of how to manage static vs dynamic params
+    #
+    # * Each compnonent has a bounding box width, length, heights, and orign - for features like stacking in 3D space
+    #
+    
+    # Geometry - Fundamental Shapes
     subassembly = Assembly()
     subassembly.add('cube', Cube(10, 10, 10), position=([1, 2, 3]))
     subassembly.add('cylinder', Cylinder(20, 20))
@@ -39,7 +56,42 @@ def build(config):
     subassembly.add('sheet', Sheet(30, 30, 3))
     #subassembly.add('wedge', Wedge(10, 10, 2, 2))
     #subassembly.add('hinge', Hinge(3, 10, 20, 100, 100, 1, True, 100))
+
+    # Stock Bearings - TBC
+    # Stock Electronics - TBC
+    # Stock Fixutres - TBC
+    # Stock Magnets - TBC
+    # Stock Motors - TBC
+    # Utilites - TBC
     
+    # Cam Profile - TBC
+    # Collar - TBC
+    # Enclosures - TBC
+    # Holes - TBC
+    # Plates - TBC
+
+    #subassembly = Assembly()
+
+    # Scotch Yotch
+    config = {
+        "stroke_length": 40.0,
+        "pulley_thickness": 3.0,
+        "pin_dia": 3.0,
+        "pin_length": 10.0,
+        "slider_x_length": 35.0,
+        "slider_x_width": 3.0 + 2.0,
+        "slider_x_thickness": 5.0,
+        "slider_y_length": 40.0 / 2.0 + 2.0,
+        "slider_y_width": 3.0 + 2.0,
+        "slider_y_thickness": 5.0
+    }
+    config["slider_x_width"] = config["pin_dia"] + 2.0
+    config["slider_y_length"] = config["stroke_length"] / 2.0 + 2.0
+    config["slider_y_width"] = config["pin_dia"] + 2.0
+    config["slider_y_thickness"] = config["slider_x_thickness"]
+    angle = math.pi / 180.0 * 90.0
+    subassembly.add('scotch_yoke', ScotchYoke(config, angle))
+
     
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)
