@@ -1,10 +1,12 @@
 import argparse
 from solid import *
 from solid.utils import *
+
 from core import *
 from geometry import *
 from curved import *
 from stock_materials import *
+from bezier_curve import *
 
 def build(config):
 
@@ -30,6 +32,16 @@ def build(config):
     subassembly.add('line_round_via_hull', LineRoundViaHull((0, 0, 0), (10, 10, 10), 5))
     #subassembly.add('polyline_round', PolylineRound([(0, 0, 0), (10, 10, 10), (0, 0, 10)], 2))
 
+    # Bezier Curve (also a point based shape)
+    p0 = (0, 0, 0)
+    p1 = (0, 0, 100)
+    p2 = (0, 100, 0)
+    p3 = (100, 100, 100)
+    pts = BezierCurve(0.05, p0, p1, p2, p3).create()
+    for i in pts:
+        print (i)
+    subassembly.add('bezier_curve', PolylineRound(pts, 5))
+    
     # Stock Materials
     subassembly.add('square_hollow_section', SHS(30, 3, 30))
     subassembly.add('channel_section', CS(30, 3, 30))
@@ -39,8 +51,7 @@ def build(config):
     subassembly.add('sheet', Sheet(30, 30, 3))
     #subassembly.add('wedge', Wedge(10, 10, 2, 2))
     #subassembly.add('hinge', Hinge(3, 10, 20, 100, 100, 1, True, 100))
-    
-    
+
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)
     subassembly.stack_y(5)
