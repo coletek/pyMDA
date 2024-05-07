@@ -102,8 +102,62 @@ def build(config):
     subassembly.add('gearbox_worm', GearboxWorm(config['gearbox_worm']))
     subassembly.add('dc_motor_and_gearbox_worm', MotorDCwGearboxWorm(config['motor_dc'], config['gearbox_worm']))
 
+    subassembly = Assembly()
+    config['servo_rds3225'] = {
+        'width': 20.0,
+        'length': 40.0,
+        'height': 40.5,
+        'axle_pos': 11.0,
+        'axle_mount_height': 1.5,
+        'axle_gearhead_height': 4.0,
+        'axle_wheel_gap': 2.8,
+        'bracket_width': 20.0,
+        'bracket_length': 57.0,
+        'bracket_thickness': 2.0,
+        'bracket_screw_head_height': 1.6,
+        'cable_mount_height': 6.0
+    }
+    subassembly.add('servo_rds3225', ServoRDS3225(config['servo_rds3225'], 0.0, True))
+
+    subassembly.add('stepper_driver', StepperDriver())
+
+    subassembly.add('stepper', Stepper())
+    subassembly.add('pulley', Pulley(0.0))
+    subassembly.add('stepper_and_pulley', StepperAndPulley(0.0))
+
+    subassembly = Assembly()
+    inch_to_mm = 25.4
+    config['linear_actuator_pa14p'] = {
+        'size': 2.0 * inch_to_mm,
+        'dist_to_mount': 0.78 * inch_to_mm,
+        'dist_to_mount2': 0.4 * inch_to_mm,
+        'width': 1.57 * inch_to_mm
+    }
+    subassembly.add('LinearActuatorPA14P', LinearActuatorPA14P(config['linear_actuator_pa14p'], 0.0 * inch_to_mm))
+    
+    config['linear_actuator_mounting_bracket_brk14'] = {
+        'width': 1.04 * inch_to_mm,
+        'length': 2.3 * inch_to_mm,
+        'length_to_axle': 0.32 * inch_to_mm,
+        'height_to_axle': 1.43 * inch_to_mm
+    }
+    subassembly.add('linear_actuator_mounting_bracket_brk14', LinearActuatorMountingBracketBRK14(config['linear_actuator_mounting_bracket_brk14']))
+
+    config['linear_actuator_mounting_bracket_brk03'] = { 'length': 55.88 }
+    subassembly.add('linear_actuator_mounting_bracket_brk03', LinearActuatorMountingBracketBRK03(config['linear_actuator_mounting_bracket_brk03']))
+
+    config['actuator_small'] = { 'dist_to_mount': 4.85 }
+    subassembly.add('linear_actuator_pa12t', LinearActuatorPA12T(config['actuator_small']))
+
+    config['linear_actuator_and_bracket'] = {
+        "stroke": 0.0 * inch_to_mm,
+        "angle": 0.0,
+        "explode_dist": 0.0
+    }
+    subassembly.add('linear_actuator_and_bracket', LinearActuatorAndBracket(config['linear_actuator_pa14p'], config['linear_actuator_mounting_bracket_brk14'], config['linear_actuator_and_bracket']))
+    
     # Stock Magnets
-    subassembly.add('coin_magnet', MagnetCoin(20, 1.0))
+    #subassembly.add('coin_magnet', MagnetCoin(20, 1.0))
     
     # Scotch Yotch
     config = {
@@ -123,11 +177,11 @@ def build(config):
     config["slider_y_width"] = config["pin_dia"] + 2.0
     config["slider_y_thickness"] = config["slider_x_thickness"]
     angle = math.pi / 180.0 * 90.0
-    subassembly.add('scotch_yoke', ScotchYoke(config, angle))
+    #subassembly.add('scotch_yoke', ScotchYoke(config, angle))
     
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)
-    subassembly.stack_y(5)
+    #subassembly.stack_y(5)
     #subassembly.stack_z(5)
 
     # demo adding component to 

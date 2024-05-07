@@ -71,6 +71,7 @@ class MotorDCwGearboxWorm(Assembly):
     ''' https://www.omc-stepperonline.com/brushed-12v-dc-gear-motor-3kg-cm-3rpm-w-828-1-worm-gearbox-wga-2430123100-g828 '''
     
     def __init__(self, motor_config, gearbox_config):
+        super().__init__()
         self.motor_config = motor_config
         self.gearbox_config = gearbox_config
         
@@ -94,40 +95,34 @@ class MotorDCwGearboxWorm(Assembly):
 class ServoRDS3225(Component):
     ''' https://www.aliexpress.com/item/32907625266.html '''
     
-    def __init__(self, a = 0.0, include_support_bracket = False):
-        servo_rds3225_width = 20.0
-        servo_rds3225_length = 40.0
-        servo_rds3225_height = 40.5
-        servo_rds3225_axle_pos = 11.0
-        servo_rds3225_axle_mount_height = 1.5
-        servo_rds3225_axle_gearhead_height = 4.0
-        servo_rds3225_axle_wheel_gap = 2.8
-        servo_rds3225_bracket_width = 20.0
-        servo_rds3225_bracket_length = 57.0
-        servo_rds3225_bracket_thickness = 2.0
-        servo_rds3225_bracket_screw_head_height = 1.6
-        servo_rds3225_cable_mount_height = 6.0
+    def __init__(self, config, a = 0.0, include_support_bracket = False):
+        super().__init__()
+        self.config = config
+        self.a = a
+        self.include_support_bracket = include_support_bracket
+
+    def create(self):
 
         b = color(Aluminum) (import_stl("cots/RDS3225-bracket.stl"))
 
         b = rotate(180, [1, 0, 0]) (b)
         b = rotate(90, [0, 0, 1]) (b)
         
-        b = translate([-servo_rds3225_width / 2.0, -servo_rds3225_axle_pos, 0]) (b)
+        b = translate([-self.config['width'] / 2.0, -self.config['axle_pos'], 0]) (b)
         
         s = color(BlackPaint) (import_stl("cots/RDS3225-servo.stl"))
         
-        if include_support_bracket:
+        if self.include_support_bracket:
             s += color(Aluminum) (import_stl("cots/RDS3225-bracket-support.stl"))
 
         s = rotate(180, [1, 0, 0]) (s)
         s = rotate(90, [0, 0, 1]) (s)
     
-        s = translate([-servo_rds3225_width / 2.0, -servo_rds3225_axle_pos, 0]) (s)
+        s = translate([-self.config['width'] / 2.0, -self.config['axle_pos'], 0]) (s)
 
-        p = s + rotate(a, [0, 0, 1]) (b)
+        p = s + rotate(self.a, [0, 0, 1]) (b)
 
-        p = translate([0, 0, -servo_rds3225_axle_mount_height / 2.0]) (p)
+        p = translate([0, 0, -self.config['axle_mount_height'] / 2.0]) (p)
     
         return p
 
@@ -146,22 +141,23 @@ class StepperDriver(Component):
 
 class Stepper(Component):
     def __init__(self, nema_type = 17, length = 24.0):
+        super().__init__()
         self.nema_type = nema_type
         self.length = 24.0
         
     def create(self):
         
-        if nema_type == 17:
+        if self.nema_type == 17:
             self.width = 42
             self.bore = 5
             self.bore_length = 14#24
             self.mounting_hole_pitch = 31
-            self.mounting_hole_size = m3_tap_hole_size
+            self.mounting_hole_size = 2.5 #m3_tap_hole_size
             self.mounting_hole_depth = 4
         else:
             print ("TODO: NEMA TYPE NOT DEFINED")
         
-        block = cube([self.width, length, self.width], center = True)
+        block = cube([self.width, self.length, self.width], center = True)
         axle = cylinder(d = self.bore, h = self.bore_length, segments = self.segments_count)
         mounting_hole = cylinder(d = self.mounting_hole_size, h = self.mounting_hole_depth + 1, segments = self.segments_count)
         
@@ -179,6 +175,7 @@ class Stepper(Component):
 class Pulley(Component):
 
     def __init__(self, angle = 0):
+        super().__init__()
         self.angle = angle
         
     def create(self):
@@ -193,6 +190,7 @@ class Pulley(Component):
 class StepperAndPulley(Component):
 
     def __init__(self, angle = 0.0, nema_type = 17, length = 24.0):
+        super().__init__()
         self.angle = angle
         self.nema_type = nema_type
         self.length = length
@@ -202,7 +200,7 @@ class StepperAndPulley(Component):
             Stepper(self.nema_type, self.length).create(),
             translate([0, 13, 0]) (
                 rotate(-270, [0, 0, 1]) (
-                    pulley(self.angle)
+                    Pulley(self.angle).create()
                 )
             )
         )
@@ -217,69 +215,71 @@ class LinearActuatorPA14P(Component):
     '''@bom_part("Linear Actuator (PA-14P)", 138.99)'''
     ''' TODO: make stroke work - requires replacing STL files with custom OpenSCAD model until then, we can hack it via using size'''
     
-    
-    #def __init__(self, size = 2.0 * inch_to_mm, stroke = 0.0, actuator_dist_to_mount = 0.78 * inch_to_mm, actuator_dist_to_mount2 = 0.4 * inch_to_mm, actuator_width = 1.57 * inch_to_mm):
-    #    self.size = size
-        # etc
+    def __init__(self, config, stroke):
+        super().__init__()
+        self.config = config
+        self.stroke = stroke
         
     def create(self):
-        self.inch_to_mm = 25.4
-        size += stroke
+        inch_to_mm = 25.4
+        self.config['size'] += self.stroke
         p = import_stl("cots/PA-14P-2.stl")
-        if size == 4.0 * inch_to_mm:
+        if self.config['size'] == 4.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-4.stl")
-        if size == 6.0 * inch_to_mm:
+        if self.config['size'] == 6.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-6.stl")
-        if size == 8.0 * inch_to_mm:
+        if self.config['size'] == 8.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-8.stl")
-        if size == 10.0 * inch_to_mm:
+        if self.config['size'] == 10.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-10.stl")
-        if size == 12.0 * inch_to_mm:
+        if self.config['size'] == 12.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-12.stl")
-        if size == 18.0 * inch_to_mm:
+        if self.config['size'] == 18.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-18.stl")
-        if size == 24.0 * inch_to_mm:
+        if self.config['size'] == 24.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-24.stl")
-        if size == 30.0 * inch_to_mm:
+        if self.config['size'] == 30.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-30.stl")
-        if size == 40.0 * inch_to_mm:
+        if self.config['size'] == 40.0 * inch_to_mm:
             p = import_stl("cots/PA-14P-40.stl")
-        return color(BlackPaint) (translate([-actuator_dist_to_mount, actuator_dist_to_mount2, actuator_width / 2.0]) (p))
+        return color(BlackPaint) (translate([-self.config['dist_to_mount'], self.config['dist_to_mount2'], self.config['width'] / 2.0]) (p))
 
 class LinearActuatorMountingBracketBRK14(Component):
     '''@bom_part("Linear Actuator Mounting Bracket (BRK-14)", 8.5)'''
     
-    #def __init__(actuator_mounting_bracket_width = 1.04 * inch_to_mm, actuator_mounting_bracket_length = 2.3 * inch_to_mm, actuator_mounting_bracket_length_to_axle = 0.32 * inch_to_mm, actuator_mounting_bracket_height_to_axle = 1.43 * inch_to_mm):
-        
-    #return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - actuator_mounting_bracket_width / 2.0, 11.899 - actuator_mounting_bracket_height_to_axle, actuator_mounting_bracket_length - actuator_mounting_bracket_length_to_axle]) (import_stl("cots/BRK-14.stl")))))
+    def __init__(self, config):
+        self.config = config
 
+    def create(self):
+        return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - self.config['width'] / 2.0, 11.899 - self.config['height_to_axle'], self.config['length'] - self.config['length_to_axle']]) (import_stl("cots/BRK-14.stl")))))
+    
 class LinearActuatorMountingBracketBRK03(Component):
     # waiting on revised 3D model
     '''@bom_part("Linear Actuator Mounting Bracket (BRK-03)", 9.5)'''
     
-    def __init__(self, actuator_mounting_bracket_length = 55.88):
-        self.actuator_mounting_bracket_length = actuator_mounting_bracket_length
+    def __init__(self, config):
+        self.config = config
         
     def create(self):
+        inch_to_mm = 25.4
         return color(BlackPaint) (translate([10.0, (0.79 + 0.75 / 2.0 + 5.16 + 0.11) * inch_to_mm + 1, 0]) (rotate(90, [1, 0, 0]) (rotate(90, [0, 0, 1]) (scale(20.066/50.8386) (import_stl("cots/BRK-03.stl"))))))
-
-class LinearActuactorPA12T(Component):
+    
+class LinearActuatorPA12T(Component):
     # waiting on revised 3D model
     #@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
     
-    def __init__(self, actuator_small_dist_to_mount = 4.85):
-        self.actuator_small_dist_to_mount = actuator_small_dist_to_mount
+    def __init__(self, config):
+        self.config = config
 
     def create(self):
-        return color(BlackPaint) (translate([0, -self.actuator_small_dist_to_mount, 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/PA-12-1.06.stl")))))
+        return color(BlackPaint) (translate([0, -self.config['dist_to_mount'], 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/PA-12-1.06.stl")))))
 
 class LinearActuatorAndBracket(Component):
 
-    def __init__(self, size, stroke, angle, explode_dist):
-        self.size = size
-        self.stroke = stroke
-        self.angle = angle
-        self.explode_dist
+    def __init__(self, actuator_config, bracket_config, config):
+        self.actuator_config = actuator_config
+        self.bracket_config = bracket_config
+        self.config = config
         
     def create(self):
-        return rotate(self.angle, [0, 0, 1]) (LinearActuatorPA14P(size, stroke)) + translate([0, -self.explode_dist, 0]) (LinearActuatorMountingBracketBRK14())
+        return rotate(self.config['angle'], [0, 0, 1]) (LinearActuatorPA14P(self.actuator_config, self.config['stroke']).create()) + translate([0, -self.config['explode_dist'], 0]) (LinearActuatorMountingBracketBRK14(self.bracket_config).create())
