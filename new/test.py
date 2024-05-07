@@ -6,6 +6,7 @@ from core import *
 from geometry import *
 from curved import *
 from stock_materials import *
+from stock_magnets import *
 from scotch_yoke import *
 
 def build(config):
@@ -24,6 +25,7 @@ def build(config):
     #
     # * Each compnonent has a bounding box width, length, heights, and orign - for features like stacking in 3D space
     #
+    # * stock_motors could perhaps be more advanced OO of motor models for example
     
     # Geometry - Fundamental Shapes
     subassembly = Assembly()
@@ -60,17 +62,19 @@ def build(config):
     # Stock Bearings - TBC
     # Stock Electronics - TBC
     # Stock Fixutres - TBC
-    # Stock Magnets - TBC
     # Stock Motors - TBC
-    # Utilites - TBC
+
+    # Stock Magnets - TBC
+
+    #subassembly = Assembly()
+    subassembly.add('coin_magnet', MagnetCoin(20, 1.0))
     
+    # Utilites - TBC    
     # Cam Profile - TBC
     # Collar - TBC
     # Enclosures - TBC
     # Holes - TBC
     # Plates - TBC
-
-    #subassembly = Assembly()
 
     # Scotch Yotch
     config = {

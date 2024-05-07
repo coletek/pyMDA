@@ -1,7 +1,16 @@
-def magnet_coin(dia, thickness, segments_count):
+import math
+from solid import *
+from solid.utils import *
+from core import *
 
-    p = cylinder(d = dia, h = thickness, center = True, segments = segments_count)
+class MagnetCoin(Component):
 
-    p = translate([0, 0, thickness / 2.0]) (p)
-
-    return p
+    def __init__(self, dia, thickness):
+        super().__init__()  # This calls the constructor of the parent class (Component)
+        self.dia = dia
+        self.thickness = thickness
+    
+    def create(self):
+        p = cylinder(d = self.dia, h = self.thickness, center = True, segments = self.segments_count)
+        p = translate([0, 0, self.thickness / 2.0]) (p)
+        return p
