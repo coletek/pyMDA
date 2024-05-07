@@ -9,14 +9,17 @@ from stock_materials import *
 from bezier_curve import *
 from stock_magnets import *
 from stock_motors import *
+from stock_bearings import *
+from stock_fixtures import *
 from scotch_yoke import *
+from collar import *
 
 def build(config):
 
     #
     # NOTES:
     #
-    # * At this stage, just demo each of the shapes, features, helpers
+     # * At this stage, just demo each of the shapes, features, helpers
     # of this repositories. Shapes/features/helpers are likely to
     # envolve/merge moving forward with this OO approach - allowing
     # easier management of the wide range of features
@@ -29,7 +32,7 @@ def build(config):
     #
     # * stock_motors could perhaps be more advanced OO of motor models for example
     #
-    # * TBC: Stock Bearings, Stock Electronics, Stock Fixtures, Utilites, Cam Profile, Collar, Enclosures, Holes
+    # * TBC: Stock Electronics, Utilites, Cam Profile, Collar, Enclosures, Holes
     #   and plates (perhaps perhaps should move to stock_materials?)
     #
     
@@ -64,6 +67,26 @@ def build(config):
     for i in pts:
         print (i)
     subassembly.add('bezier_curve', PolylineRound(pts, 5))
+
+    # Scotch Yotch
+    config = {
+        "stroke_length": 40.0,
+        "pulley_thickness": 3.0,
+        "pin_dia": 3.0,
+        "pin_length": 10.0,
+        "slider_x_length": 35.0,
+        "slider_x_width": 3.0 + 2.0,
+        "slider_x_thickness": 5.0,
+        "slider_y_length": 40.0 / 2.0 + 2.0,
+        "slider_y_width": 3.0 + 2.0,
+        "slider_y_thickness": 5.0
+    }
+    config["slider_x_width"] = config["pin_dia"] + 2.0
+    config["slider_y_length"] = config["stroke_length"] / 2.0 + 2.0
+    config["slider_y_width"] = config["pin_dia"] + 2.0
+    config["slider_y_thickness"] = config["slider_x_thickness"]
+    angle = math.pi / 180.0 * 90.0
+    subassembly.add('scotch_yoke', ScotchYoke(config, angle))
     
     # Stock Materials
     subassembly.add('square_hollow_section', SHS(30, 3, 30))
@@ -120,7 +143,6 @@ def build(config):
     subassembly.add('servo_rds3225', ServoRDS3225(config['servo_rds3225'], 0.0, True))
 
     subassembly.add('stepper_driver', StepperDriver())
-
     subassembly.add('stepper', Stepper())
     subassembly.add('pulley', Pulley(0.0))
     subassembly.add('stepper_and_pulley', StepperAndPulley(0.0))
@@ -157,27 +179,32 @@ def build(config):
     subassembly.add('linear_actuator_and_bracket', LinearActuatorAndBracket(config['linear_actuator_pa14p'], config['linear_actuator_mounting_bracket_brk14'], config['linear_actuator_and_bracket']))
     
     # Stock Magnets
-    #subassembly.add('coin_magnet', MagnetCoin(20, 1.0))
-    
-    # Scotch Yotch
-    config = {
-        "stroke_length": 40.0,
-        "pulley_thickness": 3.0,
-        "pin_dia": 3.0,
-        "pin_length": 10.0,
-        "slider_x_length": 35.0,
-        "slider_x_width": 3.0 + 2.0,
-        "slider_x_thickness": 5.0,
-        "slider_y_length": 40.0 / 2.0 + 2.0,
-        "slider_y_width": 3.0 + 2.0,
-        "slider_y_thickness": 5.0
+    subassembly.add('coin_magnet', MagnetCoin(20, 1.0))
+
+    # Stock Bearings
+    subassembly.add('bearing', Bearing(10, 20, 5))
+    subassembly.add('bearing_pillow_block_ucp201', BearingPillowBlockUCP201())
+    subassembly.add('bearing_pillow_block_ucp204', BearingPillowBlockUCP204())
+    #subassembly.add('bearing_2_bolt_flange_ucfl204', Bearing2BoltFlangeUCFL204())
+
+    # Stock Fixtures
+    subassembly.add('fixture_counter_sunk', FixtureCounterSunk(2, 4, 5, 1))
+    subassembly.add('fixture_socket', FixtureSocket(2, 4, 5, 2))
+    subassembly.add('washer', Washer(20, 10, 3))
+
+    # Collar
+    config['collar'] = {
+        "id": 100,
+        "thickness": 5,
+        "width": 10,
+        "connection_gap": 10,
+        "connection_hole_dia": 5,
+        "connection_thickness": 5,
+        "connection_height": 0.0,
+        "connection_gap_closed": 0.0
     }
-    config["slider_x_width"] = config["pin_dia"] + 2.0
-    config["slider_y_length"] = config["stroke_length"] / 2.0 + 2.0
-    config["slider_y_width"] = config["pin_dia"] + 2.0
-    config["slider_y_thickness"] = config["slider_x_thickness"]
-    angle = math.pi / 180.0 * 90.0
-    #subassembly.add('scotch_yoke', ScotchYoke(config, angle))
+    subassembly.add('collar', Collar(config['collar']))
+    
     
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)

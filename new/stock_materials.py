@@ -171,3 +171,14 @@ class Hinge(Component):
         p -= axle
      
         return p
+
+class Door(Component):
+
+    def __init__(self, config):
+        self.config = config
+        
+    def door(self):
+        p = cube([self.config['width'], self.config['thickness'], self.config['height']], center = True)
+        p = translate([0, 0, self.config['height'] / 2.0]) (p) 
+        p = color(Oak) (p)
+        return p
