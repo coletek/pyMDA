@@ -12,9 +12,10 @@ class ScotchYoke(Component):
 
     def create(self):
 
-        # add pulley
+        # add crack
         p = cylinder(d=self.config["stroke_length"] / 2.0, h=self.config["pulley_thickness"], center=True, segments=self.segments_count)
 
+        # add pin
         pin = cylinder(d=self.config["pin_dia"], h=self.config["pin_length"], center=True, segments=self.segments_count)
         d = self.config["stroke_length"] / 4.0 - self.config["pin_dia"] / 2.0
         x = d * math.sin(self.angle)
