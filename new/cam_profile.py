@@ -1,36 +1,44 @@
-def cam_profile(height, start_radius, start_angle, end_radius, end_angle, increment = 0.01, is_center = True):
+import math
+import numpy as np
 
-    points = []
+from solid import *
+from solid.utils import *
 
-    angle_range = end_angle - start_angle
+from core import *
 
-    radius_step = (end_radius - start_radius) / (angle_range / increment)
-
-    radius = start_radius
-    for i in np.arange(start_angle, end_angle, increment):
-        x = radius * cos(i)
-        y = radius * sin(i)
-        pt = [x, y]
-        points.append(pt)
-        radius += radius_step
-
-    return linear_extrude(height, center = is_center) (polygon(points=points))
-
-def cam_profile_find_radius(target_angle, start_radius, start_angle, end_radius, end_angle, increment = 0.01):
-
-    # TODO: this could/should be replaced with a single equation - can't think of the solution right now.
+class CamProfile(Component):
     
-    angle_range = end_angle - start_angle
+    def __init__(self, config):        
+        self.config = config
+        
+    def create(self):
+        points = []
+        angle_range = self.config["end_angle"] - self.config["start_angle"]
+        radius_step = (self.config["end_radius"] - self.config["start_radius"]) / (angle_range / self.config["increment"])
+        radius = self.config["start_radius"]
+        for i in np.arange(self.config["start_angle"], self.config["end_angle"], self.config["increment"]):
+            x = radius * math.cos(i)
+            y = radius * math.sin(i)
+            pt = [x, y]
+            points.append(pt)
+            radius += radius_step
+        return linear_extrude(self.config["height"], center = self.config["is_center"]) (polygon(points=points))
 
-    radius_step = (end_radius - start_radius) / (angle_range / increment)
+    def find_radius(target_angle):
 
-    # end_angle + 1deg is required to complete the loop
-    radius = start_radius
-    for i in np.arange(start_angle, end_angle + math.radians(1.0), increment):
-        #print ("i=%f(%fdeg) radius_step=%f start_angle=%f(%fdeg) end_angle=%f(%fdeg) target_angle=%f(%fdeg) radius=%f" % \
-        #       (i, math.degrees(i), radius_step, start_angle, math.degrees(start_angle), end_angle, math.degrees(end_angle), target_angle, math.degrees(target_angle), radius))
-        if round(math.degrees(i)) == round(math.degrees(target_angle)):
-            return radius
-        radius += radius_step
+        # TODO: this could/should be replaced with a single equation - can't think of the solution right now.
+        
+        angle_range = self.config["end_angle"] - self.config["start_angle"]
+        
+        radius_step = (self.config["end_radius"] - self.config["start_radius"]) / (angle_range / self.config["increment"])
+        
+        # self.config["end_angle"] + 1deg is required to complete the loop
+        radius = self.config["start_radius"]
+        for i in np.arange(self.config["start_angle"], self.config["end_angle"] + math.radians(1.0), self.config["increment"]):
+            #print ("i=%f(%fdeg) radius_step=%f self.config["start_angle"]=%f(%fdeg) self.config["end_angle"]=%f(%fdeg) target_angle=%f(%fdeg) radius=%f" % \
+                #       (i, math.degrees(i), radius_step, self.config["start_angle"], math.degrees(self.config["start_angle"]), self.config["end_angle"], math.degrees(self.config["end_angle"]), target_angle, math.degrees(target_angle), radius))
+            if round(math.degrees(i)) == round(math.degrees(target_angle)):
+                return radius
+            radius += radius_step
 
-    return False
+        return False

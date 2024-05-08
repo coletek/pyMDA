@@ -12,8 +12,10 @@ from stock_motors import *
 from stock_bearings import *
 from stock_fixtures import *
 from stock_electronics import *
-from scotch_yoke import *
+
 from collar import *
+from cam_profile import *
+from scotch_yoke import *
 
 def build(config):
 
@@ -206,11 +208,22 @@ def build(config):
     }
     subassembly.add('collar', Collar(config['collar']))
 
-    # Stock Electronics
     subassembly = Assembly()
-    config['pcb_header_dual'] = {}
+    config['cam_profile'] = {
+        "height": 20,
+        "start_radius": 10.0 / 2.0,
+        "start_angle": math.radians(180.0),
+        "end_radius": 10.0 / 2.0 + 8.0,
+        "end_angle": math.radians(360.0),
+        "increment": 0.01,
+        "is_center": True
+    }
+    subassembly.add('cam_profile', CamProfile(config["cam_profile"]))
+    
+    # Stock Electronics
+    #config['pcb_header_dual'] = {}
     #subassembly.add('pcb_header', PCBHeader(config['pcb_header'], 2.54, 10))
-    subassembly.add('pcb_header_dual', PCBHeaderDual(config['pcb_header_dual'], 2.54, 10))
+    #subassembly.add('pcb_header_dual', PCBHeaderDual(config['pcb_header_dual'], 2.54, 10))
     
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)
