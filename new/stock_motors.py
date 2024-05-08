@@ -134,6 +134,9 @@ class ServoRDS3225(Component):
 
 class StepperDriver(Component):
 
+    def __init__(self):
+        super().__init__()
+    
     def create(self):
         return translate([-86.0 / 2.0, -55.0 / 2.0, -20.0 / 2.0]) (
             cube([86, 55, 20])
@@ -248,6 +251,7 @@ class LinearActuatorMountingBracketBRK14(Component):
     '''@bom_part("Linear Actuator Mounting Bracket (BRK-14)", 8.5)'''
     
     def __init__(self, config):
+        super().__init__()
         self.config = config
 
     def create(self):
@@ -258,6 +262,7 @@ class LinearActuatorMountingBracketBRK03(Component):
     '''@bom_part("Linear Actuator Mounting Bracket (BRK-03)", 9.5)'''
     
     def __init__(self, config):
+        super().__init__()
         self.config = config
         
     def create(self):
@@ -269,6 +274,7 @@ class LinearActuatorPA12T(Component):
     #@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
     
     def __init__(self, config):
+        super().__init__()
         self.config = config
 
     def create(self):
@@ -277,6 +283,7 @@ class LinearActuatorPA12T(Component):
 class LinearActuatorAndBracket(Component):
 
     def __init__(self, actuator_config, bracket_config, config):
+        super().__init__()
         self.actuator_config = actuator_config
         self.bracket_config = bracket_config
         self.config = config

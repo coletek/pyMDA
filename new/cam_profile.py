@@ -9,6 +9,7 @@ from core import *
 class CamProfile(Component):
     
     def __init__(self, config):        
+        super().__init__()
         self.config = config
         
     def create(self):

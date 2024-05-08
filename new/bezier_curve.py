@@ -7,6 +7,7 @@ from core import *
 class BezierCurve:
 
     def __init__(self, t_step, p0, p1, p2, p3):
+        super().__init__()
         self.t_step = t_step
         self.p0 = p0
         self.p1 = p1
