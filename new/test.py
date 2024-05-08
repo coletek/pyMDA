@@ -322,7 +322,7 @@ def build_stock_motors(config):
     }
     assembly.add('motor_dc', MotorDC(config['motor_dc']))
     assembly.add('gearbox_worm', GearboxWorm(config['gearbox_worm']))
-    assembly.add('dc_motor_and_gearbox_worm', MotorDCwGearboxWorm(config['motor_dc'], config['gearbox_worm']))
+    #assembly.add('dc_motor_and_gearbox_worm', MotorDCwGearboxWorm(config['motor_dc'], config['gearbox_worm']))
 
     config['servo_rds3225'] = {
         'width': 20.0,
@@ -343,7 +343,7 @@ def build_stock_motors(config):
     assembly.add('stepper_driver', StepperDriver())
     assembly.add('stepper', Stepper())
     assembly.add('pulley', Pulley(0.0))
-    assembly.add('stepper_and_pulley', StepperAndPulley(0.0))
+    #assembly.add('stepper_and_pulley', StepperAndPulley(0.0))
 
     inch_to_mm = 25.4
     config['linear_actuator_pa14p'] = {
@@ -360,22 +360,22 @@ def build_stock_motors(config):
         'length_to_axle': 0.32 * inch_to_mm,
         'height_to_axle': 1.43 * inch_to_mm
     }
-    assembly.add('linear_actuator_mounting_bracket_brk14', LinearActuatorMountingBracketBRK14(config['linear_actuator_mounting_bracket_brk14']))
+    #assembly.add('linear_actuator_mounting_bracket_brk14', LinearActuatorMountingBracketBRK14(config['linear_actuator_mounting_bracket_brk14']))
 
     config['linear_actuator_mounting_bracket_brk03'] = { 'length': 55.88 }
-    assembly.add('linear_actuator_mounting_bracket_brk03', LinearActuatorMountingBracketBRK03(config['linear_actuator_mounting_bracket_brk03']))
+    #assembly.add('linear_actuator_mounting_bracket_brk03', LinearActuatorMountingBracketBRK03(config['linear_actuator_mounting_bracket_brk03']))
 
     config['actuator_small'] = { 'dist_to_mount': 4.85 }
-    assembly.add('linear_actuator_pa12t', LinearActuatorPA12T(config['actuator_small']))
+    #assembly.add('linear_actuator_pa12t', LinearActuatorPA12T(config['actuator_small']))
 
     config['linear_actuator_and_bracket'] = {
         "stroke": 0.0 * inch_to_mm,
         "angle": 0.0,
         "explode_dist": 0.0
     }
-    assembly.add('linear_actuator_and_bracket', LinearActuatorAndBracket(config['linear_actuator_pa14p'], config['linear_actuator_mounting_bracket_brk14'], config['linear_actuator_and_bracket']))
+    #assembly.add('linear_actuator_and_bracket', LinearActuatorAndBracket(config['linear_actuator_pa14p'], config['linear_actuator_mounting_bracket_brk14'], config['linear_actuator_and_bracket']))
 
-    assembly.stack_y(200)
+    assembly.stack_y(100)
         
     return assembly
 
@@ -445,7 +445,7 @@ def build_stock_electronics(config):
     }
     assembly.add('fuse_holder_mini', FuseHolderMini(config['fuse_holder_mini']))
 
-    assembly.add('fuse_mini_and_holder', FuseMiniAndHolder(config['fuse_mini'], config['fuse_holder_mini']))
+    #assembly.add('fuse_mini_and_holder', FuseMiniAndHolder(config['fuse_mini'], config['fuse_holder_mini']))
 
     config['rpi'] = {
         'width': 56.0,
@@ -492,7 +492,7 @@ def build_stock_electronics(config):
     }
     assembly.add('pcb_camera', PCBCamera(config['plate_with_mounting_holes'], config['pcb_camera'], 10.0, False))
 
-    assembly.stack_y(100)
+    assembly.stack_y(150)
     
     return assembly
 
