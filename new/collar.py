@@ -5,17 +5,18 @@ from core import *
 
 class Collar(Component):
 
-    def __init__(self, config):
+    def __init__(self, config, gap_closed):
         super().__init__()
         self.config = config
+        self.gap_closed = gap_closed
     
     def create(self):
 
         od = self.config['id'] + self.config['thickness'] * 2.0
 
-        # process self.config['connection_gap_closed'] - i.e. reduce the connection gap, which will also reduce the collar radius
-        self.config['connection_gap'] -= self.config['connection_gap_closed']
-        C = 2.0 * math.pi * (od / 2.0) - self.config['connection_gap_closed']
+        # process gap_closed - i.e. reduce the connection gap, which will also reduce the collar radius
+        self.config['connection_gap'] -= self.gap_closed
+        C = 2.0 * math.pi * (od / 2.0) - self.gap_closed
         od = C / (2.0 * math.pi) * 2.0
         self.config['id'] = od - self.config['thickness'] * 2.0
 

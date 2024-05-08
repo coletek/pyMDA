@@ -1,84 +1,106 @@
-def plate_width_mounting_holes(width, length, thickness,
-                               mounting_hole_dia, mounting_hole_pitch_width, mounting_hole_pitch_length,
-                               mounting_hole_offset_width, mounting_hole_offset_length, segments_count):
+import math
+from solid import *
+from solid.utils import *
+from core import *
+
+class PlateWithMountingHoles(Component):
+
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+
+    def create(self):
+        b = cube([self.config['width'], self.config['length'], self.config['thickness']], center = True)
+        
+        h = cylinder(d = self.config['mounting_hole_dia'], h = self.config['thickness'] + 2.0, segments = self.segments_count, center = True)
+        
+        hh = translate([self.config['mounting_hole_pitch_width'] / 2.0, self.config['mounting_hole_pitch_length'] / 2.0, 0]) (h) + \
+            translate([-self.config['mounting_hole_pitch_width'] / 2.0, self.config['mounting_hole_pitch_length'] / 2.0, 0]) (h) + \
+            translate([self.config['mounting_hole_pitch_width'] / 2.0, -self.config['mounting_hole_pitch_length'] / 2.0, 0]) (h) + \
+            translate([-self.config['mounting_hole_pitch_width'] / 2.0, -self.config['mounting_hole_pitch_length'] / 2.0, 0]) (h)
+        
+        hh = translate([self.config['mounting_hole_offset_width'], self.config['mounting_hole_offset_length'], 0]) (hh)
     
-    b = cube([width, length, thickness], center = True)
+        p = b - hh
+        
+        return p
 
-    h = cylinder(d = mounting_hole_dia, h = thickness + 2.0, segments = segments_count, center = True)
-
-    hh = translate([mounting_hole_pitch_width / 2.0, mounting_hole_pitch_length / 2.0, 0]) (h) + \
-        translate([-mounting_hole_pitch_width / 2.0, mounting_hole_pitch_length / 2.0, 0]) (h) + \
-        translate([mounting_hole_pitch_width / 2.0, -mounting_hole_pitch_length / 2.0, 0]) (h) + \
-        translate([-mounting_hole_pitch_width / 2.0, -mounting_hole_pitch_length / 2.0, 0]) (h)
-
-    hh = translate([mounting_hole_offset_width, mounting_hole_offset_length, 0]) (hh)
+class PlateWithMountingHolesEdges(Component):
+    ''' TODO: perhaps z should be thickness'''
     
-    p = b - hh
-    
-    return p
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
 
-def plate(width, height, thickness, top_mounting_hole_depth = 0, bottom_mounting_hole_depth = 0, mounting_hole_size = 0, segments_count = None):
+    def create(self):
 
-    p = translate([-thickness / 2.0, -width / 2.0, -height / 2.0]) (
-        cube([thickness, width, height])
-    )
-
-    distance = thickness / 2.0
-        
-    if top_mounting_hole_depth > 0:
-
-        depth = top_mounting_hole_depth
-        
-        bolt_hole1 = translate([0, width / 2.0 - distance, height / 2.0 - depth - 1]) (
-            rotate(90, [0, 0, 1]) (
-                cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
-            )
+        p = translate([-self.config['thickness'] / 2.0, -self.config['width'] / 2.0, -self.config['height'] / 2.0]) (
+            cube([self.config['thickness'], self.config['width'], self.config['height']])
         )
-        bolt_hole2 = translate([0, - width / 2.0 + distance, height / 2.0 - depth - 1]) (
-            rotate(90, [0, 0, 1]) (
-                cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
-            )
-        )
-
-        p = p - bolt_hole1 - bolt_hole2
         
-    if bottom_mounting_hole_depth > 0:
-
-        depth = bottom_mounting_hole_depth
+        distance = self.config['thickness'] / 2.0
         
-        bolt_hole3 = translate([0, width / 2.0 - distance, - height / 2.0 - 1]) (
-            rotate(90, [0, 0, 1]) (
-                cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
-            )
-        )
-        bolt_hole4 = translate([0, - width / 2.0 + distance, - height / 2.0 - 1]) (
-            rotate(90, [0, 0, 1]) (
-                cylinder(h = depth + 2, d = mounting_hole_size, segments = segments_count)
-            )
-        )
+        if self.config['top_mounting_hole_depth'] > 0:
 
-        p = p - bolt_hole3 - bolt_hole4
+            depth = self.config['top_mounting_hole_depth']
+            
+            bolt_hole1 = translate([0, self.config['width'] / 2.0 - distance, self.config['height'] / 2.0 - depth - 1]) (
+                rotate(90, [0, 0, 1]) (
+                    cylinder(h = depth + 2, d = self.config['mounting_hole_size'], segments = self.segments_count)
+                )
+            )
+            bolt_hole2 = translate([0, - self.config['width'] / 2.0 + distance, self.config['height'] / 2.0 - depth - 1]) (
+                rotate(90, [0, 0, 1]) (
+                    cylinder(h = depth + 2, d = self.config['mounting_hole_size'], segments = self.segments_count)
+                )
+            )
+            
+            p = p - bolt_hole1 - bolt_hole2
+        
+        if self.config['bottom_mounting_hole_depth'] > 0:
+            
+            depth = self.config['bottom_mounting_hole_depth']
+            
+            bolt_hole3 = translate([0, self.config['width'] / 2.0 - distance, - self.config['height'] / 2.0 - 1]) (
+                rotate(90, [0, 0, 1]) (
+                    cylinder(h = depth + 2, d = self.config['mounting_hole_size'], segments = self.segments_count)
+                )
+            )
+            bolt_hole4 = translate([0, - self.config['width'] / 2.0 + distance, - self.config['height'] / 2.0 - 1]) (
+                rotate(90, [0, 0, 1]) (
+                    cylinder(h = depth + 2, d = self.config['mounting_hole_size'], segments = self.segments_count)
+                )
+            )
+
+            p = p - bolt_hole3 - bolt_hole4
                 
-    return p
+        return p
 
-def plate_with_fillets(width, length, thickness, fillet_radius, segments):
-    # could be done with hull(), but done this way to support FreeCAD STEP exporting
+class PlateWithFillets(Component):
 
-    x = width - fillet_radius * 2.0
-    y = length - fillet_radius * 2.0
-
-    p = []
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
     
-    if x != 0:
-        p += cube([x, length, thickness], center = True)
+    def create(self):
 
-    if y != 0:
-        p += cube([width, y, thickness], center = True)
+        # could be done with hull(), but done this way to support FreeCAD STEP exporting
+
+        x = self.config['width'] - self.config['fillet_radius'] * 2.0
+        y = self.config['length'] - self.config['fillet_radius'] * 2.0
+
+        p = []
     
-    f = cylinder(r = fillet_radius, h = thickness, center = True, segments = segments)
-    p += translate([x / 2.0, y / 2.0, 0]) (f) + \
-         translate([x / 2.0, -y / 2.0, 0]) (f) + \
-         translate([-x / 2.0, y / 2.0, 0]) (f) + \
-         translate([-x / 2.0, -y / 2.0, 0]) (f)
+        if x != 0:
+            p += cube([x, self.config['length'], self.config['thickness']], center = True)
 
-    return p
+        if y != 0:
+            p += cube([self.config['width'], y, self.config['thickness']], center = True)
+    
+        f = cylinder(r = self.config['fillet_radius'], h = self.config['thickness'], center = True, segments = self.segments_count)
+        p += translate([x / 2.0, y / 2.0, 0]) (f) + \
+            translate([x / 2.0, -y / 2.0, 0]) (f) + \
+            translate([-x / 2.0, y / 2.0, 0]) (f) + \
+            translate([-x / 2.0, -y / 2.0, 0]) (f)
+
+        return p

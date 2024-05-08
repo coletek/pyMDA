@@ -1,88 +1,123 @@
-]def slot(width, length, height, segments_count, use_hull = False):
+import math
+from solid import *
+from solid.utils import *
+from core import *
+
+class Slot(Component):
+
+    def __init__(self, config, use_hull = False):
+        super().__init__()
+        self.config = config
+        self.use_hull = use_hull
+        
+    def create(self):
     
-    hole = translate([0, 0, -(height + 2.0) / 2.0]) (cylinder(segments = segments_count, r = width / 2.0, h = height + 2.0))
+        hole = translate([0, 0, -(self.config['height'] + 2.0) / 2.0]) (cylinder(segments = self.segments_count,
+                                                                                 r = self.config['width'] / 2.0,
+                                                                                 h = self.config['height'] + 2.0))
 
-    if use_hull:
-        p = hull() (
-            translate([0, -length / 2.0, 0]) (hole),
-            translate([0, length / 2.0, 0]) (hole),
-        )
-    else:
-        p = translate([0, -length / 2.0, 0]) (hole) + \
-            translate([0, length / 2.0, 0]) (hole) + \
-            cube([width, length, height + 2], center = True)
-
-    return p
-
-def slot_curve(width, height, radius, start_angle, end_angle, step, segments_count, use_holes):
-    
-    hole = translate([0, 0, -(height + 2.0) / 2.0]) (cylinder(segments = segments_count, r = width / 2.0, h = height + 2.0))
-
-    p = []
-    
-    if use_holes:
-
-        y = radius * math.cos(start_angle)
-        x = radius * math.sin(start_angle)
-        p += translate([x, y, 0]) (hole)
-
-        y = radius * math.cos(end_angle)
-        x = radius * math.sin(end_angle)
-        p += translate([x, y, 0]) (hole)
+        if self.use_hull:
+            p = hull() (
+                translate([0, -self.config['length'] / 2.0, 0]) (hole),
+                translate([0, self.config['length'] / 2.0, 0]) (hole),
+            )
+        else:
+            p = translate([0, -self.config['length'] / 2.0, 0]) (hole) + \
+                translate([0, self.config['length'] / 2.0, 0]) (hole) + \
+                cube([self.config['width'], self.config['length'], self.config['height'] + 2], center = True)
             
-        for a in np.arange(start_angle, end_angle, step):
-            y = radius * math.cos(a)
-            x = radius * math.sin(a)
-            #print (radius, x, y, a)
+        return p
+
+class SlotCurve(Component):
+    
+    def __init__(self, config, use_holes = False):
+        super().__init__()
+        self.config = config
+        self.use_holes = use_holes
+    
+    def create(self):
+
+        hole = translate([0, 0, -(self.config['height'] + 2.0) / 2.0]) (cylinder(segments = self.segments_count, r = self.config['width'] / 2.0, h = self.config['height'] + 2.0))
+
+        p = []
+    
+        if self.use_holes:
+
+            y = self.config['radius'] * math.cos(self.config['start_angle'])
+            x = self.config['radius'] * math.sin(self.config['start_angle'])
             p += translate([x, y, 0]) (hole)
 
-    else:
+            y = self.config['radius'] * math.cos(self.config['end_angle'])
+            x = self.config['radius'] * math.sin(self.config['end_angle'])
+            p += translate([x, y, 0]) (hole)
+            
+            for a in np.arange(self.config['start_angle'], self.config['end_angle'], self.config['step']):
+                y = self.config['radius'] * math.cos(a)
+                x = self.config['radius'] * math.sin(a)
+                #print (self.config['radius'], x, y, a)
+                p += translate([x, y, 0]) (hole)
+
+        else:
         
-        p = cylinder(r = radius + width / 2.0, h = height + 2.0, center = True, segments = segments_count) - cylinder(r = radius - width / 2.0, h = height + 3.0, center = True, segments = segments_count)
+            p = cylinder(r = self.config['radius'] + self.config['width'] / 2.0, h = self.config['height'] + 2.0, center = True, segments = self.segments_count) - cylinder(r = self.config['radius'] - self.config['width'] / 2.0, h = self.config['height'] + 3.0, center = True, segments = self.segments_count)
         
-        p -= rotate(-math.degrees(start_angle), [0, 0, 1]) (translate([-(radius + width) / 2.0, 0, 0]) (cube([radius + width, radius * 2.0 + width * 2.0, height * 2.0], center = True)))
-        p -= rotate(-math.degrees(end_angle), [0, 0, 1]) (translate([(radius + width) / 2.0, 0, 0]) (cube([radius + width, radius * 2.0 + width * 2.0, height * 2.0], center = True)))
-
-        y = radius * math.cos(start_angle)
-        x = radius * math.sin(start_angle)
-        p += translate([x, y, 0]) (hole)
-
-        y = radius * math.cos(end_angle)
-        x = radius * math.sin(end_angle)
-        p += translate([x, y, 0]) (hole)
+            p -= rotate(-math.degrees(self.config['start_angle']), [0, 0, 1]) (translate([-(self.config['radius'] + self.config['width']) / 2.0, 0, 0]) (cube([self.config['radius'] + self.config['width'], self.config['radius'] * 2.0 + self.config['width'] * 2.0, self.config['height'] * 2.0], center = True)))
+            p -= rotate(-math.degrees(self.config['end_angle']), [0, 0, 1]) (translate([(self.config['radius'] + self.config['width']) / 2.0, 0, 0]) (cube([self.config['radius'] + self.config['width'], self.config['radius'] * 2.0 + self.config['width'] * 2.0, self.config['height'] * 2.0], center = True)))
         
-    return p
+            y = self.config['radius'] * math.cos(self.config['start_angle'])
+            x = self.config['radius'] * math.sin(self.config['start_angle'])
+            p += translate([x, y, 0]) (hole)
+            
+            y = self.config['radius'] * math.cos(self.config['end_angle'])
+            x = self.config['radius'] * math.sin(self.config['end_angle'])
+            p += translate([x, y, 0]) (hole)
+        
+        return p
 
-def slot_array(length, slot_width, slot_length, slot_count, height, segments_count, use_hull = False):
-    gap = (length - slot_count * (slot_length + slot_width)) / (slot_count + 1.0)
+class SlotArray(Component):
 
-    y = - length / 2.0 + gap + (slot_length + slot_width) / 2.0
-    p = translate([0, y, 0]) (slot(slot_width, slot_length, height, segments_count))
-    for i in range(slot_count - 1):
-        y += gap + (slot_length + slot_width)
-        p += translate([0, y, 0]) (slot(slot_width, slot_length, height, segments_count, use_hull))
-    return p
+    def __init__(self, config, use_hull = False):
+        super().__init__()
+        self.config = config
+        self.use_hull = use_hull
+        
+    def create(self):
+        
+        gap = (self.config['length'] - self.config['slot_count'] * (self.config['slot_length'] + self.config['slot_width'])) / (self.config['slot_count'] + 1.0)
+
+        y = - self.config['length'] / 2.0 + gap + (self.config['slot_length'] + self.config['slot_width']) / 2.0
+        p = translate([0, y, 0]) (Slot(self.config['slot_width'], self.config['slot_length'], self.config['height']).create())
+        for i in range(self.config['slot_count'] - 1):
+            y += gap + (self.config['slot_length'] + self.config['slot_width'])
+            p += translate([0, y, 0]) (Slot(self.config['slot_width'], self.config['slot_length'], self.config['height'], self.use_hull).create())
+        return p
 
 
-def speaker_holes(enclosure_speaker_holes_outer_dia, enclosure_speaker_pitch, enclosure_speaker_hole_dia, enclosure_wall_thickness, segments_count):
+class SpeakerGrill(Component):
 
-    speaker_hole = cylinder(d = enclosure_speaker_hole_dia, h = enclosure_wall_thickness, segments = segments_count, center = True)
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+    
+    def create(self):
 
-    l = int(enclosure_speaker_holes_outer_dia / 2.0 / enclosure_speaker_pitch)
+        speaker_hole = cylinder(d = self.config['hole_dia'], h = self.config['wall_thickness'], segments = self.segments_count, center = True)
+        
+        l = int(self.config['dia'] / 2.0 / self.config['pitch'])
+        
+        p = speaker_hole
 
-    p = speaker_hole
+        for j in range(l):
+            c = 2 * math.pi * (self.config['pitch'] * j + self.config['pitch'])
+            num = int(c / self.config['pitch'])
+            angle_diff = 2.0 * math.pi / num
+            #print c, num
+            angle = 0.0
+            for i in range(num):
+                x = ((self.config['pitch'] * j) + self.config['pitch']) * math.cos(angle)
+                y = ((self.config['pitch'] * j) + self.config['pitch']) * math.sin(angle)
+                p += translate([x, y, 0]) (speaker_hole)
+                #print angle, x, y
+                angle += angle_diff
 
-    for j in range(l):
-        c = 2 * math.pi * (enclosure_speaker_pitch * j + enclosure_speaker_pitch)
-        num = int(c / enclosure_speaker_pitch)
-        angle_diff = 2.0 * math.pi / num
-        #print c, num
-        angle = 0.0
-        for i in range(num):
-            x = ((enclosure_speaker_pitch * j) + enclosure_speaker_pitch) * math.cos(angle)
-            y = ((enclosure_speaker_pitch * j) + enclosure_speaker_pitch) * math.sin(angle)
-            p += translate([x, y, 0]) (speaker_hole)
-            #print angle, x, y
-            angle += angle_diff
-
-    return p
+        return p

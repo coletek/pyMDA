@@ -5,8 +5,10 @@ from solid.utils import *
 from core import *
 from geometry import *
 from curved import *
-from stock_materials import *
 from bezier_curve import *
+from plates import *
+
+from stock_materials import *
 from stock_magnets import *
 from stock_motors import *
 from stock_bearings import *
@@ -16,6 +18,10 @@ from stock_electronics import *
 from collar import *
 from cam_profile import *
 from scotch_yoke import *
+
+from enclosures import *
+
+from holes import *
 
 def build(config):
 
@@ -34,9 +40,6 @@ def build(config):
     # * Each compnonent has a bounding box width, length, heights, and orign - for features like stacking in 3D space
     #
     # * stock_motors could perhaps be more advanced OO of motor models for example
-    #
-    # * TBC: Utilites, Cam Profile, Enclosures, Holes
-    #   and plates (perhaps perhaps should move to stock_materials?)
     #
     
     # Geometry - Fundamental Shapes
@@ -90,6 +93,29 @@ def build(config):
     config["slider_y_thickness"] = config["slider_x_thickness"]
     angle = math.pi / 180.0 * 90.0
     subassembly.add('scotch_yoke', ScotchYoke(config, angle))
+
+    # Collar - based on Trimble GPS mount collar
+    config['collar'] = {
+        "id": 76, # 76 uncompressed
+        "thickness": 8,
+        "width": 25,
+        "connection_gap": 8,
+        "connection_hole_dia": 8.5, # m10_tap_hole_size
+        "connection_thickness": 11.5,
+        "connection_height": 0.0 # fixed distance between connection and collar - zero here I think
+    }
+    subassembly.add('collar', Collar(config['collar'], 0.0))
+
+    config['cam_profile'] = {
+        "height": 20,
+        "start_radius": 10.0 / 2.0,
+        "start_angle": math.radians(180.0),
+        "end_radius": 10.0 / 2.0 + config['collar']['connection_gap'],
+        "end_angle": math.radians(360.0),
+        "increment": 0.01,
+        "is_center": True
+    }
+    subassembly.add('cam_profile', CamProfile(config["cam_profile"]))
     
     # Stock Materials
     subassembly.add('square_hollow_section', SHS(30, 3, 30))
@@ -195,36 +221,216 @@ def build(config):
     subassembly.add('fixture_socket', FixtureSocket(2, 4, 5, 2))
     subassembly.add('washer', Washer(20, 10, 3))
 
-    # Collar
-    config['collar'] = {
-        "id": 100,
-        "thickness": 5,
-        "width": 10,
-        "connection_gap": 10,
-        "connection_hole_dia": 5,
-        "connection_thickness": 5,
-        "connection_height": 0.0,
-        "connection_gap_closed": 0.0
-    }
-    subassembly.add('collar', Collar(config['collar']))
-
-    subassembly = Assembly()
-    config['cam_profile'] = {
-        "height": 20,
-        "start_radius": 10.0 / 2.0,
-        "start_angle": math.radians(180.0),
-        "end_radius": 10.0 / 2.0 + 8.0,
-        "end_angle": math.radians(360.0),
-        "increment": 0.01,
-        "is_center": True
-    }
-    subassembly.add('cam_profile', CamProfile(config["cam_profile"]))
-    
     # Stock Electronics
-    #config['pcb_header_dual'] = {}
-    #subassembly.add('pcb_header', PCBHeader(config['pcb_header'], 2.54, 10))
-    #subassembly.add('pcb_header_dual', PCBHeaderDual(config['pcb_header_dual'], 2.54, 10))
-    
+    config['pcb_header'] = {}
+    subassembly.add('pcb_header', PCBHeader(config['pcb_header'], 2.54, 10))
+    config['pcb_header_dual'] = {}
+    subassembly.add('pcb_header_dual', PCBHeaderDual(config['pcb_header_dual'], 2.54, 10))
+
+    config['pot_side'] = {
+        'wall_thickness': 1.0,
+        'dia': 6.81,
+        'length': 4.5,
+        'height': 8.4,
+        'pin_width': 0.8,
+        'pin_length': 0.8 / 2.0, # pin_width / 2.0
+        'pin_height': 3.0,
+        'pin_pitch_x': 5.0,
+        'pin_pitch_y': 2.5
+    }
+    subassembly.add('pot_side', POTSide(config['pot_side']))
+
+    config['fuse_mini'] = {
+        'width': 3.8,
+        'length': 10.9,
+        'height': 8.8,
+        'pin_width': 0.8,
+        'pin_length': 2.8,
+        'pin_height': 7.5
+    }
+    subassembly.add('fuse_mini', FuseMini(config['fuse_mini']))
+
+    config['fuse_holder_mini'] = {
+        'width': 6.73,
+        'length': 16.0,
+        'height': 7.37,
+        'pitch_x': 3.41,
+        'pitch_y': 9.9
+    }
+    subassembly.add('fuse_holder_mini', FuseHolderMini(config['fuse_holder_mini']))
+
+    subassembly.add('fuse_mini_and_holder', FuseMiniAndHolder(config['fuse_mini'], config['fuse_holder_mini']))
+
+    config['rpi'] = {
+        'width': 56.0,
+        'length': 85.0,
+        'width_offset': -1.57,
+        'length_offset': -2.76,
+        'mounting_holes_width_pitch': 49.0, # FYI
+        'mounting_holes_length_pitch': 58.0, # FYI
+        'mounting_holes_offset': 3.5 # FYI
+    }
+    subassembly = Assembly()
+    subassembly.add('rpi', RPI(config['rpi']))
+
+    config['rpi_display'] = {
+        'width': 110.8,
+        'length': 193.0,
+        'width_offset': 51.3,
+        'length_offset': 69.5,
+        'mounting_holes_width_pitch': 66.0, # FYI
+        'mounting_holes_length_pitch': 126.0, # FYI
+        'mounting_holes_offset': 33.5 # FYI
+    }
+    subassembly = Assembly()
+    subassembly.add('rpi_display', RPIDisplay(config['rpi_display']))
+
+    config['nvidia_jetson_nano'] = {
+        'width': 79.0,
+        'length': 100.0,
+        'mounting_holes_width_pitch': 58.0, # FYI
+        'mounting_holes_length_pitch': 86.0, # FYI
+        'mounting_holes_offset': 4.0 # FYI
+    }
+    subassembly = Assembly()
+    subassembly.add('nvidia_jetson_nano', NVidiaJetsonNano(config['nvidia_jetson_nano']))
+
+    # ttps://www.raspberrypi.com/documentation/accessories/camera.html
+    config['pcb_camera'] = {
+        'pcb_width': 25.0,
+        'pcb_length': 23.862,
+        'pcb_thickness': 1.12,
+        'pcb_mounting_hole_dia': 2.2,
+        'pcb_mounting_pitch_width': 25.0 - 2.0 - 2.0,
+        'pcb_mounting_pitch_length': 14.5 - 2.0,
+        'pcb_mounting_hole_offset_width': 0.0,
+        'pcb_mounting_hole_offset_length': 23.862 / 2.0 - (14.5 - 2.0) / 2.0 - 2.0, #camera_pcb_length / 2.0 - camera_pcb_mounting_hole_pitch_length / 2.0 - 2.0
+        
+        'lens_dia': 10.8,
+        'lens_height':8.3,
+        'lens_offset_width': 0.0,
+        'lens_offset_length': 0.0, # or is this height which is 14.4 - 14.5
+        
+        'sensor_width': 6.45,
+        'sensor_height': 3.63,
+        'sensor_thickness': 1.0,
+        'focal_length': 2.75
+    }
+    subassembly = Assembly()
+    subassembly.add('pcb_camera', PCBCamera(config['pcb_camera'], 10.0, False))
+
+    config['plate_with_mounting_holes'] = {
+        'width': 25.0,
+        'length': 23.862,
+        'thickness': 1.12,
+        'mounting_hole_dia': 2.2,
+        'mounting_hole_pitch_width': 25.0 - 2.0 - 2.0,
+        'mounting_hole_pitch_length': 14.5 - 2.0,
+        'mounting_hole_offset_width': 0.0,
+        'mounting_hole_offset_length': 23.862 / 2.0 - (14.5 - 2.0) / 2.0 - 2.0
+    }
+    subassembly = Assembly()
+    #subassembly.add('plate_with_mounting_holes', PlateWithMountingHoles(config['plate_with_mounting_holes']))
+
+    config['plate_with_mounting_holes_edges'] = {
+        'width': 100,
+        'height': 100,
+        'thickness': 5,
+        'mounting_hole_size': 3.0,
+        'top_mounting_hole_depth': 10.0,
+        'bottom_mounting_hole_depth': 10.0
+    }
+    #subassembly.add('plate_with_mounting_holes_edges', PlateWithMountingHolesEdges(config['plate_with_mounting_holes_edges']))
+    config['plate_with_fillets'] = {
+        'width': 100,
+        'length': 100,
+        'thickness': 5,
+        'fillet_radius': 5.0
+    }
+    #subassembly.add('plate_with_fillets', PlateWithFillets(config['plate_with_fillets']))
+
+    config['slot'] = {
+        'width': 5,
+        'length': 100,
+        'height': 10
+    }
+    #subassembly.add('slot', Slot(config['slot']))
+
+    config['slot_curve'] = {
+        'width': 6.0 + 0.1,
+        'height': 10.0,
+        'radius': 200.0,
+        'start_angle': math.radians(15),
+        'end_angle': math.radians(125),
+        'step': 0.1
+    }
+    #subassembly.add('slot_curve', SlotCurve(config['slot_curve']))
+
+    config['slot_array'] = {
+        'length': 100,
+        'slot_width': 100,
+        'slot_length': 3.0,
+        'slot_count': 10,
+        'height': 360
+    }
+    #subassembly.add('slot_array', SlotArray(config['slot_array']))
+
+    config['speaker_grill'] = {
+        'dia': 50,
+        'pitch': 5,
+        'hole_dia': 3,
+        'wall_thickness': 2
+    }
+    #subassembly.add('speaker_grill', SpeakerGrill(config['speaker_grill']))
+
+    config['boss'] = {
+        'dia': 10,
+        'hole_dia': 5,
+        'thickness': 10
+    }
+    #subassembly.add('boss', Boss(config['boss']))
+
+    config['boss_plate'] = {
+        'width': 100,
+        'length': 100,
+        'thickness': 10,
+        'mounting_hole_dia': 4,
+        'dia': 10,
+        'hole_dia': 5,
+        'height': 50,
+    }
+    #subassembly.add('boss_plate', BossPlate(config['boss_plate']))
+
+    config['boss_plate_dual'] = {
+        'width': 100,
+        'length': 100,
+        'thickness': 10,
+        'mounting_hole_dia': 4,
+        'dia': 10,
+        'hole_dia': 5,
+        'height': 50,
+        'pitch': 30
+    }
+    #subassembly.add('boss_plate_dual', BossPlateDual(config['boss_plate_dual']))
+
+    config['rubber_button'] = {
+        'radius': 4.0, 
+        'length': 15,
+        'support_radius': 8,
+        'support_length': 5
+    }
+    #subassembly.add('rubber_button', RubberButton(config['rubber_button']))
+
+    config['lightpipe_straight'] = {
+        'radius': 5,
+        'length': 30,
+        'support_radius': 8,
+        'support_length': 5,
+        'support_offset': 2,
+        'head_radius': 10
+    }
+    subassembly.add('lightpipe_straight', LightpipeStraight(config['lightpipe_straight']))
+
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)
     #subassembly.stack_y(5)
