@@ -27,7 +27,7 @@ class Component:
         return self.origin
 
     def get_width(self):
-        return self.bouding_box["width"]
+        return self.bounding_box["width"]
 
     def get_length(self):
         return self.bounding_box["length"]
@@ -90,8 +90,8 @@ class Assembly:
     def center_assembly(self):
         """Reposition all components so the assembly is centered at the origin."""
         width = self.get_width()
-        height = self.get_height()
         length = self.get_length()
+        height = self.get_height()
     
         x_offset = width / 2
         y_offset = length / 2
