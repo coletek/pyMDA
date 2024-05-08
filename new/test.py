@@ -267,7 +267,7 @@ def build_enclosures(config):
     }
     assembly.add('lightpipe_straight', LightpipeStraight(config['lightpipe_straight']))
 
-    assembly.stack_y(100)
+    assembly.stack_y(110)
     
     return assembly
     
