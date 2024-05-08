@@ -3,11 +3,13 @@ from solid import *
 from solid.utils import *
 from core import *
 from utilties import *
+from plates import *
 
 class PCBHeader(Component):
     ''' https://app.adam-tech.com/products/download/data_sheet/201605/ph1-xx-ua-data-sheet.pdf '''
 
     def __init__(self, config, pitch = 2.54, number_of_pins = 2):
+        super().__init__()
         self.config = config
         self.config['width'] = 2.5
         self.config['length'] = pitch * number_of_pins
@@ -36,6 +38,7 @@ class PCBHeaderDual(Component):
     ''' https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/6025/302-S.pdf '''
 
     def __init__(self, config, pitch = 2.54, number_of_pins = 2):
+        super().__init__()
         self.config = config
         self.pitch = pitch
         self.number_of_pins = number_of_pins
@@ -143,13 +146,14 @@ class FuseMiniAndHolder(Assembly):
     ''' mini_fuse_holder_and_fuse_height = 17 is manually measured '''
     
     def __init__(self, fuse_mini_config, fuse_holder_mini_config, mini_fuse_holder_and_fuse_height = 17.0):
+        super().__init__()
         self.fuse_mini_config = fuse_mini_config
         self.fuse_holder_mini_config = fuse_holder_mini_config
         self.mini_fuse_holder_and_fuse_height = mini_fuse_holder_and_fuse_height
             
     def create(self):
         p = FuseHolderMini(self.fuse_holder_mini_config).create()
-        p += translate([0, 0, -self.fuse_mini_config['height'] + mini_fuse_holder_and_fuse_height]) (FuseMini(self.fuse_mini_config).create())
+        p += translate([0, 0, -self.fuse_mini_config['height'] + self.mini_fuse_holder_and_fuse_height]) (FuseMini(self.fuse_mini_config).create())
         return p
 
 class RPI(Component):
@@ -207,36 +211,37 @@ class PCBCamera(Component):
     https://www.raspberrypi.com/documentation/accessories/camera.html
     '''
 
-    def __init__(self, config, fov_dist, enable_fov):
-        self.config = config
+    def __init__(self, pcb_config, camera_config, fov_dist, enable_fov):
+        super().__init__()
+        self.pcb_config = pcb_config
+        self.camera_config = camera_config
         self.fov_dist = fov_dist
         self.enable_fov = enable_fov
 
     def create(self):
-            
-        b = PlateWithMountingHoles(self.config['pcb_width'], self.config['pcb_length'], self.config['pcb_thickness'],
-                                   self.config['pcb_mounting_hole_dia'], self.config['pcb_mounting_pitch_width'], self.config['pcb_mounting_pitch_length'],
-                                   self.config['pcb_mounting_hole_offset_width'], self.config['pcb_mounting_hole_offset_length']).create()
+
+        b = PlateWithMountingHoles(self.pcb_config).create()
+        colour_pcb = [0, 0.549, 0.29]
         b = color(colour_pcb)
         
-        b = translate([self.config['lens_offset_width'], self.config['lens_offset_length'], 0]) (b)
+        b = translate([self.camera_config['lens_offset_width'], self.camera_config['lens_offset_length'], 0]) (b)
         
-        lens = color(BlackPaint) (cylinder(d = self.config['lens_dia'], h = self.config['lens_height'], center = True, segments = self.segments_count))
+        lens = color(BlackPaint) (cylinder(d = self.camera_config['lens_dia'], h = self.camera_config['lens_height'], center = True, segments = self.segments_count))
         
-        p = translate([0, 0, self.config['pcb_thickness'] / 2.0]) (b) + \
-            translate([0, 0, self.config['lens_height'] / 2.0 + self.config['pcb_thickness']]) (lens)
+        p = translate([0, 0, self.pcb_config['thickness'] / 2.0]) (b) + \
+            translate([0, 0, self.camera_config['lens_height'] / 2.0 + self.pcb_config['thickness']]) (lens)
         
-        if enable_fov:
+        if self.enable_fov:
             
-            fov_width = 2.0 * math.atan2(self.config['sensor_width'], 2 * self.config['focal_length'])
-            fov_height = 2.0 * math.atan2(self.config['sensor_height'], 2 * self.config['focal_length'])
+            fov_width = 2.0 * math.atan2(self.camera_config['sensor_width'], 2 * self.camera_config['focal_length'])
+            fov_height = 2.0 * math.atan2(self.camera_config['sensor_height'], 2 * self.camera_config['focal_length'])
             print ("H-FOV %f" % math.degrees(fov_width))
             print ("V-FOV %f" % math.degrees(fov_height))
             
-            fov_start = cube([self.config['sensor_width'], self.config['sensor_height'], 0.1], center = True)
+            fov_start = cube([self.camera_config['sensor_width'], self.camera_config['sensor_height'], 0.1], center = True)
             fov_end = cube([fov_dist * math.tan(fov_width / 2.0) * 2.0, fov_dist * math.tan(fov_height / 2.0) * 2.0, 0.1], center = True)
             fov = color([0.5, 0.5, 0.5, 0.5]) (hull() (fov_start, translate([0, 0, fov_dist]) (fov_end)))
-            p += translate([0, 0, 0.1 / 2.0 + self.config['pcb_thickness'] + self.config['sensor_thickness'] + self.config['focal_length']]) (fov)
+            p += translate([0, 0, 0.1 / 2.0 + self.camera_config['pcb_thickness'] + self.camera_config['sensor_thickness'] + self.camera_config['focal_length']]) (fov)
     
         return p
         

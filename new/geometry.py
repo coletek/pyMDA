@@ -11,9 +11,10 @@ class Cube(Component):
     ''' 4sides (square) with depth '''
     
     def __init__(self, w, l, h, is_center = True, is_add_text = True):
-        self.width = w
-        self.length = l
-        self.height = h
+        super().__init__()
+        self.width = self.bounding_box["width"] = w
+        self.length = self.bounding_box["length"] = l
+        self.height = self.bounding_box["height"] = h
         self.is_center = is_center
         self.is_add_text = is_add_text
         if self.is_center:
@@ -37,8 +38,11 @@ class Cube(Component):
 class Cylinder(Component):
     
     def __init__(self, d, h, is_center = True, segments_count = 100, is_add_text = True):
+        super().__init__()
         self.width = self.length = d
         self.height = h
+        self.bounding_box['width'] = self.bounding_box['length'] = d
+        self.bounding_box['height'] = h
         self.dia = d
         self.is_center = is_center
         self.segments_count = 100
@@ -64,7 +68,9 @@ class Cylinder(Component):
 class Sphere(Component):
     
     def __init__(self, d, is_center = True, segments_count = 100, is_add_text = True):
+        super().__init__()
         self.width = self.length = self.height = d
+        self.bounding_box['width'] = self.bounding_box['length'] = self.bounding_box['height'] = d
         self.dia = d
         self.is_center = is_center
         self.segments_count = 100
@@ -88,9 +94,13 @@ class Sphere(Component):
         return p
 
 class Pyramid(Component):
+
     def __init__(self, base_length, height, is_center=False, is_add_text=True):
+        super().__init__()
         self.width = self.length = base_length
         self.height = height
+        self.bounding_box['width'] = self.bounding_box['length'] = base_length
+        self.bounding_box['height'] = height
         self.is_center = is_center
         self.is_add_text = is_add_text
         if self.is_center:
@@ -122,9 +132,13 @@ class Pyramid(Component):
         return p
 
 class Cone(Component):
+
     def __init__(self, dia, height, is_center=False, segments_count=100, is_add_text=True):
+        super().__init__()
         self.width = self.length = dia
         self.height = height
+        self.bounding_box['width'] = self.bounding_box['length'] = dia
+        self.bounding_box['height'] = height
         self.is_center = is_center
         self.segments_count = segments_count
         self.is_add_text = is_add_text
@@ -141,8 +155,11 @@ class Cone(Component):
         return p
 
 class Tetrahedron(Component):
+
     def __init__(self, side_length, is_center = False, is_add_text = True):
+        super().__init__()
         self.width = self.length = self.height = side_length
+        self.bounding_box['width'] = self.bounding_box['length'] = self.bounding_box['height'] = side_length
         self.is_center = is_center
         self.is_add_text = is_add_text
         if is_center:
@@ -195,9 +212,13 @@ class Tetrahedron(Component):
         return p
     
 class Torus(Component): # donut
+
     def __init__(self, dia, thickness, segments_count, rotate_extrude_segments_count, is_center = True, is_add_text = True):
+        super().__init__()
         self.width = self.length = dia + thickness
         self.height = thickness
+        self.bounding_box['width'] = self.bounding_box['length'] = dia + thickness
+        self.bounding_box['height'] = thickness
         self.is_center = is_center
         self.is_add_text = is_add_text
         if is_center:
@@ -234,9 +255,13 @@ class TriangularPrism(Component):
     '''3sides (triangle) with depth'''
     
     def __init__(self, w, l, h, is_center = True, is_add_text = True):
+        super().__init__()
         self.width = w
         self.length = l
         self.height = h
+        self.bounding_box['width'] = w
+        self.bounding_box['length'] = l
+        self.bounding_box['height'] = h
         self.is_center = is_center
         self.is_add_text = is_add_text
         self.origin = [0, 0, 0]
@@ -277,13 +302,18 @@ class TriangularPrism(Component):
         return p
 
 class HexagonalPrism(Component): # 6sides (hexagonal) base with depth
+
     def __init__(self, cle, h, is_center = True, is_add_text = True):
+        super().__init__()
         self.cle = cle
         self.angle = 360.0 / 6.0;
         self.width = cle
         self.length_half = cle * 1.0 / math.tan(math.radians(self.angle))
         self.length = self.length_half * 2.0
         self.height = h
+        self.bounding_box['width'] = cle
+        self.bounding_box['length'] = self.length_half * 2.0
+        self.bounding_box['height'] = h
         self.origin = [0, 0, 0]
         self.is_center = is_center
         self.is_add_text = is_add_text

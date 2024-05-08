@@ -28,7 +28,7 @@ def build(config):
     #
     # NOTES:
     #
-     # * At this stage, just demo each of the shapes, features, helpers
+    # * At this stage, just demo each of the shapes, features, helpers
     # of this repositories. Shapes/features/helpers are likely to
     # envolve/merge moving forward with this OO approach - allowing
     # easier management of the wide range of features
@@ -74,8 +74,71 @@ def build(config):
         print (i)
     subassembly.add('bezier_curve', PolylineRound(pts, 5))
 
+    config['plate_with_mounting_holes'] = {
+        'width': 25.0,
+        'length': 23.862,
+        'thickness': 1.12,
+        'mounting_hole_dia': 2.2,
+        'mounting_hole_pitch_width': 25.0 - 2.0 - 2.0,
+        'mounting_hole_pitch_length': 14.5 - 2.0,
+        'mounting_hole_offset_width': 0.0,
+        'mounting_hole_offset_length': 23.862 / 2.0 - (14.5 - 2.0) / 2.0 - 2.0
+    }
+    subassembly.add('plate_with_mounting_holes', PlateWithMountingHoles(config['plate_with_mounting_holes']))
+
+    config['plate_with_mounting_holes_edges'] = {
+        'width': 100,
+        'height': 100,
+        'thickness': 5,
+        'mounting_hole_size': 3.0,
+        'top_mounting_hole_depth': 10.0,
+        'bottom_mounting_hole_depth': 10.0
+    }
+    subassembly.add('plate_with_mounting_holes_edges', PlateWithMountingHolesEdges(config['plate_with_mounting_holes_edges']))
+    config['plate_with_fillets'] = {
+        'width': 100,
+        'length': 100,
+        'thickness': 5,
+        'fillet_radius': 5.0
+    }
+    subassembly.add('plate_with_fillets', PlateWithFillets(config['plate_with_fillets']))
+
+    config['slot'] = {
+        'width': 5,
+        'length': 100,
+        'height': 10
+    }
+    subassembly.add('slot', Slot(config['slot']))
+
+    config['slot_curve'] = {
+        'width': 6.0 + 0.1,
+        'height': 10.0,
+        'radius': 200.0,
+        'start_angle': math.radians(15),
+        'end_angle': math.radians(125),
+        'step': 0.1
+    }
+    subassembly.add('slot_curve', SlotCurve(config['slot_curve']))
+
+    config['slot_array'] = {
+        'length': 100,
+        'slot_width': 100,
+        'slot_length': 3.0,
+        'slot_count': 10,
+        'height': 360
+    }
+    #subassembly.add('slot_array', SlotArray(config['slot_array']))
+
+    config['speaker_grill'] = {
+        'dia': 50,
+        'pitch': 5,
+        'hole_dia': 3,
+        'wall_thickness': 2
+    }
+    subassembly.add('speaker_grill', SpeakerGrill(config['speaker_grill']))
+
     # Scotch Yotch
-    config = {
+    config['scotch_yotch'] = {
         "stroke_length": 40.0,
         "pulley_thickness": 3.0,
         "pin_dia": 3.0,
@@ -87,12 +150,12 @@ def build(config):
         "slider_y_width": 3.0 + 2.0,
         "slider_y_thickness": 5.0
     }
-    config["slider_x_width"] = config["pin_dia"] + 2.0
-    config["slider_y_length"] = config["stroke_length"] / 2.0 + 2.0
-    config["slider_y_width"] = config["pin_dia"] + 2.0
-    config["slider_y_thickness"] = config["slider_x_thickness"]
+    config['scotch_yotch']["slider_x_width"] = config['scotch_yotch']["pin_dia"] + 2.0
+    config['scotch_yotch']["slider_y_length"] = config['scotch_yotch']["stroke_length"] / 2.0 + 2.0
+    config['scotch_yotch']["slider_y_width"] = config['scotch_yotch']["pin_dia"] + 2.0
+    config['scotch_yotch']["slider_y_thickness"] = config['scotch_yotch']["slider_x_thickness"]
     angle = math.pi / 180.0 * 90.0
-    subassembly.add('scotch_yoke', ScotchYoke(config, angle))
+    subassembly.add('scotch_yoke', ScotchYoke(config['scotch_yotch'], angle))
 
     # Collar - based on Trimble GPS mount collar
     config['collar'] = {
@@ -154,7 +217,6 @@ def build(config):
     subassembly.add('gearbox_worm', GearboxWorm(config['gearbox_worm']))
     subassembly.add('dc_motor_and_gearbox_worm', MotorDCwGearboxWorm(config['motor_dc'], config['gearbox_worm']))
 
-    subassembly = Assembly()
     config['servo_rds3225'] = {
         'width': 20.0,
         'length': 40.0,
@@ -176,7 +238,6 @@ def build(config):
     subassembly.add('pulley', Pulley(0.0))
     subassembly.add('stepper_and_pulley', StepperAndPulley(0.0))
 
-    subassembly = Assembly()
     inch_to_mm = 25.4
     config['linear_actuator_pa14p'] = {
         'size': 2.0 * inch_to_mm,
@@ -270,7 +331,6 @@ def build(config):
         'mounting_holes_length_pitch': 58.0, # FYI
         'mounting_holes_offset': 3.5 # FYI
     }
-    subassembly = Assembly()
     subassembly.add('rpi', RPI(config['rpi']))
 
     config['rpi_display'] = {
@@ -282,7 +342,6 @@ def build(config):
         'mounting_holes_length_pitch': 126.0, # FYI
         'mounting_holes_offset': 33.5 # FYI
     }
-    subassembly = Assembly()
     subassembly.add('rpi_display', RPIDisplay(config['rpi_display']))
 
     config['nvidia_jetson_nano'] = {
@@ -292,20 +351,10 @@ def build(config):
         'mounting_holes_length_pitch': 86.0, # FYI
         'mounting_holes_offset': 4.0 # FYI
     }
-    subassembly = Assembly()
     subassembly.add('nvidia_jetson_nano', NVidiaJetsonNano(config['nvidia_jetson_nano']))
 
     # ttps://www.raspberrypi.com/documentation/accessories/camera.html
     config['pcb_camera'] = {
-        'pcb_width': 25.0,
-        'pcb_length': 23.862,
-        'pcb_thickness': 1.12,
-        'pcb_mounting_hole_dia': 2.2,
-        'pcb_mounting_pitch_width': 25.0 - 2.0 - 2.0,
-        'pcb_mounting_pitch_length': 14.5 - 2.0,
-        'pcb_mounting_hole_offset_width': 0.0,
-        'pcb_mounting_hole_offset_length': 23.862 / 2.0 - (14.5 - 2.0) / 2.0 - 2.0, #camera_pcb_length / 2.0 - camera_pcb_mounting_hole_pitch_length / 2.0 - 2.0
-        
         'lens_dia': 10.8,
         'lens_height':8.3,
         'lens_offset_width': 0.0,
@@ -316,79 +365,14 @@ def build(config):
         'sensor_thickness': 1.0,
         'focal_length': 2.75
     }
-    subassembly = Assembly()
-    subassembly.add('pcb_camera', PCBCamera(config['pcb_camera'], 10.0, False))
-
-    config['plate_with_mounting_holes'] = {
-        'width': 25.0,
-        'length': 23.862,
-        'thickness': 1.12,
-        'mounting_hole_dia': 2.2,
-        'mounting_hole_pitch_width': 25.0 - 2.0 - 2.0,
-        'mounting_hole_pitch_length': 14.5 - 2.0,
-        'mounting_hole_offset_width': 0.0,
-        'mounting_hole_offset_length': 23.862 / 2.0 - (14.5 - 2.0) / 2.0 - 2.0
-    }
-    subassembly = Assembly()
-    #subassembly.add('plate_with_mounting_holes', PlateWithMountingHoles(config['plate_with_mounting_holes']))
-
-    config['plate_with_mounting_holes_edges'] = {
-        'width': 100,
-        'height': 100,
-        'thickness': 5,
-        'mounting_hole_size': 3.0,
-        'top_mounting_hole_depth': 10.0,
-        'bottom_mounting_hole_depth': 10.0
-    }
-    #subassembly.add('plate_with_mounting_holes_edges', PlateWithMountingHolesEdges(config['plate_with_mounting_holes_edges']))
-    config['plate_with_fillets'] = {
-        'width': 100,
-        'length': 100,
-        'thickness': 5,
-        'fillet_radius': 5.0
-    }
-    #subassembly.add('plate_with_fillets', PlateWithFillets(config['plate_with_fillets']))
-
-    config['slot'] = {
-        'width': 5,
-        'length': 100,
-        'height': 10
-    }
-    #subassembly.add('slot', Slot(config['slot']))
-
-    config['slot_curve'] = {
-        'width': 6.0 + 0.1,
-        'height': 10.0,
-        'radius': 200.0,
-        'start_angle': math.radians(15),
-        'end_angle': math.radians(125),
-        'step': 0.1
-    }
-    #subassembly.add('slot_curve', SlotCurve(config['slot_curve']))
-
-    config['slot_array'] = {
-        'length': 100,
-        'slot_width': 100,
-        'slot_length': 3.0,
-        'slot_count': 10,
-        'height': 360
-    }
-    #subassembly.add('slot_array', SlotArray(config['slot_array']))
-
-    config['speaker_grill'] = {
-        'dia': 50,
-        'pitch': 5,
-        'hole_dia': 3,
-        'wall_thickness': 2
-    }
-    #subassembly.add('speaker_grill', SpeakerGrill(config['speaker_grill']))
+    subassembly.add('pcb_camera', PCBCamera(config['plate_with_mounting_holes'], config['pcb_camera'], 10.0, False))
 
     config['boss'] = {
         'dia': 10,
         'hole_dia': 5,
         'thickness': 10
     }
-    #subassembly.add('boss', Boss(config['boss']))
+    subassembly.add('boss', Boss(config['boss']))
 
     config['boss_plate'] = {
         'width': 100,
@@ -399,7 +383,7 @@ def build(config):
         'hole_dia': 5,
         'height': 50,
     }
-    #subassembly.add('boss_plate', BossPlate(config['boss_plate']))
+    subassembly.add('boss_plate', BossPlate(config['boss_plate']))
 
     config['boss_plate_dual'] = {
         'width': 100,
@@ -411,7 +395,7 @@ def build(config):
         'height': 50,
         'pitch': 30
     }
-    #subassembly.add('boss_plate_dual', BossPlateDual(config['boss_plate_dual']))
+    subassembly.add('boss_plate_dual', BossPlateDual(config['boss_plate_dual']))
 
     config['rubber_button'] = {
         'radius': 4.0, 
@@ -419,7 +403,7 @@ def build(config):
         'support_radius': 8,
         'support_length': 5
     }
-    #subassembly.add('rubber_button', RubberButton(config['rubber_button']))
+    subassembly.add('rubber_button', RubberButton(config['rubber_button']))
 
     config['lightpipe_straight'] = {
         'radius': 5,
@@ -433,7 +417,7 @@ def build(config):
 
     # demo stacking/aligning with margin/pitch
     #subassembly.stack_x(5)
-    #subassembly.stack_y(5)
+    subassembly.stack_y(100)
     #subassembly.stack_z(5)
 
     # demo adding component to 
@@ -461,11 +445,6 @@ def main():
 
     args = parser.parse_args()
 
-    # example of config
-    #config = {
-    #    "prism": { "dim": {"l": 20, "w": 20, "h": 20}, "pos": {"x": 100, "y": 100, "z": 5}},
-    #    "hexagon": { "dim": {"cle": 10, "h": 20}, "pos": {"x": 10, "y": 10, "z": 10}}#,
-    #}
     config = {}
 
     assembly = build(config)

@@ -6,9 +6,13 @@ from core import *
 class SHS(Component):
     
     def __init__(self, width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0.0):
+        super().__init__()
         self.width = width
         self.length = length
         self.height = thickness
+        self.bounding_box["width"] = width
+        self.bounding_box["length"] = length
+        self.bounding_box["height"] = thickness
         self.thickness = thickness
         self.end1_cut_angle = end1_cut_angle
         self.end2_cut_angle = end2_cut_angle
@@ -42,9 +46,13 @@ class SHS(Component):
 class CS(Component):
     
     def __init__(self, width, thickness, length):
+        super().__init__()
         self.width = width
         self.length = length
         self.height = thickness
+        self.bounding_box["width"] = width
+        self.bounding_box["length"] = length
+        self.bounding_box["height"] = thickness
         self.thickness = thickness
         
     def create(self):
@@ -56,9 +64,13 @@ class CS(Component):
 class LS(Component):
     
     def __init__(self, width, height, thickness, length):
+        super().__init__()
         self.width = width
         self.length = length
         self.height = height
+        self.bounding_box["width"] = width
+        self.bounding_box["length"] = length
+        self.bounding_box["height"] = height
         self.thickness = thickness
         
     def create(self):
@@ -69,9 +81,13 @@ class LS(Component):
 class SB(Component):
     
     def __init__(self, width, length):
+        super().__init__()
         self.width = width
         self.length = length
         self.height = width
+        self.bounding_box["width"] = width
+        self.bounding_box["length"] = length
+        self.bounding_box["height"] = width
 
     def create(self):
         p = cube([self.width, self.length, self.width], center = True)
@@ -81,9 +97,13 @@ class SB(Component):
 class Rod(Component):
     
     def __init__(self, dia, length, segments_count = 100):
+        super().__init__()
         self.width = dia
         self.length = dia
         self.height = length
+        self.bounding_box["width"] = dia
+        self.bounding_box["length"] = dia
+        self.bounding_box["height"] = length
         self.segments_count = segments_count
         self.dia = dia
 
@@ -93,9 +113,13 @@ class Rod(Component):
 class Sheet(Component):
 
     def __init__(self, width = 600, length = 2400, thickness = 1.2):
+        super().__init__()
         self.width = width
         self.length = length
         self.height = thickness
+        self.bounding_box["width"] = width
+        self.bounding_box["length"] = length
+        self.bounding_box["height"] = thickness
         self.thickness = thickness
 
     def create(self):
@@ -106,9 +130,13 @@ class Sheet(Component):
 class Wedge(Component):
 
     def __init__(self, r, h, sa, ea, segments_count = 100):
+        super().__init__()
         self.width = r
         self.length = r
         self.height = h
+        self.bounding_box["width"] = r
+        self.bounding_box["length"] = r
+        self.bounding_box["height"] = h
         self.r = r
         self.h = h
         self.sa = sa
@@ -132,9 +160,13 @@ class Wedge(Component):
 class Hinge(Component):
 
     def __init__(self, d, axle_d, h, hinge_segments, l, tolerance, is_left, segments_count = 100):
+        super().__init__()
         self.width = h
         self.length = h
         self.height = h
+        self.bounding_box["width"] = h
+        self.bounding_box["length"] = h
+        self.bounding_box["height"] = h
         self.d = d
         self.axle_d = d
         self.h = h
@@ -175,6 +207,7 @@ class Hinge(Component):
 class Door(Component):
 
     def __init__(self, config):
+        super().__init__()
         self.config = config
         
     def door(self):

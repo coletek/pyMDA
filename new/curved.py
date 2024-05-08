@@ -11,9 +11,13 @@ from geometry import *
 class CubeCurvedSides(Component):
     
     def __init__(self, x, y, z, corner_radius, side_count, is_center = True, segments_count = 100):
+        super().__init__()
         self.width = x
         self.length = y
         self.height = z
+        self.bounding_box["width"] = x
+        self.bounding_box["length"] = y
+        self.bounding_box["height"] = z
         self.is_center = is_center
         self.origin = [0, 0, 0]
         self.x = x
@@ -56,12 +60,16 @@ class CubeCurvedSides(Component):
 # Curve all 12 sides of a cube - similar to BarCurvedEdges, but not rectangular
 #
         
-class CubeCurvedEdges():
+class CubeCurvedEdges(Component):
     
     def __init__(self, x, y, z, corner_radius, is_center = True, segments_count = 100):
+        super().__init__()
         self.width = x
         self.length = y
         self.height = z
+        self.bounding_box["width"] = x
+        self.bounding_box["length"] = y
+        self.bounding_box["height"] = z
         self.is_center = is_center
         self.origin = [0, 0, 0]
         self.x = x
@@ -106,10 +114,15 @@ class CubeCurvedEdges():
 #
         
 class BarCurvedEdges(Component):
+
     def __init__(self, length, thickness, corner_radius, segments_count = 100):
+        super().__init__()
         self.width = thickness
         self.length = length
         self.height = thickness
+        self.bounding_box["width"] = thickness
+        self.bounding_box["length"] = length
+        self.bounding_box["height"] = thickness
         self.origin = [0, 0, 0]
         self.thickness = thickness
         self.corner_radius = corner_radius
@@ -126,8 +139,11 @@ class BarCurvedEdges(Component):
 class CylinderCurvedEdges(Component):
     
     def __init__(self, r, h, corner_radius, both_sides = True, is_center = True, is_add_test = True, segments_count = 100):
+        super().__init__()
         self.width = self.length = r * 2
         self.height = h
+        self.bounding_box["width"] = self.bounding_box["length"] = r * 2
+        self.bounding_box["height"] = h
         self.origin = [0, 0, 0]
         self.is_center = is_center
         self.is_add_test = is_add_test
@@ -165,9 +181,13 @@ class CylinderCurvedEdges(Component):
 class LineRoundViaHull(Component):
     
     def __init__(self, p1, p2, radius, segments_count = 100):
+        super().__init__()
         self.width = p2[0] - p1[0] + radius * 2
         self.length = p2[1] - p1[1] + radius * 2
         self.height = p2[2] - p1[2] + radius * 2
+        self.bounding_box["width"] = p2[0] - p1[0] + radius * 2
+        self.bounding_box["length"] = p2[1] - p1[1] + radius * 2
+        self.bounding_box["height"] = p2[2] - p1[2] + radius * 2
         self.origin = (p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2])
         self.p1 = p1
         self.p2 = p2
@@ -192,6 +212,7 @@ class LineRoundViaHull(Component):
 class PolylineRound(Component):
 
     def __init__(self, pts, radius, is_close = False, segments_count = 100):
+        super().__init__()
         self.pts = pts
         self.radius = radius
         self.segments_count = segments_count
