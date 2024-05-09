@@ -5,15 +5,13 @@ from core import *
 
 class Bearing(Component):
 
-    def __init__(self, id, od, thickness):
+    def __init__(self, config):
         super().__init__()
-        self.id = id
-        self.od = od
-        self.thickness = thickness
+        self.config = config
 
     def create(self):
-        outter = cylinder(d = self.od, h = self.thickness, segments = self.segments_count)
-        inner = cylinder(d = self.id, h = self.thickness + 2, segments = self.segments_count)
+        outter = cylinder(d = self.config["od"], h = self.config["thickness"], segments = self.segments_count)
+        inner = cylinder(d = self.config["id"], h = self.config["thickness"] + 2, segments = self.segments_count)
         p = outter - translate([0, 0, -1]) (inner)
         return p
 

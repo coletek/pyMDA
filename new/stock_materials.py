@@ -96,7 +96,7 @@ class Rod(Component):
     def __init__(self, dia, length):
         super().__init__()
         self.dia = dia
-        self.length = dia
+        self.length = length
         self.bounding_box["width"] = dia
         self.bounding_box["length"] = dia
         self.bounding_box["height"] = length

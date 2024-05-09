@@ -302,10 +302,12 @@ def build_stock_motors(config):
     config['motor_dc'] = {
         'dia':  24.4,
         'length':  30.8,
-        'shaft_dia':  6.0, # FYI
-        'shaft_length':  7.0, # FYI
-        'shaft_key_cut':  6.0 - 4.0, # FYI
-        'shaft_key_length':  6.2 # FYI
+        'shaft': {
+            'dia':  6.0, # FYI
+            'length':  7.0, # FYI
+            'key_cut':  6.0 - 4.0, # FYI
+            'key_length':  6.2 # FYI
+        }
     }
     config['gearbox_worm'] = {
         'width': 32.0,
@@ -315,10 +317,12 @@ def build_stock_motors(config):
         'length_pitch': 33.0,
         'length_pitch_pos': 6.0,
         'shaft_pos': 9 + 6,
-        'shaft_dia': 6.0,
-        'shaft_length': 7.0,
-        'shaft_key_cut': 6.0 - 4.0,
-        'shaft_key_length': 6.2
+        'shaft': {
+            'dia': 6.0,
+            'length': 7.0,
+            'key_cut': 6.0 - 4.0,
+            'key_length': 6.2
+        }
     }
     assembly.add('motor_dc', MotorDC(config['motor_dc']))
     assembly.add('gearbox_worm', GearboxWorm(config['gearbox_worm']))
@@ -340,8 +344,14 @@ def build_stock_motors(config):
     }
     assembly.add('servo_rds3225', ServoRDS3225(config['servo_rds3225'], 0.0, True))
 
-    assembly.add('stepper_driver', StepperDriver())
-    assembly.add('stepper', Stepper())
+    config['stepper_driver'] = {
+        "width": 86, 
+        "length": 55,
+        "height": 20
+    }
+    assembly.add('stepper_driver', StepperDriver(config["stepper_driver"]))
+    config['stepper'] = { 'nema_type': 17, 'length': 24 }
+    assembly.add('stepper', Stepper(config['stepper']))
     assembly.add('pulley', Pulley(0.0))
     #assembly.add('stepper_and_pulley', StepperAndPulley(0.0))
 
@@ -383,7 +393,12 @@ def build_stock_bearings(config):
     
     assembly = Assembly()
 
-    assembly.add('bearing', Bearing(10, 20, 5))
+    config['bearing'] = {
+        "id": 10,
+        "od": 20,
+        "thickness": 5
+    }
+    assembly.add('bearing', Bearing(config['bearing']))
     assembly.add('bearing_pillow_block_ucp201', BearingPillowBlockUCP201())
     assembly.add('bearing_pillow_block_ucp204', BearingPillowBlockUCP204())
     #assembly.add('bearing_2_bolt_flange_ucfl204', Bearing2BoltFlangeUCFL204())
