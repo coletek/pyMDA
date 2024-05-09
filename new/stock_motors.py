@@ -5,18 +5,17 @@ from core import *
 
 class ShaftKey(Component):
 
-    def __init__(self, dia, length, key_cut, key_length):
+    def __init__(self, config):
         super().__init__()
-        self.dia = dia
-        self.length = length
-        self.key_cut = key_cut
-        self.key_length = key_length
+        self.config = config
         
     def create(self):
-        k = translate([-self.dia / 2.0 - 1.0,
-                       self.dia / 2.0 - self.key_cut,
-                       self.length - self.key_length]) (cube([self.dia + 2.0, self.dia, self.key_length + 1.0]))
-        s = cylinder(d = self.dia, h = self.length, segments = self.segments_count)
+        k = translate([-self.config['dia'] / 2.0 - 1.0,
+                       self.config['dia'] / 2.0 - self.config['key_cut'],
+                       self.config['length'] - self.config['key_length']]) (cube([self.config['dia'] + 2.0,
+                                                                                  self.config['dia'],
+                                                                                  self.config['key_length'] + 1.0]))
+        s = cylinder(d = self.config['dia'], h = self.config['length'], segments = self.segments_count)
         p = s - k
         p = color(Steel) (p)
         return p
@@ -31,7 +30,9 @@ class MotorDC(Component):
     def create(self):
         m = cylinder(d = self.config['dia'], h = self.config['length'], segments = self.segments_count)
         m = color(Aluminum) (m)
-        s = ShaftKey(self.config['shaft_dia'], self.config['shaft_length'], self.config['shaft_key_cut'], self.config['shaft_key_length']).create()
+
+        s = ShaftKey(self.config['shaft']).create()
+        
         p = m + translate([0, 0, self.config['length']]) (s)
         p = translate([0, 0, -self.config['length']]) (p)
         return p
@@ -48,7 +49,7 @@ class GearboxWorm(Component):
 
         b = color(Aluminum) (b)
         
-        s = ShaftKey(self.config['shaft_dia'], self.config['shaft_length'], self.config['shaft_key_cut'], self.config['shaft_key_length']).create()
+        s = ShaftKey(self.config['shaft']).create()
 
         m3_tap_hole_size = 2.5
         h = cylinder(d = m3_tap_hole_size, h = self.config['height'] / 2.0, segments = self.segments_count)
@@ -134,39 +135,44 @@ class ServoRDS3225(Component):
 
 class StepperDriver(Component):
 
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+    
     def create(self):
-        return translate([-86.0 / 2.0, -55.0 / 2.0, -20.0 / 2.0]) (
-            cube([86, 55, 20])
+        return translate([-self.config['width'] / 2.0, -self.config['length'] / 2.0, -self.config['height'] / 2.0]) (
+            cube([self.config['width'], self.config['length'], self.config['height']])
         )
 
 class Stepper(Component):
-    def __init__(self, nema_type = 17, length = 24.0):
+    def __init__(self, config):
         super().__init__()
-        self.nema_type = nema_type
-        self.length = 24.0
+        self.config = config
         
     def create(self):
         
-        if self.nema_type == 17:
-            self.width = 42
-            self.bore = 5
-            self.bore_length = 14#24
-            self.mounting_hole_pitch = 31
-            self.mounting_hole_size = 2.5 #m3_tap_hole_size
-            self.mounting_hole_depth = 4
+        if self.config['nema_type'] == 17:
+            self.config['width'] = 42
+            self.config['bore'] = 5
+            self.config['bore_length'] = 14#24
+            self.config['mounting_hole_pitch'] = 31
+            self.config['mounting_hole_size'] = 2.5 #m3_tap_hole_size
+            self.config['mounting_hole_depth'] = 4
         else:
             print ("TODO: NEMA TYPE NOT DEFINED")
         
-        block = cube([self.width, self.length, self.width], center = True)
-        axle = cylinder(d = self.bore, h = self.bore_length, segments = self.segments_count)
-        mounting_hole = cylinder(d = self.mounting_hole_size, h = self.mounting_hole_depth + 1, segments = self.segments_count)
+        block = cube([self.config['width'], self.config['length'], self.config['width']], center = True)
+        axle = cylinder(d = self.config['bore'], h = self.config['bore_length'], segments = self.segments_count)
+        mounting_hole = cylinder(d = self.config['mounting_hole_size'], h = self.config['mounting_hole_depth'] + 1, segments = self.segments_count)
         
-        mounting_holes = translate([self.mounting_hole_pitch / 2.0, 1, self.mounting_hole_pitch / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole)) + \
-            translate([self.mounting_hole_pitch / 2.0, 1, -self.mounting_hole_pitch / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole)) + \
-            translate([-self.mounting_hole_pitch / 2.0, 1, self.mounting_hole_pitch / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole)) + \
-            translate([-self.mounting_hole_pitch / 2.0, 1, -self.mounting_hole_pitch / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole))
+        mounting_holes = translate([self.config['mounting_hole_pitch'] / 2.0,
+                                    1,
+                                    self.config['mounting_hole_pitch'] / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole)) + \
+            translate([self.config['mounting_hole_pitch'] / 2.0, 1, -self.config['mounting_hole_pitch'] / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole)) + \
+            translate([-self.config['mounting_hole_pitch'] / 2.0, 1, self.config['mounting_hole_pitch'] / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole)) + \
+            translate([-self.config['mounting_hole_pitch'] / 2.0, 1, -self.config['mounting_hole_pitch'] / 2.0]) (rotate(90, [1, 0, 0]) (mounting_hole))
     
-        p = translate([0, -self.length / 2.0, 0]) (block) + \
+        p = translate([0, -self.config['length'] / 2.0, 0]) (block) + \
             rotate(90 + 180, [1, 0, 0]) (axle) - \
             mounting_holes
     
@@ -174,8 +180,9 @@ class Stepper(Component):
 
 class Pulley(Component):
 
-    def __init__(self, angle = 0):
+    def __init__(self, config, angle = 0):
         super().__init__()
+        self.config = config
         self.angle = angle
         
     def create(self):
@@ -189,18 +196,18 @@ class Pulley(Component):
 
 class StepperAndPulley(Component):
 
-    def __init__(self, angle = 0.0, nema_type = 17, length = 24.0):
+    def __init__(self, stepper_config, pulley_config, angle = 0.0):
         super().__init__()
+        self.stepper_config = stepper_config
+        self.pulley_config = pulley_config
         self.angle = angle
-        self.nema_type = nema_type
-        self.length = length
         
     def create(self):
         return union()(
-            Stepper(self.nema_type, self.length).create(),
+            Stepper(self.stepper_config).create(),
             translate([0, 13, 0]) (
                 rotate(-270, [0, 0, 1]) (
-                    Pulley(self.angle).create()
+                    Pulley(self.pulley_config, self.angle).create()
                 )
             )
         )
@@ -248,6 +255,7 @@ class LinearActuatorMountingBracketBRK14(Component):
     '''@bom_part("Linear Actuator Mounting Bracket (BRK-14)", 8.5)'''
     
     def __init__(self, config):
+        super().__init__()
         self.config = config
 
     def create(self):
@@ -258,6 +266,7 @@ class LinearActuatorMountingBracketBRK03(Component):
     '''@bom_part("Linear Actuator Mounting Bracket (BRK-03)", 9.5)'''
     
     def __init__(self, config):
+        super().__init__()
         self.config = config
         
     def create(self):
@@ -269,6 +278,7 @@ class LinearActuatorPA12T(Component):
     #@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
     
     def __init__(self, config):
+        super().__init__()
         self.config = config
 
     def create(self):
@@ -277,6 +287,7 @@ class LinearActuatorPA12T(Component):
 class LinearActuatorAndBracket(Component):
 
     def __init__(self, actuator_config, bracket_config, config):
+        super().__init__()
         self.actuator_config = actuator_config
         self.bracket_config = bracket_config
         self.config = config

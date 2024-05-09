@@ -10,12 +10,13 @@ class Component:
         self.length = 0
         self.height = 0
         self.origin = [0, 0, 0]
+        self.bounding_box = { "width": 0, "length": 0, "height": 0}
     
     def create(self):
         raise NotImplementedError("Each component must implement the create method.")
 
     def test(self):
-        if self.width < 0 or self.length < 0 or self.height < 0:
+        if self.bounding_box["width"] <= 0 or self.bounding_box["length"] < 0 or self.bounding_box["height"] < 0:
             return False
         return True
 
@@ -24,21 +25,21 @@ class Component:
 
     def get_origin(self):
         return self.origin
-    
+
     def get_width(self):
-        return self.width
+        return self.bounding_box["width"]
 
     def get_length(self):
-        return self.length
+        return self.bounding_box["length"]
 
     def get_height(self):
-        return self.height
+        return self.bounding_box["height"]
 
     def add_text(self, p):
-        s = "%.0fx%.0fx%.0fmm" % (self.width, self.length, self.height)
-        txt = text(s, size=self.height / 10.0, halign="center", valign="center", font="Arial:style=Bold")
+        s = "%.0fx%.0fx%.0fmm" % (self.bounding_box["width"], self.bounding_box["length"], self.bounding_box["height"])
+        txt = text(s, size=self.bounding_box["height"] / 10.0, halign="center", valign="center", font="Arial:style=Bold")
         #txt = rotate(-45, [0, 0, 1]) (txt)
-        txt = translate([self.origin[0], self.origin[1], self.origin[2] + self.height / 2.0])(txt)
+        txt = translate([self.origin[0], self.origin[1], self.origin[2] + self.bounding_box["height"] / 2.0])(txt)
         return union() (p, txt)
     
 class Assembly:
@@ -61,17 +62,17 @@ class Assembly:
                 min_x = horizontal_position
         return max_x - min_x
 
-    def get_depth(self):
-        """Calculate the total depth of the assembly."""
+    def get_length(self):
+        """Calculate the total length of the assembly."""
         min_y = float('inf')
         max_y = float('-inf')
         for item_info in self.items.values():
-            item_depth = item_info['item'].get_depth()
-            depth_position = item_info['position'][1]  # Y position
-            if depth_position + item_depth > max_y:
-                max_y = depth_position + item_depth
-            if depth_position < min_y:
-                min_y = depth_position
+            item_length = item_info['item'].get_length()
+            length_position = item_info['position'][1]  # Y position
+            if length_position + item_length > max_y:
+                max_y = length_position + item_length
+            if length_position < min_y:
+                min_y = length_position
         return max_y - min_y
     
     def get_height(self):
@@ -89,11 +90,11 @@ class Assembly:
     def center_assembly(self):
         """Reposition all components so the assembly is centered at the origin."""
         width = self.get_width()
+        length = self.get_length()
         height = self.get_height()
-        depth = self.get_depth()
     
         x_offset = width / 2
-        y_offset = depth / 2
+        y_offset = length / 2
         z_offset = height / 2
 
         for item_info in self.items.values():
@@ -151,7 +152,7 @@ class Assembly:
         # Calculate the necessary translations for proper alignment
         offset = [0, 0, 0]  # Initialize offset for x, y, z
 
-        # Horizontal alignment (adjustments based on width or depth can be similarly computed)
+        # Horizontal alignment (adjustments based on width or length can be similarly computed)
         if align == 'left':
             if face_align == 'left':
                 offset[0] = base_origin[0] - base['item'].get_width() / 2.0
@@ -163,19 +164,19 @@ class Assembly:
             elif face_align == 'right':
                 offset[0] = base_origin[0] + base['item'].get_width() / 2.0 - added['item'].get_width()
 
-        # Horizontal alignment (adjustments based on width or depth can be similarly computed)
+        # Horizontal alignment (adjustments based on width or length can be similarly computed)
         if align == 'front':
             if face_align == 'front':
-                offset[1] = base_origin[0] - base['item'].get_depth() / 2.0
+                offset[1] = base_origin[0] - base['item'].get_length() / 2.0
             elif face_align == 'back':
-                offset[1] = base_origin[0] - base['item'].get_depth() / 2.0 - added['item'].get_depth()
+                offset[1] = base_origin[0] - base['item'].get_length() / 2.0 - added['item'].get_length()
         elif align == 'back':
             if face_align == 'front':
-                offset[1] = base_origin[0] + base['item'].get_depth() / 2.0
+                offset[1] = base_origin[0] + base['item'].get_length() / 2.0
             elif face_align == 'back':
-                offset[1] = base_origin[0] + base['item'].get_depth() / 2.0 - added['item'].get_depth()
+                offset[1] = base_origin[0] + base['item'].get_length() / 2.0 - added['item'].get_length()
 
-        # Assume get_height(), get_width(), get_depth() are implemented
+        # Assume get_height(), get_width(), get_length() are implemented
         if align == 'top':
             if face_align == 'top':
                 offset[2] = base['item'].get_height() - base_origin[2] - added['item'].get_height()
