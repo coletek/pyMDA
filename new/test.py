@@ -48,7 +48,7 @@ def build_geometry(config):
     assembly.add('pyramid', Pyramid(30, 30))
     assembly.add('cone', Cone(40, 40))
     assembly.add('tetrahedron', Tetrahedron(50), position=(0, 0, 0))
-    assembly.add('torus', Torus(60, 30, 100, 100))
+    assembly.add('torus', Torus(60, 30))
     assembly.add('triangular_prism', TriangularPrism(70, 70, 70), position=(0, 0, 0))
     assembly.add('hexagonal_prism', HexagonalPrism(80, 80))
     assembly.stack_y(10)

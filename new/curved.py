@@ -10,7 +10,7 @@ from geometry import *
 
 class CubeCurvedSides(Component):
     
-    def __init__(self, x, y, z, corner_radius, side_count, is_center = True, segments_count = 100):
+    def __init__(self, x, y, z, corner_radius, side_count, is_center = True):
         super().__init__()
         self.width = x
         self.length = y
@@ -25,7 +25,6 @@ class CubeCurvedSides(Component):
         self.z = z
         self.corner_radius = corner_radius
         self.side_count = side_count
-        self.segments_count = segments_count
         
     def create(self):
         
@@ -62,7 +61,7 @@ class CubeCurvedSides(Component):
         
 class CubeCurvedEdges(Component):
     
-    def __init__(self, x, y, z, corner_radius, is_center = True, segments_count = 100):
+    def __init__(self, x, y, z, corner_radius, is_center = True):
         super().__init__()
         self.width = x
         self.length = y
@@ -76,7 +75,6 @@ class CubeCurvedEdges(Component):
         self.y = y
         self.z = z
         self.corner_radius = corner_radius
-        self.segments_count = segments_count
 
     def create(self):
         
@@ -115,7 +113,7 @@ class CubeCurvedEdges(Component):
         
 class BarCurvedEdges(Component):
 
-    def __init__(self, length, thickness, corner_radius, segments_count = 100):
+    def __init__(self, length, thickness, corner_radius):
         super().__init__()
         self.width = thickness
         self.length = length
@@ -126,10 +124,9 @@ class BarCurvedEdges(Component):
         self.origin = [0, 0, 0]
         self.thickness = thickness
         self.corner_radius = corner_radius
-        self.segments_count = segments_count
         
     def create(self):
-        return CubeCurvedEdges(self.thickness, self.length, self.thickness, self.corner_radius, True, self.segments_count).create()
+        return CubeCurvedEdges(self.thickness, self.length, self.thickness, self.corner_radius, True).create()
 
 #
 # FIXME: only really works with ideal corner_radius and r selection
@@ -138,7 +135,7 @@ class BarCurvedEdges(Component):
 
 class CylinderCurvedEdges(Component):
     
-    def __init__(self, r, h, corner_radius, both_sides = True, is_center = True, is_add_test = True, segments_count = 100):
+    def __init__(self, r, h, corner_radius, both_sides = True, is_center = True, is_add_test = True):
         super().__init__()
         self.width = self.length = r * 2
         self.height = h
@@ -151,7 +148,6 @@ class CylinderCurvedEdges(Component):
         self.r = r
         self.corner_radius = corner_radius
         self.both_sides = both_sides
-        self.segments_count = segments_count
         
     def create(self):
 
@@ -180,7 +176,7 @@ class CylinderCurvedEdges(Component):
     
 class LineRoundViaHull(Component):
     
-    def __init__(self, p1, p2, radius, segments_count = 100):
+    def __init__(self, p1, p2, radius):
         super().__init__()
         self.width = p2[0] - p1[0] + radius * 2
         self.length = p2[1] - p1[1] + radius * 2
@@ -192,7 +188,6 @@ class LineRoundViaHull(Component):
         self.p1 = p1
         self.p2 = p2
         self.radius = radius
-        self.segments_count = segments_count
     
     def create(self):
 
@@ -211,21 +206,20 @@ class LineRoundViaHull(Component):
 
 class PolylineRound(Component):
 
-    def __init__(self, pts, radius, is_close = False, segments_count = 100):
+    def __init__(self, pts, radius, is_close = False):
         super().__init__()
         self.pts = pts
         self.radius = radius
-        self.segments_count = segments_count
         self.is_close = is_close
     
     def create(self):
 
         if self.is_close:
-            p = LineRoundViaHull(self.pts[len(self.pts) - 1], self.pts[0], self.radius, self.segments_count).create()
+            p = LineRoundViaHull(self.pts[len(self.pts) - 1], self.pts[0], self.radius).create()
         else:
             p = 0
         
         for i in range(len(self.pts) - 1):
-            p += LineRoundViaHull(self.pts[i], self.pts[i + 1], self.radius, self.segments_count).create()
+            p += LineRoundViaHull(self.pts[i], self.pts[i + 1], self.radius).create()
 
         return p

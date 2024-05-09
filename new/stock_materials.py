@@ -8,14 +8,13 @@ class SHS(Component):
     def __init__(self, width, thickness, length = 100, end1_cut_angle = 0.0, end2_cut_angle = 0.0):
         super().__init__()
         self.width = width
+        self.thickness = thickness
         self.length = length
-        self.height = thickness
+        self.end1_cut_angle = end1_cut_angle
+        self.end2_cut_angle = end2_cut_angle
         self.bounding_box["width"] = width
         self.bounding_box["length"] = length
         self.bounding_box["height"] = thickness
-        self.thickness = thickness
-        self.end1_cut_angle = end1_cut_angle
-        self.end2_cut_angle = end2_cut_angle
         
     def create(self):
         # works for -45 and 45.0
@@ -48,12 +47,11 @@ class CS(Component):
     def __init__(self, width, thickness, length):
         super().__init__()
         self.width = width
+        self.thickness = thickness
         self.length = length
-        self.height = thickness
         self.bounding_box["width"] = width
         self.bounding_box["length"] = length
         self.bounding_box["height"] = thickness
-        self.thickness = thickness
         
     def create(self):
         p = cube([self.width, self.length, self.width], center = True) - \
@@ -66,12 +64,12 @@ class LS(Component):
     def __init__(self, width, height, thickness, length):
         super().__init__()
         self.width = width
-        self.length = length
         self.height = height
+        self.thickness = thickness
+        self.length = length
         self.bounding_box["width"] = width
         self.bounding_box["length"] = length
         self.bounding_box["height"] = height
-        self.thickness = thickness
         
     def create(self):
         p = cube([self.width, self.length, self.height], center = True) - translate([-0.5 - self.thickness, 0, -0.5 - self.thickness]) (cube([self.width + 1, self.length + 2, self.height + 1], center = True))
@@ -84,7 +82,6 @@ class SB(Component):
         super().__init__()
         self.width = width
         self.length = length
-        self.height = width
         self.bounding_box["width"] = width
         self.bounding_box["length"] = length
         self.bounding_box["height"] = width
@@ -96,19 +93,16 @@ class SB(Component):
 
 class Rod(Component):
     
-    def __init__(self, dia, length, segments_count = 100):
+    def __init__(self, dia, length):
         super().__init__()
-        self.width = dia
+        self.dia = dia
         self.length = dia
-        self.height = length
         self.bounding_box["width"] = dia
         self.bounding_box["length"] = dia
         self.bounding_box["height"] = length
-        self.segments_count = segments_count
-        self.dia = dia
 
     def create(self):
-        return color(Aluminum) (cylinder(d = self.dia, h = self.height, center = True, segments = self.segments_count))
+        return color(Aluminum) (cylinder(d = self.dia, h = self.length, center = True, segments = self.segments_count))
 
 class Sheet(Component):
 
@@ -116,11 +110,10 @@ class Sheet(Component):
         super().__init__()
         self.width = width
         self.length = length
-        self.height = thickness
+        self.thickness = thickness
         self.bounding_box["width"] = width
         self.bounding_box["length"] = length
         self.bounding_box["height"] = thickness
-        self.thickness = thickness
 
     def create(self):
         p = cube([self.width, self.length, self.thickness], center = True)
@@ -129,19 +122,15 @@ class Sheet(Component):
 
 class Wedge(Component):
 
-    def __init__(self, r, h, sa, ea, segments_count = 100):
+    def __init__(self, r, h, sa, ea):
         super().__init__()
-        self.width = r
-        self.length = r
-        self.height = h
-        self.bounding_box["width"] = r
-        self.bounding_box["length"] = r
-        self.bounding_box["height"] = h
         self.r = r
         self.h = h
         self.sa = sa
         self.ea = ea
-        self.segments_count = segments_count
+        self.bounding_box["width"] = r
+        self.bounding_box["length"] = r
+        self.bounding_box["height"] = h
         # TODO make work for larger then 180deg
 
     def create(self):
@@ -159,14 +148,8 @@ class Wedge(Component):
 
 class Hinge(Component):
 
-    def __init__(self, d, axle_d, h, hinge_segments, l, tolerance, is_left, segments_count = 100):
+    def __init__(self, d, axle_d, h, hinge_segments, l, tolerance, is_left):
         super().__init__()
-        self.width = h
-        self.length = h
-        self.height = h
-        self.bounding_box["width"] = h
-        self.bounding_box["length"] = h
-        self.bounding_box["height"] = h
         self.d = d
         self.axle_d = d
         self.h = h
@@ -174,7 +157,9 @@ class Hinge(Component):
         self.l = l
         self.tolerance = tolerance
         self.is_left = is_left
-        self.segments_count = segments_count
+        self.bounding_box["width"] = h
+        self.bounding_box["length"] = h
+        self.bounding_box["height"] = h
     
     def create(self):
 
