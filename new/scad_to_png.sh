@@ -2,7 +2,7 @@
 
 openscad -o demo_geometry.png --autocenter --viewall --render a demo_geometry.scad
 openscad -o demo_curved.png --autocenter --viewall --render a demo_curved.scad
-openscad -o demo_pts.png --autocenter --viewall --render a demo_pts.scad
+#openscad -o demo_pts.png --autocenter --viewall --render a demo_pts.scad
 openscad -o demo_plates.png --autocenter --viewall --render a demo_plates.scad
 openscad -o demo_holes.png --autocenter --viewall --render a demo_holes.scad
 openscad -o demo_features.png --autocenter --viewall --render a demo_features.scad
