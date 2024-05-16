@@ -245,3 +245,317 @@ class PCBCamera(Component):
     
         return p
         
+
+class LED():
+    '''@bom_part("RGB LED (ASMB-MTB1-0A3A2)", 0.98)'''
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+        
+    def create():
+        return color(White) (translate([0, 0, self.config['height'] / 2.0]) (cube([self.config['length'], self.config['width'], self.config['height']], center = True)))
+
+class button_tact():
+
+    def __init__():
+        super().__init__()
+        self.config = config
+        
+    def create():
+        return color(Aluminum) (translate([0, self.config['length'] / 2.0 + (self.config['length_all'] - self.config['length']), 0]) (rotate(90, [1, 0, 0]) (import_stl("cots/EVQP7-JA-01P.stl"))))
+
+    def pcb_outline():
+        return translate([0, self.config['length'] / 2.0 + (self.config['length_all'] - self.config['length']), 0]) (cube([self.config['width'], self.config['length'], self.config['pcb_thickness'] + 2], center = True))
+
+# TODO: PORT BELOW
+    
+def switch_pins_holes(is_holes = False):
+
+    pin_ground_pitch = 14.2
+    
+    pin_pitch = 2.0
+
+    if is_holes:
+        pin_ground_height = pcb_thickness + 2
+        pin_ground_z_offset = 0.0
+        pin_ground = cylinder(d = 1.25, h = pin_ground_height, center = True, segments = segments_count)
+        pin_height = pcb_thickness + 2
+        pin_dia = 0.8
+    else:
+        pin_ground_height = 2.8
+        pin_ground_z_offset = 0.5
+        pin_ground = color(Brass) (cube([1.2, 0.4, pin_ground_height], center = True))
+        pin_height = pin_ground_height - pin_ground_z_offset
+        pin_dia = 0.5
+
+    pin = color(Brass) (cylinder(d = pin_dia, h = pin_height, center = True, segments = segments_count))
+
+    # data pins
+    p = translate([0, -pin_pitch / 2.0 - pin_pitch * 2.0, 0]) (pin) + \
+        translate([0, -pin_pitch / 2.0 - pin_pitch, 0]) (pin) + \
+        translate([0, -pin_pitch / 2.0, 0]) (pin) + \
+        translate([0, pin_pitch / 2.0, 0]) (pin) + \
+        translate([0, pin_pitch / 2.0 + pin_pitch, 0]) (pin) + \
+        translate([0, pin_pitch / 2.0 + pin_pitch * 2.0, 0]) (pin)
+
+    # ground pins
+    p += translate([0, -pin_ground_pitch / 2.0, pin_ground_z_offset]) (pin_ground) + \
+        translate([0, pin_ground_pitch / 2.0, pin_ground_z_offset]) (pin_ground)
+
+    return p
+
+@bom_part("Switch Slide SP4T (SK-14D01-G 6)", 0.47)
+def switch(pos = 0):
+    # https://www.digikey.com.au/product-detail/en/c-k/SK-14D01-G-6/CKN10368-ND/2747169
+
+    b = color(Aluminum) (cube([switch_width, switch_length, switch_height], center = True))
+    a = color(BlackPaint) (cube([9 + 2, switch_knob_width, switch_knob_width], center = True))
+
+    pin_ground_height = 2.8
+    pin_ground_z_offset = 0.5
+    pin_height = pin_ground_height - pin_ground_z_offset
+    
+    p = b + \
+        translate([9 / 2.0 - 1, -switch_pos_pitch / 2.0 - switch_pos_pitch + switch_pos_pitch * pos, -switch_height / 2.0 + switch_knob_pos_z]) (a) + \
+        translate([0, 0, - switch_height / 2.0 - pin_height / 2.0]) (switch_pins_holes())
+
+    p = translate([0, 0, switch_height / 2.0]) (p)
+    
+    return p
+
+@bom_part("Battery 14500 800mAh 3.7V (SB2301)", 7.01)
+def battery():
+    b = color(Blue) (cylinder(d = battery_dia, h = battery_length, center = True, segments = segments_count))
+
+    leg_total_height = battery_leg_height + battery_dia / 2.0
+    l = color(Aluminum) (cube([battery_leg_width, leg_total_height, battery_leg_thickness], center = True))
+
+    p = b + \
+        translate([0, leg_total_height / 2.0, battery_length / 2.0 + battery_leg_thickness / 2.0]) (l) + \
+        translate([0, leg_total_height / 2.0, -battery_length / 2.0 - battery_leg_thickness / 2.0]) (l)
+    
+    return p
+    
+@bom_part("Speaker 82dB 23mm (SP-2306Y)", 2.49)
+def speaker():
+    return color(Steel) (import_stl("cots/SP-2306Y-1.stl"))
+
+@bom_part("Coin Vibration 10000rpm 3V (316040004)", 1.27)
+def vibrator():    
+    return color(Steel) (translate([0, 0, vibrator_thickness / 2.0]) (cylinder(d = vibrator_dia, h = vibrator_thickness, center = True, segments = segments_count) + \
+                        translate([vibrator_dia / 2.0 + vibrator_connector_length / 2.0 - 1, 0, 0]) (cube([vibrator_connector_length + 2, vibrator_connector_width, 2.7], center = True))))
+
+@bom_part("Wireless Charging Coil (IWAS3827ECEB100J50)", 1.8)
+def coil():
+    # TODO: revise to include backplate
+    return color([0.722, 0.451, 0.20]) (translate([-21.5, 69.8, -46.72]) (rotate(90, [1, 0, 0]) (import_stl("cots/IWAS-3827EC-50.stl"))))
+
+def magnet_connector_pins_holes(is_holes = False):
+
+    pin_pitch = 2.2
+    pin_ground_pitch = 10.0
+    
+    if is_holes:
+        pin_height = pcb_thickness + 2
+        pin_dia = 0.9
+        pin_ground_dia = 1.15
+    else:
+        pin_height = 1.15 + magnet_connector_pins_extra_height
+        pin_dia = 0.65
+        pin_ground_dia = 1.0
+        
+    pin = color(Brass) (cylinder(d = pin_dia, h = pin_height, center = True, segments = segments_count))
+    pin_ground = color(Brass) (cylinder(d = pin_ground_dia, h = pin_height, center = True, segments = segments_count))
+
+    pin_ground_offset_y = -0.2
+    
+    # data pins
+    p = translate([-pin_pitch / 2.0 - pin_pitch, 0, 0]) (pin) + \
+         translate([-pin_pitch / 2.0, 0, 0]) (pin) + \
+         translate([pin_pitch / 2.0, 0, 0]) (pin) + \
+         translate([pin_pitch / 2.0 + pin_pitch, 0, 0]) (pin)
+
+    # ground pins
+    p += translate([-pin_ground_pitch / 2.0, pin_ground_offset_y, 0]) (pin_ground) + \
+         translate([pin_ground_pitch / 2.0, pin_ground_offset_y, 0]) (pin_ground)
+    
+    return p
+
+@bom_part("Magnet Connector (HTP-CON-M411P-F)", 4.64)
+def magnet_connector():
+
+    back_x = 15.0
+    back_y = 3.1
+    back_z = magnet_connector_height_from_pcb
+    back_r = 2.14 # estimate
+
+    mid1_x = 15.0
+    mid1_y = 4.31 - 3.1
+
+    mid2_x = 14.2
+    mid2_y = 5.81 - 4.31
+    mid2_r = 2.57 # estimate
+    
+    mid_z = 4.7
+
+    front_y = 6.66 - 5.81
+    front_z = 2.57
+    front_x = 10.714 # estimate
+
+    pin_pogo_dia = 1.45
+    pin_pogo_height = 0.01
+    
+    back = color(BlackPaint) (hull() (
+        translate([0, 0, -back_z / 2.0 + (back_z - mid_z / 2.0) / 2.0]) (cube([back_x, back_y, back_z - mid_z / 2.0], center = True)),
+        translate([back_x / 2.0 - mid_z / 4.0, 0, back_z / 2.0 - mid_z / 4.0]) (rotate(90, [1, 0, 0]) (cylinder(d = mid_z / 2.0, h = back_y, center = True, segments = segments_count))),
+        translate([-back_x / 2.0 + mid_z / 4.0, 0, back_z / 2.0 - mid_z / 4.0]) (rotate(90, [1, 0, 0]) (cylinder(d = mid_z / 2.0, h = back_y, center = True, segments = segments_count)))
+        ))
+    
+    mid1 = color(BlackPaint) (hull() (
+        translate([0, 0, -mid_z / 4.0]) (cube([mid1_x, mid1_y, mid_z / 2.0], center = True)),
+        translate([mid1_x / 2.0 - mid_z / 4.0, 0, mid_z / 4.0]) (rotate(90, [1, 0, 0]) (cylinder(d = mid_z / 2.0, h = mid1_y, center = True, segments = segments_count))),
+        translate([-mid1_x / 2.0 + mid_z / 4.0, 0, mid_z / 4.0]) (rotate(90, [1, 0, 0]) (cylinder(d = mid_z / 2.0, h = mid1_y, center = True, segments = segments_count))),
+        ))
+    
+    mid2 = color(Aluminum) (hull() (
+        translate([mid2_x / 2.0 - mid_z / 2.0, 0, 0]) (rotate(90, [1, 0, 0]) (cylinder(d = mid_z, h = mid2_y, center = True, segments = segments_count))),
+        translate([-mid2_x / 2.0 + mid_z / 2.0, 0, 0]) (rotate(90, [1, 0, 0]) (cylinder(d = mid_z, h = mid2_y, center = True, segments = segments_count)))
+        ))
+    
+    front = color(BlackPaint) (hull() (
+        translate([front_x / 2.0 - front_z / 2.0, 0, 0]) (rotate(90, [1, 0, 0]) (cylinder(d = front_z, h = front_y, center = True, segments = segments_count))),
+        translate([-front_x / 2.0 + front_z / 2.0, 0, 0]) (rotate(90, [1, 0, 0]) (cylinder(d = front_z, h = front_y, center = True, segments = segments_count)))
+        ))
+
+    pin_pitch = 2.2
+    pin_height = 1.15 + magnet_connector_pins_extra_height
+    pin_offset_y = -back_y / 2.0 + 2.1
+    pin_pogo = color(Brass) (cylinder(d = pin_pogo_dia, h = pin_pogo_height, center = True, segments = segments_count))
+    
+    back += translate([0, -pin_offset_y, -pin_height / 2.0 - back_z / 2.0]) (magnet_connector_pins_holes())
+
+    front += translate([-pin_pitch / 2.0 - pin_pitch, front_y / 2.0, 0]) (rotate(90, [1, 0, 0]) (pin_pogo)) + \
+             translate([-pin_pitch / 2.0, front_y / 2.0, 0]) (rotate(90, [1, 0, 0]) (pin_pogo)) + \
+             translate([pin_pitch / 2.0, front_y / 2.0, 0]) (rotate(90, [1, 0, 0]) (pin_pogo)) + \
+             translate([pin_pitch / 2.0 + pin_pitch, front_y / 2.0, 0]) (rotate(90, [1, 0, 0]) (pin_pogo))
+    
+    p = union() (
+        translate([0, pin_offset_y, (mid_z - back_z) / 2.0]) (back),
+        translate([0, mid1_y / 2.0 - (back_y / 2.0 - pin_offset_y) + back_y, 0]) (mid1),
+        translate([0, mid2_y / 2.0 - (back_y / 2.0 - pin_offset_y) + back_y + mid1_y, 0]) (mid2),
+        translate([0, front_y / 2.0 - (back_y / 2.0 - pin_offset_y) + back_y + mid1_y + mid2_y, 0]) (front)
+        )
+
+    p = translate([0, 0, back_z - mid_z / 2.0]) (p)
+    
+    return p
+
+#@bom_part("USB-C (USB4110-GF-A)", 1.42)
+#def usb():
+#    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/USB4110-GF-A--3DModel-STEP-56544.stl"))))
+
+@bom_part("Rubber Buttons", 0.5)
+def rubber_buttons():
+
+    d = 0
+    if button_enable:
+        d += button_knob_travel
+    
+    b1_angle = 0
+    b2_angle = -switch_spacing
+    b3_angle = switch_spacing
+    
+    # cylinder buttons
+    button = translate([-rubber_button_length / 2.0 - rubber_button_support_thickness / 4.0, 0, 0]) (rotate(90, [0, 1, 0]) (cylinder(d = rubber_button_dia, h = rubber_button_length, center = True, segments = segments_count)))
+    p = translate([(bl + d) * cos(math.radians(b1_angle)), (bl + d) * sin(math.radians(b1_angle)), 0]) (rotate(b1_angle, [0, 0, 1]) (button)) + \
+        translate([(bl + d) * cos(math.radians(b2_angle)), (bl + d) * sin(math.radians(b2_angle)), 0]) (rotate(b2_angle, [0, 0, 1]) (button)) + \
+        translate([(bl + d) * cos(math.radians(b3_angle)), (bl + d) * sin(math.radians(b3_angle)), 0]) (rotate(b3_angle, [0, 0, 1]) (button))
+    
+    # backplane
+    o = cylinder(d = enclosure_id - d, h = rubber_button_support_height, segments = segments_count, center = True)
+    i = cylinder(d = enclosure_id - d - rubber_button_support_thickness, h = rubber_button_support_height + 2.0, segments = segments_count, center = True)
+    aoi1 = o - i
+    aoi = cube([rubber_button_support_length, rubber_button_support_length, rubber_button_support_height], center = True)
+    aoi2 = translate([bl * cos(math.radians(b1_angle)), bl * sin(math.radians(b1_angle)), 0]) (rotate(180 + b1_angle, [0, 0, 1]) (aoi))
+    p += intersection() (aoi1, aoi2)
+    
+    return color(BlackPaint) (p)
+
+@bom_part("Custom Enclosure Top Lens", 0.5)
+def enclosure_top_lens():
+    p = intersection() (enclosure_top_curve(), enclosure_top_lens_aoi())
+
+    # mounting support (rough)
+    o = sphere(d = enclosure_top_d - enclosure_wall_thickness * 2.0, segments = segments_count)
+    i = sphere(d = enclosure_top_d - enclosure_wall_thickness * 4.0, segments = segments_count)
+    p += translate([0, 0, -enclosure_top_r + enclosure_top_h]) (o - i)
+    cut = cube([enclosure_top_d + 2, enclosure_top_d + 2, enclosure_top_d - enclosure_top_h + 1], center = True) # cut bottom
+    p -= translate([0, 0, -(enclosure_top_d - enclosure_top_h + 1) / 2.0]) (cut)    
+    p -= cylinder(d = enclosure_lens_id, h = enclosure_top_h * 2.0, center = True, segments = segments_count) # cut speaker hole
+    c = cube([enclosure_od / 2.0, enclosure_od, enclosure_top_h + 6.0], center = True) # cut in half
+    p -= rotate(enclosure_lens_angle, [0, 0, 1]) (translate([0, 0, enclosure_top_h / 2.0 - 1]) (translate([enclosure_od / 4.0, 0, 0]) (c)))
+    
+    p = translate([0, 0, pcb_thickness + magnet_connector_height_from_pcb + sla_cots_clearance]) (p)
+
+    # colors - https://www.oliversbabycare.co.uk/wp-content/uploads/2019/02/Meemoo-Meelight-Portable-Nightlight-7.png
+    # eec181, fedca7, ffeccc
+    return color([0.93, 0.757, 0.506, 0.9]) (p)
+
+# KHL
+
+def usb():
+    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/USB4110-GF-A--3DModel-STEP-56544.stl"))))
+
+def led():
+    return translate([-led_length / 2.0, led_width / 2.0, 0.0254]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/LSM0603XXXV.stl"))))
+
+def button():
+    return translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/EVQP7-JA-01P.stl"))))
+
+def battery():
+    return color(Aluminum) (cube_curved_edges(battery_width, battery_length, battery_thickness, battery_corner_radius, segments_count, True))
+
+# WHA
+
+@bom_part("Generic ID Card", 0.0)
+def card():
+    p = cube([card_width, card_length, card_thickness], center = True)
+    return color(Blue) (p)
+
+@bom_part("ePaper (ER-EPD0154-2R)", 4.67)
+def lcd():
+    pcb = color(colour_pcb) (cube([lcd_width, lcd_length, lcd_thickness], center = True))
+
+    cut_window = cube([lcd_window_width, lcd_window_length, lcd_thickness + 2], center = True)
+    window = color([0.5, 0.5, 0.5, 0.5]) (cube([lcd_window_width, lcd_window_length, lcd_thickness], center = True))
+
+    p = pcb - \
+        translate([0, lcd_window_length / 2.0 + lcd_length / 2.0 - lcd_window_length - lcd_window_offset_y, 0]) (cut_window) + \
+        translate([0, lcd_window_length / 2.0 + lcd_length / 2.0 - lcd_window_length - lcd_window_offset_y, 0]) (window)
+    
+    return p
+
+@bom_part("3.7V 240mAh 1S 20C LiPo (Z240S20C)", 4.79, currency="AU$")
+def battery():
+    p = cube([battery_width, battery_length, battery_thickness], center = True)
+    return color(Aluminum) (p)
+
+@bom_part("Coin Vibration 10000rpm 3V (316040004)", 1.22)
+def vibrator():    
+    return color(Steel) (translate([0, 0, vibrator_thickness / 2.0]) (cylinder(d = vibrator_dia, h = vibrator_thickness, center = True, segments = segments_count) + \
+                        translate([vibrator_dia / 2.0 + vibrator_connector_length / 2.0 - 1, 0, 0]) (cube([vibrator_connector_length + 2, vibrator_connector_width, 2.7], center = True))))
+
+@bom_part("Switch Tactile SPST-NO (EVQ-P7A01P)", 0.31)
+def button():
+    return color(Aluminum) (translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (rotate(90, [1, 0, 0]) (import_stl("cots/EVQP7-JA-01P.stl"))))
+
+def usb():
+    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/USB4110-GF-A--3DModel-STEP-56544.stl"))))
+
+def button_outline():
+    return translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (cube([button_width, button_length, pcb_thickness + 2], center = True
+))
+
+def lcd_connector_outline():
+    return cube([lcd_connector_width, lcd_connector_length, pcb_thickness + 2], center = True)
+
