@@ -11,7 +11,7 @@ from pyMDA.new.core import *
 class Cube(Component):
     ''' 4sides (square) with depth '''
     
-    def __init__(self, w, l, h, is_center = True, is_add_text = True):
+    def __init__(self, w, l, h, is_center = True, is_add_text = False):
         super().__init__()
         self.width = w
         self.length = l
@@ -42,7 +42,7 @@ class Cube(Component):
 
 class Cylinder(Component):
     
-    def __init__(self, d, h, is_center = True, is_add_text = True):
+    def __init__(self, d, h, is_center = True, is_add_text = False):
         super().__init__()
         self.dia = d
         self.height = h
@@ -70,7 +70,7 @@ class Cylinder(Component):
 
 class Sphere(Component):
     
-    def __init__(self, d, is_center = True, is_add_text = True):
+    def __init__(self, d, is_center = True, is_add_text = False):
         super().__init__()
         self.dia = d
         self.is_center = is_center
@@ -155,7 +155,7 @@ class Cone(Component):
 
 class Tetrahedron(Component):
 
-    def __init__(self, side_length, is_center = False, is_add_text = True):
+    def __init__(self, side_length, is_center = False, is_add_text = False):
         super().__init__()
         self.side_length = side_length
         self.is_center = is_center
@@ -212,7 +212,7 @@ class Tetrahedron(Component):
     
 class Torus(Component): # donut
 
-    def __init__(self, dia, thickness, is_center = True, is_add_text = True):
+    def __init__(self, dia, thickness, is_center = True, is_add_text = False):
         super().__init__()
         self.dia = dia
         self.thickness = thickness
@@ -251,7 +251,7 @@ class Torus(Component): # donut
 class TriangularPrism(Component):
     '''3sides (triangle) with depth'''
     
-    def __init__(self, w, l, h, is_center = True, is_add_text = True):
+    def __init__(self, w, l, h, is_center = True, is_add_text = False):
         super().__init__()
         self.width = w
         self.length = l
@@ -300,7 +300,7 @@ class TriangularPrism(Component):
 
 class HexagonalPrism(Component): # 6sides (hexagonal) base with depth
 
-    def __init__(self, cle, h, is_center = True, is_add_text = True):
+    def __init__(self, cle, h, is_center = True, is_add_text = False):
         super().__init__()
         self.cle = cle
         self.height = h

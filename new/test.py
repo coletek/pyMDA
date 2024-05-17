@@ -2,26 +2,26 @@ import argparse
 from solid import *
 from solid.utils import *
 
-from core import *
-from geometry import *
-from curved import *
-from bezier_curve import *
-from plates import *
+from pyMDA.new.core import *
+from pyMDA.new.geometry import *
+from pyMDA.new.curved import *
+from pyMDA.new.bezier_curve import *
+from pyMDA.new.plates import *
 
-from stock_materials import *
-from stock_magnets import *
-from stock_motors import *
-from stock_bearings import *
-from stock_fixtures import *
-from stock_electronics import *
+from pyMDA.new.stock_materials import *
+from pyMDA.new.stock_magnets import *
+from pyMDA.new.stock_motors import *
+from pyMDA.new.stock_bearings import *
+from pyMDA.new.stock_fixtures import *
+from pyMDA.new.stock_electronics import *
 
-from collar import *
-from cam_profile import *
-from scotch_yoke import *
+from pyMDA.new.collar import *
+from pyMDA.new.cam_profile import *
+from pyMDA.new.scotch_yoke import *
 
-from enclosures import *
+from pyMDA.new.enclosures import *
 
-from holes import *
+from pyMDA.new.holes import *
 
 #
 # NOTES:

@@ -151,14 +151,19 @@ class Stepper(Component):
         self.config = config
         
     def create(self):
-        
+
+        # https://www.omc-stepperonline.com/e-series-nema-17-bipolar-1-8deg-17ncm-24-07oz-in-1a-42x42x23mm-4-wires-17he08-1004s
+        # perhaps worth noting that some of this info is different for the same NEMA type (e.g. length, and bore_length)
         if self.config['nema_type'] == 17:
             self.config['width'] = 42
             self.config['bore'] = 5
-            self.config['bore_length'] = 14#24
             self.config['mounting_hole_pitch'] = 31
             self.config['mounting_hole_size'] = 2.5 #m3_tap_hole_size
-            self.config['mounting_hole_depth'] = 4
+            self.config['mounting_hole_depth'] = 3
+            if 'length' not in self.config:
+                self.config['length'] = 23
+            if 'bore_length' not in self.config:
+                self.config['bore_length'] = 20
         else:
             print ("TODO: NEMA TYPE NOT DEFINED")
         
@@ -185,10 +190,12 @@ class Pulley(Component):
         super().__init__()
         self.config = config
         self.angle = angle
-        
+
     def create(self):
+        self.config["length"] = 15.5
+        
         return rotate(self.angle, [1, 0, 0]) (
-            translate([-6.95, -7, -7]) (
+            translate([0, -7, -7]) (
                 color(Aluminum) (
                     import_stl("cots/stepper/GT2_16T.STL")
                 )
@@ -197,17 +204,24 @@ class Pulley(Component):
 
 class StepperAndPulley(Component):
 
-    def __init__(self, stepper_config, pulley_config, angle = 0.0):
+    def __init__(self, stepper_config, pulley_config, assembly_config, angle = 0.0):
         super().__init__()
         self.stepper_config = stepper_config
         self.pulley_config = pulley_config
+        self.assembly_config = assembly_config
         self.angle = angle
         
     def create(self):
+
+        rot = -270
+        if self.assembly_config["is_thread_close_to_motor"]:
+            rot += 180
+            self.assembly_config['gap'] += 15.5
+        
         return union()(
             Stepper(self.stepper_config).create(),
-            translate([0, 13, 0]) (
-                rotate(-270, [0, 0, 1]) (
+            translate([0, self.assembly_config['gap'], 0]) (
+                rotate(rot, [0, 0, 1]) (
                     Pulley(self.pulley_config, self.angle).create()
                 )
             )

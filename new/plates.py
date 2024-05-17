@@ -1,7 +1,8 @@
 import math
 from solid import *
 from solid.utils import *
-from core import *
+
+from pyMDA.new.core import *
 
 class PlateWithMountingHoles(Component):
 
@@ -102,5 +103,25 @@ class PlateWithFillets(Component):
             translate([x / 2.0, -y / 2.0, 0]) (f) + \
             translate([-x / 2.0, y / 2.0, 0]) (f) + \
             translate([-x / 2.0, -y / 2.0, 0]) (f)
+
+        return p
+
+class PlummerBlock(Component):
+
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+
+    def create(self):
+
+        c = cube([self.config["width"], self.config['dia'] + self.config['wall_thickness'] * 2.0, self.config['pitch']], center = True)
+        cc = cylinder(d=self.config["dia"] + self.config['wall_thickness'] * 2.0, h = self.config["width"], center = True, segments = self.segments_count)
+        h = cylinder(d=self.config["dia"], h=self.config["width"] + 2.0, center = True, segments = self.segments_count)
+        
+        d = self.config["pitch"]
+        p = hull() (translate([0, 0, self.config["pitch"] / 2.0]) (c),
+                    translate([0, 0, d]) (rotate(90, [0, 1, 0]) (cc)))
+
+        p -= translate([0, 0, d]) (rotate(90, [0, 1, 0]) (h))
 
         return p

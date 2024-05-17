@@ -1,7 +1,8 @@
 import math
 from solid import *
 from solid.utils import *
-from core import *
+
+from pyMDA.new.core import *
 
 class Collar(Component):
 

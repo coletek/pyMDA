@@ -2,7 +2,8 @@ import math
 import numpy as np
 from solid import *
 from solid.utils import *
-from core import *
+
+from pyMDA.new.core import *
 
 class BezierCurve:
 
