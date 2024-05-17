@@ -19,14 +19,14 @@ class Bearing(Component):
 class BearingPillowBlockUCP201(Component):
     '''@bom_part("Bearing Pillow Block (UCP201)", 22.42, 'A$')'''
     def create(self):
-        return color(BlackPaint) (rotate(90, [0, 1, 0]) (rotate(90, [0, 0, 1]) (translate([102.9, -77.5, -169.0]) (import_stl("cots/ucp201.stl")))))
+        return color(BlackPaint) (rotate(90, [0, 1, 0]) (rotate(90, [0, 0, 1]) (translate([102.9, -77.5, -169.0]) (import_stl("cots/bearings/ucp201.stl")))))
 
 class BearingPillowBlockUCP204(Component):
     '''@bom_part("Bearing Pillow Block (UCP204)", 27.19, 'A$')'''
     def create(self):
-        return color(BlackPaint) (import_stl("cots/ucp204.stl"))
+        return color(BlackPaint) (import_stl("cots/bearings/ucp204.stl"))
 
 class Bearing2BoltFlangeUCFL204(Component):
     '''@bom_part("Bearing 2 Bolt Flange (UCFL204)", 19.76, 'A$')'''
     def create(self):
-        return color(BlackPaint) (import_stl("cots/ucfl204.stl"))
+        return color(BlackPaint) (import_stl("cots/bearings/ucfl204.stl"))

@@ -105,17 +105,17 @@ class ServoRDS3225(Component):
 
     def create(self):
 
-        b = color(Aluminum) (import_stl("cots/RDS3225-bracket.stl"))
+        b = color(Aluminum) (import_stl("cots/servo/RDS3225-bracket.stl"))
 
         b = rotate(180, [1, 0, 0]) (b)
         b = rotate(90, [0, 0, 1]) (b)
         
         b = translate([-self.config['width'] / 2.0, -self.config['axle_pos'], 0]) (b)
         
-        s = color(BlackPaint) (import_stl("cots/RDS3225-servo.stl"))
+        s = color(BlackPaint) (import_stl("cots/servo/RDS3225-servo.stl"))
         
         if self.include_support_bracket:
-            s += color(Aluminum) (import_stl("cots/RDS3225-bracket-support.stl"))
+            s += color(Aluminum) (import_stl("cots/servo/RDS3225-bracket-support.stl"))
 
         s = rotate(180, [1, 0, 0]) (s)
         s = rotate(90, [0, 0, 1]) (s)
@@ -190,7 +190,7 @@ class Pulley(Component):
         return rotate(self.angle, [1, 0, 0]) (
             translate([-6.95, -7, -7]) (
                 color(Aluminum) (
-                    import_stl("cots/GT2_16T.STL")
+                    import_stl("cots/stepper/GT2_16T.STL")
                 )
             )
         )
@@ -231,25 +231,25 @@ class LinearActuatorPA14P(Component):
     def create(self):
         inch_to_mm = 25.4
         self.config['size'] += self.stroke
-        p = import_stl("cots/PA-14P-2.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-2.stl")
         if self.config['size'] == 4.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-4.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-4.stl")
         if self.config['size'] == 6.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-6.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-6.stl")
         if self.config['size'] == 8.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-8.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-8.stl")
         if self.config['size'] == 10.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-10.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-10.stl")
         if self.config['size'] == 12.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-12.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-12.stl")
         if self.config['size'] == 18.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-18.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-18.stl")
         if self.config['size'] == 24.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-24.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-24.stl")
         if self.config['size'] == 30.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-30.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-30.stl")
         if self.config['size'] == 40.0 * inch_to_mm:
-            p = import_stl("cots/PA-14P-40.stl")
+            p = import_stl("cots/linear_actuators/PA-14P-40.stl")
         return color(BlackPaint) (translate([-self.config['dist_to_mount'], self.config['dist_to_mount2'], self.config['width'] / 2.0]) (p))
 
 class LinearActuatorMountingBracketBRK14(Component):
@@ -260,7 +260,7 @@ class LinearActuatorMountingBracketBRK14(Component):
         self.config = config
 
     def create(self):
-        return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - self.config['width'] / 2.0, 11.899 - self.config['height_to_axle'], self.config['length'] - self.config['length_to_axle']]) (import_stl("cots/BRK-14.stl")))))
+        return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - self.config['width'] / 2.0, 11.899 - self.config['height_to_axle'], self.config['length'] - self.config['length_to_axle']]) (import_stl("cots/linear_actuators/BRK-14.stl")))))
     
 class LinearActuatorMountingBracketBRK03(Component):
     # waiting on revised 3D model
@@ -272,7 +272,7 @@ class LinearActuatorMountingBracketBRK03(Component):
         
     def create(self):
         inch_to_mm = 25.4
-        return color(BlackPaint) (translate([10.0, (0.79 + 0.75 / 2.0 + 5.16 + 0.11) * inch_to_mm + 1, 0]) (rotate(90, [1, 0, 0]) (rotate(90, [0, 0, 1]) (scale(20.066/50.8386) (import_stl("cots/BRK-03.stl"))))))
+        return color(BlackPaint) (translate([10.0, (0.79 + 0.75 / 2.0 + 5.16 + 0.11) * inch_to_mm + 1, 0]) (rotate(90, [1, 0, 0]) (rotate(90, [0, 0, 1]) (scale(20.066/50.8386) (import_stl("cots/linear_actuators/BRK-03.stl"))))))
     
 class LinearActuatorPA12T(Component):
     # waiting on revised 3D model
@@ -283,7 +283,7 @@ class LinearActuatorPA12T(Component):
         self.config = config
 
     def create(self):
-        return color(BlackPaint) (translate([0, -self.config['dist_to_mount'], 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/PA-12-1.06.stl")))))
+        return color(BlackPaint) (translate([0, -self.config['dist_to_mount'], 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/linear_actuators/PA-12-1.06.stl")))))
 
 class LinearActuatorAndBracket(Component):
 

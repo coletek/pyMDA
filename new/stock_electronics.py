@@ -164,7 +164,7 @@ class RPI(Component):
         self.config = config
 
     def create(self):
-        p = import_stl("cots/rpi3.stl")
+        p = import_stl("cots/rpi/rpi3.stl")
         p = translate([self.config['length_offset'] - self.config['length'] / 2.0,
                        self.config['width_offset'] - self.config['width'] / 2.0,
                        -1.6]) (p)
@@ -181,7 +181,7 @@ class RPIDisplay(Component):
         self.config = config
 
     def create(self):
-        p = import_stl("cots/rpi-display.stl")
+        p = import_stl("cots/rpi/rpi-display.stl")
         p = translate([self.config['width_offset'] + self.config['width'] / 2.0, \
                        self.config['length_offset'] - self.config['length'] / 2.0,
                        -1.8]) (p)
@@ -199,7 +199,7 @@ class NVidiaJetsonNano(Component):
         
 
     def create(self):
-        p = import_stl("cots/p3450-p3449-a02-p3448-a02.stl")
+        p = import_stl("cots/nvidia_jetson_nano/p3450-p3449-a02-p3448-a02.stl")
         p = translate([self.config['mounting_holes_offset'] - self.config['length'] / 2.0,
                        17.0 - self.config['width'] / 2.0,
                        0]) (p)
@@ -262,7 +262,7 @@ class button_tact():
         self.config = config
         
     def create():
-        return color(Aluminum) (translate([0, self.config['length'] / 2.0 + (self.config['length_all'] - self.config['length']), 0]) (rotate(90, [1, 0, 0]) (import_stl("cots/EVQP7-JA-01P.stl"))))
+        return color(Aluminum) (translate([0, self.config['length'] / 2.0 + (self.config['length_all'] - self.config['length']), 0]) (rotate(90, [1, 0, 0]) (import_stl("cots/pcb/buttons/EVQP7-JA-01P.stl"))))
 
     def pcb_outline():
         return translate([0, self.config['length'] / 2.0 + (self.config['length_all'] - self.config['length']), 0]) (cube([self.config['width'], self.config['length'], self.config['pcb_thickness'] + 2], center = True))
@@ -338,7 +338,7 @@ def battery():
     
 @bom_part("Speaker 82dB 23mm (SP-2306Y)", 2.49)
 def speaker():
-    return color(Steel) (import_stl("cots/SP-2306Y-1.stl"))
+    return color(Steel) (import_stl("cots/speakers/SP-2306Y-1.stl"))
 
 @bom_part("Coin Vibration 10000rpm 3V (316040004)", 1.27)
 def vibrator():    
@@ -348,7 +348,7 @@ def vibrator():
 @bom_part("Wireless Charging Coil (IWAS3827ECEB100J50)", 1.8)
 def coil():
     # TODO: revise to include backplate
-    return color([0.722, 0.451, 0.20]) (translate([-21.5, 69.8, -46.72]) (rotate(90, [1, 0, 0]) (import_stl("cots/IWAS-3827EC-50.stl"))))
+    return color([0.722, 0.451, 0.20]) (translate([-21.5, 69.8, -46.72]) (rotate(90, [1, 0, 0]) (import_stl("cots/pcb/coil/IWAS-3827EC-50.stl"))))
 
 def magnet_connector_pins_holes(is_holes = False):
 
@@ -452,7 +452,7 @@ def magnet_connector():
 
 #@bom_part("USB-C (USB4110-GF-A)", 1.42)
 #def usb():
-#    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/USB4110-GF-A--3DModel-STEP-56544.stl"))))
+#    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/pcb/usb/USB4110-GF-A--3DModel-STEP-56544.stl"))))
 
 @bom_part("Rubber Buttons", 0.5)
 def rubber_buttons():
@@ -504,13 +504,13 @@ def enclosure_top_lens():
 # KHL
 
 def usb():
-    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/USB4110-GF-A--3DModel-STEP-56544.stl"))))
+    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/pcb/usb/USB4110-GF-A--3DModel-STEP-56544.stl"))))
 
 def led():
-    return translate([-led_length / 2.0, led_width / 2.0, 0.0254]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/LSM0603XXXV.stl"))))
+    return translate([-led_length / 2.0, led_width / 2.0, 0.0254]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/pcb/led/LSM0603XXXV.stl"))))
 
 def button():
-    return translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/EVQP7-JA-01P.stl"))))
+    return translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/pcb/buttons/EVQP7-JA-01P.stl"))))
 
 def battery():
     return color(Aluminum) (cube_curved_edges(battery_width, battery_length, battery_thickness, battery_corner_radius, segments_count, True))
@@ -547,10 +547,10 @@ def vibrator():
 
 @bom_part("Switch Tactile SPST-NO (EVQ-P7A01P)", 0.31)
 def button():
-    return color(Aluminum) (translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (rotate(90, [1, 0, 0]) (import_stl("cots/EVQP7-JA-01P.stl"))))
+    return color(Aluminum) (translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (rotate(90, [1, 0, 0]) (import_stl("cots/switch/EVQP7-JA-01P.stl"))))
 
 def usb():
-    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/USB4110-GF-A--3DModel-STEP-56544.stl"))))
+    return translate([0, 0, usb_height / 2.0]) (rotate(90, [1, 0, 0]) (color(Aluminum) (import_stl("cots/pcb/usb/USB4110-GF-A--3DModel-STEP-56544.stl"))))
 
 def button_outline():
     return translate([0, button_length / 2.0 + (button_length_all - button_length), 0]) (cube([button_width, button_length, pcb_thickness + 2], center = True
