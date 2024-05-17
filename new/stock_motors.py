@@ -184,7 +184,7 @@ class Stepper(Component):
     
         return color(BlackPaint) (p)
 
-class Pulley(Component):
+class TeethedPulley(Component):
 
     def __init__(self, config, angle = 0):
         super().__init__()
@@ -202,7 +202,7 @@ class Pulley(Component):
             )
         )
 
-class StepperAndPulley(Component):
+class StepperAndTeethedPulley(Component):
 
     def __init__(self, stepper_config, pulley_config, assembly_config, angle = 0.0):
         super().__init__()
@@ -222,7 +222,7 @@ class StepperAndPulley(Component):
             Stepper(self.stepper_config).create(),
             translate([0, self.assembly_config['gap'], 0]) (
                 rotate(rot, [0, 0, 1]) (
-                    Pulley(self.pulley_config, self.angle).create()
+                    TeethedPulley(self.pulley_config, self.angle).create()
                 )
             )
         )

@@ -53,5 +53,7 @@ class ScotchYoke(Component):
 
         p += translate([x, 0, 0]) (PlummerBlock(self.config['sleeve']).create())
         p += translate([-x, 0, 0]) (PlummerBlock(self.config['sleeve']).create())
+
+        p = color(self.color) (p)
         
         return p

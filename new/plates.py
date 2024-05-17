@@ -3,6 +3,7 @@ from solid import *
 from solid.utils import *
 
 from pyMDA.new.core import *
+from pyMDA.new.geometry import *
 
 class PlateWithMountingHoles(Component):
 
@@ -124,4 +125,29 @@ class PlummerBlock(Component):
 
         p -= translate([0, 0, d]) (rotate(90, [0, 1, 0]) (h))
 
+        return p
+
+class Pulley(Component):
+    
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+
+    def create(self):
+
+        md = self.config["id"] * 2.0
+        
+        outter = cylinder(d = self.config["od"], h = self.config["thickness"], center = True, segments = self.segments_count)
+        mount = cylinder(d = md, h=self.config["thickness"], segments = self.segments_count)
+        inner = cylinder(d = self.config["id"], h = self.config["thickness"] * 2.0 + 2, center = True, segments = self.segments_count)
+        t = Torus(self.config["od"], self.config["edge_dia"]).create()
+
+        h = rotate(90, [1, 0, 0]) (cylinder(d = self.config["grub_screw_dia"], h = md / 2.0, center = True, segments = self.segments_count))
+        
+        p = outter + mount - inner - t - translate([0, md / 4.0, self.config["thickness"] / 2.0 * 1.5]) (h)
+
+        p = translate([0, 0, self.config['thickness']]) (rotate(180, [1, 0, 0]) (p))
+
+        p = color(self.color) (p)
+        
         return p

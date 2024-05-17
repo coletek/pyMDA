@@ -14,6 +14,9 @@ class Bearing(Component):
         outter = cylinder(d = self.config["od"], h = self.config["thickness"], segments = self.segments_count)
         inner = cylinder(d = self.config["id"], h = self.config["thickness"] + 2, segments = self.segments_count)
         p = outter - translate([0, 0, -1]) (inner)
+
+        p = color(self.color) (p)
+        
         return p
 
 class BearingPillowBlockUCP201(Component):

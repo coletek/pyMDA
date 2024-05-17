@@ -6,6 +6,7 @@ class Component:
     def __init__(self):
         self.config = {}
         self.segments_count = 100
+        self.color = {}
         self.width = 0
         self.length = 0
         self.height = 0
@@ -22,6 +23,9 @@ class Component:
 
     def set_segment_count(self, segments_count):
         self.segments_count = segments_count
+
+    def set_color(self, color):
+        self.color = color
 
     def get_origin(self):
         return self.origin

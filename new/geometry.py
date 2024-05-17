@@ -38,6 +38,8 @@ class Cube(Component):
         if self.is_add_text:
             p = self.add_text(p)
 
+        p = color(self.color) (p)
+            
         return p
 
 class Cylinder(Component):
