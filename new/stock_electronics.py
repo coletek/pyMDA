@@ -223,7 +223,7 @@ class PCBCamera(Component):
 
         b = PlateWithMountingHoles(self.pcb_config).create()
         colour_pcb = [0, 0.549, 0.29]
-        b = color(colour_pcb)
+        b = color(colour_pcb) (b)
         
         b = translate([self.camera_config['lens_offset_width'], self.camera_config['lens_offset_length'], 0]) (b)
         

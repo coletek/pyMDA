@@ -312,10 +312,11 @@ def build_stock_motors(config):
     config['gearbox_worm'] = {
         'width': 32.0,
         'length': 46.0,
-        'height': 25.0,
+        'height': 25.3, # 25.0 in theory
         'width_pitch': 18.0,
         'length_pitch': 33.0,
         'length_pitch_pos': 6.0,
+        'z_offset': 26.2-24.4,
         'shaft_pos': 9 + 6,
         'shaft': {
             'dia': 6.0,

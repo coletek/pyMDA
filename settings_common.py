@@ -160,6 +160,27 @@ m20_tap_hole_size_fine = 18.5
 m20_clearance_hole = 22.0
 
 #
+# nut inserts
+#
+# https://www.aliexpress.com/item/32879217592.html
+#
+
+m2_nut_insert = 3.5
+m2_5_nut_insert = 3.5
+m3_nut_insert = 4.2
+m3_nut_insert_long = 5.3
+m4_nut_insert = 5.2
+m4_nut_insert_long = 6.3
+m5_nut_insert = 6.3
+m5_nut_insert_long = 7.2
+m5_nut_insert2 = 8.3
+m6_nut_insert = 8.3
+m6_nut_insert_long = 10
+m8_nut_insert = 10
+m8_nut_insert_long = 12
+m10_nut_insert = 12
+
+#
 # screw threads:
 #
 # * https://www.diydata.com/information/screwholes/screwholes.php

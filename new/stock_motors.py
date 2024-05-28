@@ -84,7 +84,7 @@ class MotorDCwGearboxWorm(Assembly):
         
         p = g + translate([-self.motor_config['shaft_dia'] / 2.0,
                            self.gearbox_config['length'] - self.gearbox_config['shaft_pos'],
-                           -self.gearbox_config['height'] / 2.0]) (rotate(90, [1, 0, 0]) (m))
+                           -self.gearbox_config['height'] / 2.0] - self.gearbox_config['z_offset']) (rotate(90, [1, 0, 0]) (m))
         
         return p
 

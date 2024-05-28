@@ -214,8 +214,8 @@ def pcb_camera(pcb_width, pcb_length, pcb_thickness,
                                    pcb_mounting_hole_dia, pcb_mounting_pitch_width, pcb_mounting_pitch_length,
                                    pcb_mounting_hole_offset_width, pcb_mounting_hole_offset_length, 
                                    segments_count)
-    b = color(colour_pcb)
-    
+    b = color(colour_pcb) (b)
+
     b = translate([lens_offset_width, lens_offset_length, 0]) (b)
     
     lens = color(BlackPaint) (cylinder(d = lens_dia, h = lens_height, center = True, segments = segments_count))
@@ -376,6 +376,7 @@ def dc_motor_with_gearbox(motor_dia,
                           motor_worm_gearbox_shaft_length,
                           motor_worm_gearbox_shaft_key_cut,
                           motor_worm_gearbox_shaft_key_length,
+                          motor_worm_gearbox_z_offset,
                           segments_count):
 
     m = dc_motor(motor_dia, motor_length, motor_shaft_dia, motor_shaft_length, motor_shaft_key_cut, motor_shaft_key_length, segments_count)
@@ -387,7 +388,7 @@ def dc_motor_with_gearbox(motor_dia,
 
     p = g + translate([-motor_shaft_dia / 2.0,
                        motor_worm_gearbox_length - motor_worm_gearbox_shaft_pos,
-                       -motor_worm_gearbox_height / 2.0]) (rotate(90, [1, 0, 0]) (m))
+                       -motor_worm_gearbox_height / 2.0 - motor_worm_gearbox_z_offset]) (rotate(90, [1, 0, 0]) (m))
 
     return p
 
