@@ -4,9 +4,7 @@ Python based Mechanical Design Automation (MDA) or Mechanical Computer Aided Des
 
 Used to output OpenSCAD files (via SolidPython)
 
-Overall - it needs a cleanup to organise and explain parts/functions, and perhaps port to muscad
-
-For now, started a new OO based design approach - see [new/test.py](new/test.py) for a demo of the range of built-in parts and features. Here is a brackdown with some screenshots:
+See [test.py](test.py) for a demo of the range of built-in parts and features. Here is a brackdown with some screenshots:
 
 Built-in Part Assembly (using OO inheritance):
 
