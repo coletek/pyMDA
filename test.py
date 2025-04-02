@@ -574,9 +574,7 @@ def build_stock_robots(config):
     
     assembly = Assembly()
 
-    config['robot_cartesian_gantry'] = {}
-    
-    assembly.add('robot_cartesian_gantry', RobotCartesianGantry(config['robot_cartesian_gantry']))
+    assembly.add('robot_cartesian_gantry_three_axis', RobotCartesianGantryThreeAxis())
 
     #assembly.stack_y(150)
     

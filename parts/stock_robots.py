@@ -4,10 +4,10 @@ from solid.utils import *
 
 from pyMDA.parts.core import *
 
-class RobotCartesianGantry(Component):
+class RobotCartesianGantryThreeAxis(Component):
     ''' https://www.alibaba.com/product-detail/3-axis-linear-stage-like-the_62184209284.html '''
     
-    def __init__(self, config):
+    def __init__(self, config = {}):
         super().__init__()
         self.config = config
 
