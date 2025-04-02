@@ -596,7 +596,7 @@ def build(config):
                  position=([0, 0, 0]),
                  rotation=([45, 45, 45]))
     assembly_joined.add('cylinder', Cylinder(20, 20),
-                 position=([0, 0, 25]),  # relative to part1
+                 position=([0, 0, 25]),  # relative to part 'cube'
                  rotation=([0, 0, 0]),
                  parent='cube')
     
