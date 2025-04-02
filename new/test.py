@@ -602,14 +602,6 @@ def build(config):
     
     assembly_joined.export_scad("demo_assembly_joined.scad")
     
-    # example of smarter methods to join components - WIP
-    #demo_geo.join_to_surface('cube', 'cylinder', align='bottom', face_align='top')
-    #demo_geo.join_to_surface('hexagon', 'trianglular_prism', align='front', face_align='back')
-    #demo_geo.join_to_surface('hexagon', 'trianglular_prism', align='left', face_align='left')
-    #demo_geo.join_to_surface('hexagon', 'trianglular_prism', align='bottom', face_align='bottom')
-
-    #assembly.join_to_surface('assembly1', 'assembly2', align='top', face_align='bottom')
-
     return assembly
 
 def main():

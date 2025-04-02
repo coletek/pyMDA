@@ -151,61 +151,6 @@ class Assembly:
             'parent': parent
         }
 
-    def join_to_surface(self, base_name, added_name, align='top', face_align='top'):
-        base = self.items[base_name]
-        added = self.items[added_name]
-
-        # Get origin points for both base and added items
-        base_origin = base['item'].get_origin()
-        added_origin = added['item'].get_origin()
-
-        # Calculate the necessary translations for proper alignment
-        offset = [0, 0, 0]  # Initialize offset for x, y, z
-
-        # Horizontal alignment (adjustments based on width or length can be similarly computed)
-        if align == 'left':
-            if face_align == 'left':
-                offset[0] = base_origin[0] - base['item'].get_width() / 2.0
-            elif face_align == 'right':
-                offset[0] = base_origin[0] - base['item'].get_width() / 2.0 - added['item'].get_width()
-        elif align == 'right':
-            if face_align == 'left':
-                offset[0] = base_origin[0] + base['item'].get_width() / 2.0
-            elif face_align == 'right':
-                offset[0] = base_origin[0] + base['item'].get_width() / 2.0 - added['item'].get_width()
-
-        # Horizontal alignment (adjustments based on width or length can be similarly computed)
-        if align == 'front':
-            if face_align == 'front':
-                offset[1] = base_origin[0] - base['item'].get_length() / 2.0
-            elif face_align == 'back':
-                offset[1] = base_origin[0] - base['item'].get_length() / 2.0 - added['item'].get_length()
-        elif align == 'back':
-            if face_align == 'front':
-                offset[1] = base_origin[0] + base['item'].get_length() / 2.0
-            elif face_align == 'back':
-                offset[1] = base_origin[0] + base['item'].get_length() / 2.0 - added['item'].get_length()
-
-        # Assume get_height(), get_width(), get_length() are implemented
-        if align == 'top':
-            if face_align == 'top':
-                offset[2] = base['item'].get_height() - base_origin[2] - added['item'].get_height()
-            elif face_align == 'bottom':
-                offset[2] = base['item'].get_height() - base_origin[2]
-        elif align == 'bottom':
-            if face_align == 'top':
-                offset[2] = base_origin[2] - base['item'].get_height() / 2 - added['item'].get_height() / 2
-            elif face_align == 'bottom':
-                offset[2] = base_origin[2] - base['item'].get_height()
-
-        # Apply the calculated offset to the added item's position
-        new_position = (
-            base['position'][0] + offset[0],
-            base['position'][1] + offset[1],
-            base['position'][2] + offset[2]
-        )
-        added['position'] = new_position
-
     def assemble(self):
         built = {}
 
