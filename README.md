@@ -65,3 +65,7 @@ Built-in Stock Motors:
 Built-in Stock Electronics:
 
 ![Example](demo-screenshots/demo_stock_electronics.png)
+
+Built-in Stock Robots:
+
+![Example](demo-screenshots/demo_stock_robots.png)

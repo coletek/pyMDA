@@ -15,6 +15,7 @@ from pyMDA.parts.stock_motors import *
 from pyMDA.parts.stock_bearings import *
 from pyMDA.parts.stock_fixtures import *
 from pyMDA.parts.stock_electronics import *
+from pyMDA.parts.stock_robots import *
 
 from pyMDA.parts.collar import *
 from pyMDA.parts.cam_profile import *
@@ -569,6 +570,18 @@ def build_stock_electronics(config):
     
     return assembly
 
+def build_stock_robots(config):
+    
+    assembly = Assembly()
+
+    config['robot_cartesian_gantry'] = {}
+    
+    assembly.add('robot_cartesian_gantry', RobotCartesianGantry(config['robot_cartesian_gantry']))
+
+    #assembly.stack_y(150)
+    
+    return assembly
+
 def build(config):
     
     # demo stacking/aligning with margin/pitch
@@ -590,6 +603,7 @@ def build(config):
     demo_stock_bearings = build_stock_bearings(config)
     demo_stock_fixtures = build_stock_fixtures(config)
     demo_stock_electronics = build_stock_electronics(config)
+    demo_stock_robots = build_stock_robots(config)
 
     demo_geometry.export_scad("demo_geometry.scad")
     demo_curved.export_scad("demo_curved.scad")
@@ -605,6 +619,7 @@ def build(config):
     demo_stock_bearings.export_scad("demo_stock_bearings.scad")
     demo_stock_fixtures.export_scad("demo_stock_fixtures.scad")
     demo_stock_electronics.export_scad("demo_stock_electronics.scad")
+    demo_stock_robots.export_scad("demo_stock_robots.scad")
     
     # demo adding component to 
     assembly = Assembly()
@@ -622,6 +637,7 @@ def build(config):
     assembly.add('demo_stock_bearings', demo_stock_bearings)
     assembly.add('demo_stock_fixtures', demo_stock_fixtures)
     assembly.add('demo_stock_electronics', demo_stock_electronics)
+    assembly.add('demo_stock_robots', demo_stock_robots)
 
     assembly.stack_x(100)
 
