@@ -40,6 +40,10 @@ Built-in Other Features:
 
 ![Example](new/demo_features.png)
 
+Built-in Gears:
+
+![Example](new/demo_gears.png)
+
 Built-in Stock Materials:
 
 ![Example](new/demo_stock_materials.png)

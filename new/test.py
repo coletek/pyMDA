@@ -7,6 +7,7 @@ from pyMDA.new.geometry import *
 from pyMDA.new.curved import *
 from pyMDA.new.bezier_curve import *
 from pyMDA.new.plates import *
+from pyMDA.new.gears import *
 
 from pyMDA.new.stock_materials import *
 from pyMDA.new.stock_magnets import *
@@ -162,6 +163,38 @@ def build_holes(config):
 
     assembly.stack_y(100)
     
+    return assembly
+
+def build_gears(config):
+
+    assembly = Assembly()
+    
+    config['gear_spur'] = {
+        'modul': 1,
+        'tooth_number': 40,
+        'width': 10,
+        'bore': 20,
+        'pressure_angle': -20,
+        'helix_angle': -20,
+        'is_optimized': True
+    }
+
+    assembly.add('gear_spur', GearSpur(config['gear_spur']))
+    
+    config['gear_herringbone'] = {
+        'modul': 1,
+        'tooth_number': 40,
+        'width': 10,
+        'bore': 5,
+        'pressure_angle': 20,
+        'helix_angle': 30,
+        'is_optimized': True
+    }
+
+    assembly.add('gear_herringbone', GearHerringbone(config['gear_herringbone']))
+
+    assembly.stack_y(100)
+
     return assembly
 
 def build_features(config):
@@ -548,6 +581,7 @@ def build(config):
     demo_pts = build_pts(config)
     demo_plates = build_plates(config)
     demo_holes = build_holes(config)
+    demo_gears = build_gears(config)
     demo_features = build_features(config)
     demo_enclosures = build_enclosures(config)
     demo_stock_materials = build_stock_materials(config)
@@ -562,6 +596,7 @@ def build(config):
     demo_pts.export_scad("demo_pts.scad")
     demo_plates.export_scad("demo_plates.scad")
     demo_holes.export_scad("demo_holes.scad")
+    demo_gears.export_scad("demo_gears.scad")
     demo_features.export_scad("demo_features.scad")
     demo_enclosures.export_scad("demo_enclosures.scad")
     demo_stock_materials.export_scad("demo_stock_materials.scad")
@@ -578,6 +613,7 @@ def build(config):
     assembly.add('demo_pts', demo_pts)
     assembly.add('demo_plates', demo_plates)
     assembly.add('demo_holes', demo_holes)
+    assembly.add('demo_gears', demo_gears)
     assembly.add('demo_features', demo_features)
     assembly.add('demo_enclosures', demo_enclosures)
     assembly.add('demo_stock_materials', demo_stock_materials)
