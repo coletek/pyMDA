@@ -122,3 +122,24 @@ class SpeakerGrill(Component):
                 angle += angle_diff
 
         return p
+
+class Funnel(Component):
+
+    
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+    
+    def create(self):
+
+        r2_i = (self.config['height'] + 0.1) * math.sin(self.config['angle']) + self.config['id']/2
+        r2_o = self.config['height'] * math.sin(self.config['angle']) + self.config['od']/2
+
+        i = cylinder(r1=self.config['id']/2, r2=r2_i, h=self.config['height'] + 0.1, center = True, segments = self.segments_count)
+        o = cylinder(r1=self.config['od']/2, r2=r2_o, h=self.config['height'], center = True, segments = self.segments_count)
+        
+        p = o - i #- translate([-10, 0, -10]) (cube([20, 10, 20]))
+
+        p = translate([0, 0, self.config['height'] / 2.0]) (p)
+        
+        return p

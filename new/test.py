@@ -170,16 +170,30 @@ def build_features(config):
 
     # Scotch Yotch
     config['scotch_yotch'] = {
-        "stroke_length": 40.0,
+
+        "crank_height": 1.0,
+        "stroke_length": 7.0 * 2.0,
         "pulley_thickness": 3.0,
-        "pin_dia": 3.0,
+
+        "pin_dia": 5.0,
+        
         "pin_length": 10.0,
-        "slider_x_length": 35.0,
-        "slider_x_width": 3.0 + 2.0,
+
+        "slider_thickness": 5.0,
+        
+        "slider_pin_dia": 5.0 + 0.4 * 2.0,
+
+        "slider_length_fwd": 30.0,
+        "slider_length_rev": 30.0,
+        "clearance": 0.5,
+        "sleeve_clearance": 2.0,
+
+        "sleeve_thickness": 10.0,
+        "sleeve_id": 5.0 + 0.4 * 2.0,
+
         "slider_x_thickness": 5.0,
-        "slider_y_length": 40.0 / 2.0 + 2.0,
-        "slider_y_width": 3.0 + 2.0,
         "slider_y_thickness": 5.0
+        
     }
     config['scotch_yotch']["slider_x_width"] = config['scotch_yotch']["pin_dia"] + 2.0
     config['scotch_yotch']["slider_y_length"] = config['scotch_yotch']["stroke_length"] / 2.0 + 2.0
@@ -353,7 +367,17 @@ def build_stock_motors(config):
     assembly.add('stepper_driver', StepperDriver(config["stepper_driver"]))
     config['stepper'] = { 'nema_type': 17, 'length': 24 }
     assembly.add('stepper', Stepper(config['stepper']))
-    assembly.add('pulley', Pulley(0.0))
+
+
+    config['pulley'] = {
+        "id": 5.0 + 0.4 * 2,
+        "od": 70.0,
+        "thickness": 4.0,
+        "edge_dia": 3.0,
+        "mount_thickness": 5.0,
+        "grub_screw_dia": 2.5, # based on M3 thread
+    }
+    assembly.add('pulley', Pulley(config["pulley"]))
     #assembly.add('stepper_and_pulley', StepperAndPulley(0.0))
 
     inch_to_mm = 25.4
@@ -564,7 +588,20 @@ def build(config):
     assembly.add('demo_stock_electronics', demo_stock_electronics)
 
     assembly.stack_x(100)
-        
+
+    # example of how to join components
+
+    assembly_joined = Assembly()
+    assembly_joined.add('cube', Cube(50, 50, 50),
+                 position=([0, 0, 0]),
+                 rotation=([45, 45, 45]))
+    assembly_joined.add('cylinder', Cylinder(20, 20),
+                 position=([0, 0, 25]),  # relative to part1
+                 rotation=([0, 0, 0]),
+                 parent='cube')
+    
+    assembly_joined.export_scad("demo_assembly_joined.scad")
+    
     # example of smarter methods to join components - WIP
     #demo_geo.join_to_surface('cube', 'cylinder', align='bottom', face_align='top')
     #demo_geo.join_to_surface('hexagon', 'trianglular_prism', align='front', face_align='back')

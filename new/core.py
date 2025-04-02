@@ -1,3 +1,4 @@
+import math
 from solid import *
 from solid.utils import *
 from solid.solidpython import scad_render_to_file
@@ -141,9 +142,14 @@ class Assembly:
             self.items[name]['position'] = new_position
             old_item = self.items[name]['item']
 
-    def add(self, name, item, position=(0, 0, 0), rotation=(0, 0, 0)):
-        """Add a component or sub-assembly with an optional position and rotation."""
-        self.items[name] = {'item': item, 'position': position, 'rotation': rotation}
+    def add(self, name, item, position=(0, 0, 0), rotation=(0, 0, 0), parent=None):
+        """Add a component with optional parent for hierarchical transformations."""
+        self.items[name] = {
+            'item': item,
+            'position': position,
+            'rotation': rotation,
+            'parent': parent
+        }
 
     def join_to_surface(self, base_name, added_name, align='top', face_align='top'):
         base = self.items[base_name]
@@ -201,14 +207,63 @@ class Assembly:
         added['position'] = new_position
 
     def assemble(self):
-        """Recursively creates the union of all items considering their positions and rotations."""
-        model = None
-        for item_info in self.items.values():
-            item_model = item_info['item'].create()
-            item_model = rotate(item_info['rotation'])(item_model)
-            item_model = translate(item_info['position'])(item_model)
-            model = union()(model, item_model) if model else item_model
-        return model
+        built = {}
+
+        def apply_transform(name, parent_pos=(0, 0, 0), parent_rot=(0, 0, 0)):
+            item_info = self.items[name]
+            item = item_info['item']
+            local_pos = item_info['position']
+            local_rot = item_info['rotation']
+            parent = item_info.get('parent')
+
+            # Compose transformations
+            def rotate_vector(vec, rot):
+                x, y, z = vec
+                rx, ry, rz = [math.radians(r) for r in rot]
+
+                # Apply Z
+                cz, sz = math.cos(rz), math.sin(rz)
+                x, y = x * cz - y * sz, x * sz + y * cz
+
+                # Apply Y
+                cy, sy = math.cos(ry), math.sin(ry)
+                x, z = x * cy + z * sy, -x * sy + z * cy
+                
+                # Apply X
+                cx, sx = math.cos(rx), math.sin(rx)
+                y, z = y * cx - z * sx, y * sx + z * cx
+                
+                return [x, y, z]
+
+            # Recursively build parent transform if needed
+            if parent:
+                parent_pos, parent_rot = built[parent]['abs_pos'], built[parent]['abs_rot']
+
+            abs_pos = [a + b for a, b in zip(parent_pos, rotate_vector(local_pos, parent_rot))]
+            abs_rot = [a + b for a, b in zip(parent_rot, local_rot)]
+
+            model = item.create()
+            model = rotate(local_rot)(model)
+            model = translate(local_pos)(model)
+            model = rotate(parent_rot)(model)
+            model = translate(parent_pos)(model)
+            
+            built[name] = {
+                'model': model,
+                'abs_pos': abs_pos,
+                'abs_rot': abs_rot
+            }
+
+            return model
+
+        full_model = None
+        for name in self.items:
+            if name not in built:
+                model = apply_transform(name)
+                full_model = union()(full_model, model) if full_model else model
+
+        return full_model if full_model else cube(0)
+        
 
     def test_assembly(self):
         """Test the complete assembly, including any sub-assemblies."""

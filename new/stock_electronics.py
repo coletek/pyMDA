@@ -14,19 +14,18 @@ class PCBHeader(Component):
         self.config = config
         self.config['width'] = 2.5
         self.config['length'] = pitch * number_of_pins
-        self.config['height'] = 2.5
-        self.config['thickness'] = (8.85 - 6.35) / 2.0
+        self.config['thickness'] = 2.5
         self.config['pin_size'] = 0.64
         self.config['pin_length'] = 3.05
-        self.config['pin_length_overall'] = self.config['pin_length'] + self.config['height'] + 6.0
+        self.config['pin_length_overall'] = self.config['pin_length'] + self.config['thickness'] + 6.0
         self.pitch = pitch
         self.number_of_pins = number_of_pins
 
     def create(self):
             
         # enclosure
-        p = color(BlackPaint) (cube([self.config['width'], self.config['length'], self.config['height']], center = True))
-        p = translate([0, 0, self.config['height'] / 2.0]) (p)
+        p = color(BlackPaint) (cube([self.config['width'], self.config['length'], self.config['thickness']], center = True))
+        p = translate([0, 0, self.config['thickness'] / 2.0]) (p)
     
         # pins
         l = color(Aluminum) (cube([self.config['pin_size'], self.config['pin_size'], self.config['pin_length_overall']], center = True))
@@ -65,6 +64,8 @@ class PCBHeaderDual(Component):
         p += translate([-self.pitch / 2.0,
                         -(self.number_of_pins / 2.0 - 1) / 2.0 * self.pitch,
                         self.config['pin_length_overall'] / 2.0 - self.config['dual_height'] / 2.0 - self.config['pin_length']]) (l)
+
+        p = translate([0, 0, self.config['dual_height'] / 2.0]) (p)
         
         return p
 

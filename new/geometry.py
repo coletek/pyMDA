@@ -68,6 +68,8 @@ class Cylinder(Component):
         if self.is_add_text:
             p = self.add_text(p)
 
+        p = color(self.color) (p)
+            
         return p
 
 class Sphere(Component):
@@ -93,7 +95,9 @@ class Sphere(Component):
         if not self.is_center:
             p = translate([0, 0, self.d / 2]) (p)
             self.origin = [0, 0, self.d / 2]
-        
+
+        p = color(self.color) (p)
+            
         return p
 
 class Pyramid(Component):
@@ -131,6 +135,8 @@ class Pyramid(Component):
         if self.is_center:
             p = translate([0, 0, -self.height / 2]) (p)
             self.origin = [0, 0, 0]
+
+        p = color(self.color) (p)
             
         return p
 
@@ -153,6 +159,7 @@ class Cone(Component):
         p = cylinder(r1=self.dia/2, r2=0, h=self.height, center=self.is_center, segments=self.segments_count)
         if self.is_add_text:
             p = self.add_text(p)
+        p = color(self.color) (p)
         return p
 
 class Tetrahedron(Component):
@@ -209,7 +216,9 @@ class Tetrahedron(Component):
         else:
             p = translate([-self.bounding_box["width"] / 2.0, -self.bounding_box["length"] / 2.0, 0]) (p)
             self.origin = [0, 0, 0]
-        
+
+        p = color(self.color) (p)
+            
         return p
     
 class Torus(Component): # donut
@@ -244,6 +253,8 @@ class Torus(Component): # donut
             p = translate([0, 0, self.bounding_box["height"] / 2]) (p)
             self.origin = [0, 0, self.bounding_box["height"] / 2]
 
+        p = color(self.color) (p)
+            
         return p
     
 #
@@ -297,6 +308,8 @@ class TriangularPrism(Component):
         if self.is_center:
             p = translate([-self.origin[0], -self.origin[1], -self.origin[2]]) (p)
             self.origin = [0, 0, 0]
+
+        p = color(self.color) (p)
             
         return p
 
@@ -333,6 +346,8 @@ class HexagonalPrism(Component): # 6sides (hexagonal) base with depth
         else:
             p = translate([0, 0, self.height / 2]) (p)
             self.origin = [0, 0, self.height / 2]
-            
+
+        p = color(self.color) (p)
+
         return p
 

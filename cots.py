@@ -10,20 +10,42 @@ from helpers import *
 #
 #==============================================================================
 
+def header(pitch = 2.54, number_of_pins = 2):
+
+    pcb_header_width = 2.5
+    pcb_header_length = pitch * number_of_pins
+    pcb_header_height = 14.0
+    pcb_header_thickness = 2.5
+    pcb_header_pin_size = 0.64
+    pcb_header_pin_length = 3.05
+    pcb_header_pin_length_overall = pcb_header_pin_length + pcb_header_height - 1.0
+    
+    # enclosure
+    p = color(BlackPaint) (cube([pcb_header_width, pcb_header_length, pcb_header_height], center = True))
+    p = translate([0, 0, pcb_header_height / 2.0]) (p)
+    
+    # pins holes
+    l = color(Aluminum) (cube([pcb_header_pin_size, pcb_header_pin_size, pcb_header_pin_length_overall], center = True))
+    l = matrix_copy_simple(l, 0, pitch, 1, number_of_pins)
+    p -= translate([0, -(number_of_pins - 1) / 2.0 * pitch, pcb_header_pin_length_overall / 2.0 - pcb_header_pin_length]) (l)
+
+    p = translate([0, 0, pcb_header_thickness + 0.1]) (p)
+    
+    return p
+    
 # https://app.adam-tech.com/products/download/data_sheet/201605/ph1-xx-ua-data-sheet.pdf
 def pcb_header(pitch = 2.54, number_of_pins = 2):
 
     pcb_header_width = 2.5
     pcb_header_length = pitch * number_of_pins
-    pcb_header_height = 2.5
-    pcb_header_thickness = (8.85 - 6.35) / 2.0
+    pcb_header_thickness = 2.5
     pcb_header_pin_size = 0.64
     pcb_header_pin_length = 3.05
-    pcb_header_pin_length_overall = pcb_header_pin_length + pcb_header_height + 6.0
+    pcb_header_pin_length_overall = pcb_header_pin_length + pcb_header_thickness + 6.0
     
     # enclosure
-    p = color(BlackPaint) (cube([pcb_header_width, pcb_header_length, pcb_header_height], center = True))
-    p = translate([0, 0, pcb_header_height / 2.0]) (p)
+    p = color(BlackPaint) (cube([pcb_header_width, pcb_header_length, pcb_header_thickness], center = True))
+    p = translate([0, 0, pcb_header_thickness / 2.0]) (p)
     
     # pins
     l = color(Aluminum) (cube([pcb_header_pin_size, pcb_header_pin_size, pcb_header_pin_length_overall], center = True))
@@ -56,6 +78,8 @@ def pcb_header_dual(pitch = 2.54, number_of_pins = 2):
     p += translate([-pitch / 2.0,
                     -(number_of_pins / 2.0 - 1) / 2.0 * pitch,
                     pcb_header_pin_length_overall / 2.0 - pcb_header_dual_height / 2.0 - pcb_header_pin_length]) (l)
+
+    p = translate([0, 0, pcb_header_dual_height / 2.0]) (p)
     
     return p
 
@@ -152,7 +176,7 @@ def fuse_holder_and_fuse_mini_assembly():
 
 # https://www.raspberrypi-spy.co.uk/2012/03/mechanical-data-dimensions/
 def rpi3():
-    p = import_stl("cots/rpi3.stl")
+    p = import_stl("cots/rpi/rpi3.stl")
 
     rpi3_width = 56.0
     rpi3_length = 85.0
@@ -169,7 +193,7 @@ def rpi3():
 # https://grabcad.com/library/raspberry-pi-display-7-1
 # https://raspiworld.com/images/other/drawings/Raspberry-Pi-7in-Touchscreen-Display.jpg
 def rpi_display():
-    p = import_stl("cots/rpi-display.stl")
+    p = import_stl("cots/rpi/rpi-display.stl")
 
     rpi_display_width = 110.8
     rpi_display_length = 193.0
@@ -186,7 +210,7 @@ def rpi_display():
 # https://www.cadcrowd.com/3d-models/nvidia-jetson-nano-development-pc-board-assembly
 # https://static.cytron.io/image/catalog/products/JN-ORNN-8G-DK/JN-ORNN-8G-DK-dimensiona.jpg
 def nvidia_jetson_nano():
-    p = import_stl("cots/p3450-p3449-a02-p3448-a02.stl")
+    p = import_stl("cots/nvidia_jetson_nano/p3450-p3449-a02-p3448-a02.stl")
 
     nvidia_jetson_nano_width = 79.0
     nvidia_jetson_nano_length = 100.0
@@ -302,15 +326,15 @@ def bearing_basic(id, od, thickness, segments_count):
 
 @bom_part("Bearing Pillow Block (UCP201)", 22.42, 'A$')
 def bearing_pillow_block_ucp201():
-    return color(BlackPaint) (rotate(90, [0, 1, 0]) (rotate(90, [0, 0, 1]) (translate([102.9, -77.5, -169.0]) (import_stl("cots/ucp201.stl")))))
+    return color(BlackPaint) (rotate(90, [0, 1, 0]) (rotate(90, [0, 0, 1]) (translate([102.9, -77.5, -169.0]) (import_stl("cots/bearings/ucp201.stl")))))
 
 @bom_part("Bearing Pillow Block (UCP204)", 27.19, 'A$')
 def bearing_pillow_block_ucp204():
-    return color(BlackPaint) (import_stl("cots/ucp204.stl"))
+    return color(BlackPaint) (import_stl("cots/bearings/ucp204.stl"))
 
 @bom_part("Bearing 2 Bolt Flange (UCFL204)", 19.76, 'A$')
 def bearing_2_bolt_flange_ucfl204():
-    return color(BlackPaint) (import_stl("cots/ucfl204.stl"))
+    return color(BlackPaint) (import_stl("cots/bearings/ucfl204.stl"))
 
 #==============================================================================
 #
@@ -409,22 +433,22 @@ def servo_rds3225(a = 0.0, include_support_bracket = False):
     servo_rds3225_axle_gearhead_height = 4.0
     servo_rds3225_axle_wheel_gap = 2.8
     servo_rds3225_bracket_width = 20.0
-    servo_rds3225_bracket_length = 57.0
+    servo_rds3225_bracket_length = 57.0 # 57.0 outer measurement on cad, 56 really
     servo_rds3225_bracket_thickness = 2.0
     servo_rds3225_bracket_screw_head_height = 1.6
     servo_rds3225_cable_mount_height = 6.0
 
-    b = color(Aluminum) (import_stl("cots/RDS3225-bracket.stl"))
+    b = color(Aluminum) (import_stl("cots/servo/RDS3225-bracket.stl"))
 
     b = rotate(180, [1, 0, 0]) (b)
     b = rotate(90, [0, 0, 1]) (b)
     
     b = translate([-servo_rds3225_width / 2.0, -servo_rds3225_axle_pos, 0]) (b)
     
-    s = color(BlackPaint) (import_stl("cots/RDS3225-servo.stl"))
+    s = color(BlackPaint) (import_stl("cots/servo/RDS3225-servo.stl"))
 
     if include_support_bracket:
-        s += color(Aluminum) (import_stl("cots/RDS3225-bracket-support.stl"))
+        s += color(Aluminum) (import_stl("cots/servo/RDS3225-bracket-support.stl"))
 
     s = rotate(180, [1, 0, 0]) (s)
     s = rotate(90, [0, 0, 1]) (s)
@@ -480,7 +504,7 @@ def pulley(angle = 0):
     return rotate(angle, [1, 0, 0]) (
         translate([-6.95, -7, -7]) (
             color(Aluminum) (
-                import_stl("cots/GT2_16T.STL")
+                import_stl("cots/stepper/GT2_16T.STL")
             )
         )
     )
@@ -506,40 +530,40 @@ def linear_actuator_pa14p(size = 2.0 * inch_to_mm, stroke = 0.0, actuator_dist_t
     # TODO: make stroke work - requires replacing STL files with custom OpenSCAD model
     # until then, we can hack it via using size
     size += stroke
-    p = import_stl("cots/PA-14P-2.stl")
+    p = import_stl("cots/linear_actuators/PA-14P-2.stl")
     if size == 4.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-4.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-4.stl")
     if size == 6.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-6.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-6.stl")
     if size == 8.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-8.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-8.stl")
     if size == 10.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-10.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-10.stl")
     if size == 12.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-12.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-12.stl")
     if size == 18.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-18.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-18.stl")
     if size == 24.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-24.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-24.stl")
     if size == 30.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-30.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-30.stl")
     if size == 40.0 * inch_to_mm:
-        p = import_stl("cots/PA-14P-40.stl")
+        p = import_stl("cots/linear_actuators/PA-14P-40.stl")
     return color(BlackPaint) (translate([-actuator_dist_to_mount, actuator_dist_to_mount2, actuator_width / 2.0]) (p))
 
 @bom_part("Linear Actuator Mounting Bracket (BRK-14)", 8.5)
 def linear_actuator_mounting_bracket_brk14(actuator_mounting_bracket_width = 1.04 * inch_to_mm, actuator_mounting_bracket_length = 2.3 * inch_to_mm, actuator_mounting_bracket_length_to_axle = 0.32 * inch_to_mm, actuator_mounting_bracket_height_to_axle = 1.43 * inch_to_mm):
-    return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - actuator_mounting_bracket_width / 2.0, 11.899 - actuator_mounting_bracket_height_to_axle, actuator_mounting_bracket_length - actuator_mounting_bracket_length_to_axle]) (import_stl("cots/BRK-14.stl")))))
+    return color(BlackPaint) (rotate(-90, [0, 0, 1]) (rotate(90, [0, 1, 0]) (translate([15.62 - actuator_mounting_bracket_width / 2.0, 11.899 - actuator_mounting_bracket_height_to_axle, actuator_mounting_bracket_length - actuator_mounting_bracket_length_to_axle]) (import_stl("cots/linear_actuators/BRK-14.stl")))))
 
 # waiting on revised 3D model
 @bom_part("Linear Actuator Mounting Bracket (BRK-03)", 9.5)
 def linear_actuator_mounting_bracket_brk03(actuator_mounting_bracket_length = 55.88):
-    return color(BlackPaint) (translate([10.0, (0.79 + 0.75 / 2.0 + 5.16 + 0.11) * inch_to_mm + 1, 0]) (rotate(90, [1, 0, 0]) (rotate(90, [0, 0, 1]) (scale(20.066/50.8386) (import_stl("cots/BRK-03.stl"))))))
+    return color(BlackPaint) (translate([10.0, (0.79 + 0.75 / 2.0 + 5.16 + 0.11) * inch_to_mm + 1, 0]) (rotate(90, [1, 0, 0]) (rotate(90, [0, 0, 1]) (scale(20.066/50.8386) (import_stl("cots/linear_actuators/BRK-03.stl"))))))
 
 # waiting on revised 3D model
 #@bom_part("Linear Actuator (PA-12-10626912T)", 78.60)
 def linear_actuator_pa12t(actuator_small_dist_to_mount = 4.85):
-    return color(BlackPaint) (translate([0, -actuator_small_dist_to_mount, 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/PA-12-1.06.stl")))))
+    return color(BlackPaint) (translate([0, -actuator_small_dist_to_mount, 0]) (rotate(-90, [0, 0, 1]) (rotate(-90, [1, 0, 0]) (import_stl("cots/linear_actuators/PA-12-1.06.stl")))))
 
 def linear_actuator_and_bracket(size, stroke, angle, explode_dist):
     return rotate(angle, [0, 0, 1]) (linear_actuator_pa14p(size, stroke)) + translate([0, -explode_dist, 0]) (linear_actuator_mounting_bracket_brk14())

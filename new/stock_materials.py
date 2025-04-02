@@ -105,6 +105,18 @@ class Rod(Component):
     def create(self):
         return color(Aluminum) (cylinder(d = self.dia, h = self.length, center = True, segments = self.segments_count))
 
+class Tube(Component):
+
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+
+    def create(self):
+        outter = cylinder(d = self.config["od"], h = self.config["length"], center = True, segments = self.segments_count)
+        inner = cylinder(d = self.config["id"], h = self.config["length"] + 2, center = True, segments = self.segments_count)
+        p = outter - inner
+        return color(Aluminum) (p)
+    
 class Sheet(Component):
 
     def __init__(self, width = 600, length = 2400, thickness = 1.2):

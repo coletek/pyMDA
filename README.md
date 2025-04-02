@@ -8,6 +8,10 @@ Overall - it needs a cleanup to organise and explain parts/functions, and perhap
 
 For now, started a new OO based design approach - see [new/test.py](new/test.py) for a demo of the range of built-in parts and features. Here is a brackdown with some screenshots:
 
+Built-in Part Assembly (using OO inheritance):
+
+![Example](new/demo_assembly_joined.png)
+
 Built-in Geometry Parts:
 
 ![Example](new/demo_geometry.png)

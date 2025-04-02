@@ -165,9 +165,9 @@ m20_clearance_hole = 22.0
 # https://www.aliexpress.com/item/32879217592.html
 #
 
-m2_nut_insert = 3.5
+m2_nut_insert = 2.7 #3.5
 m2_5_nut_insert = 3.5
-m3_nut_insert = 4.2
+m3_nut_insert = 3.5 #4.2
 m3_nut_insert_long = 5.3
 m4_nut_insert = 5.2
 m4_nut_insert_long = 6.3
