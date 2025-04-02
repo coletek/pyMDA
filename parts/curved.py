@@ -1,8 +1,8 @@
 from solid import *
 from solid.utils import *
 
-from pyMDA.new.core import *
-from pyMDA.new.geometry import *
+from pyMDA.parts.core import *
+from pyMDA.parts.geometry import *
 
 #
 # This added fillets to 2 or 4 sides, not all 12 sides as done by

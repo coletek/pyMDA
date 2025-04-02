@@ -2,7 +2,7 @@ import math
 from solid import *
 from solid.utils import *
 
-from pyMDA.new.core import *
+from pyMDA.parts.core import *
 
 class FixtureCounterSunk(Component):
     ''' https://image.pushauction.com/0/0/f2c27552-fb37-436a-9369-5b4293c5087b/eda41698-7b80-41de-b5b8-98625f130e93.jpg '''

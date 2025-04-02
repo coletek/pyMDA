@@ -2,9 +2,9 @@ import math
 from solid import *
 from solid.utils import *
 
-from pyMDA.new.core import *
-from pyMDA.new.utilties import *
-from pyMDA.new.plates import *
+from pyMDA.parts.core import *
+from pyMDA.parts.utilties import *
+from pyMDA.parts.plates import *
 
 class PCBHeader(Component):
     ''' https://app.adam-tech.com/products/download/data_sheet/201605/ph1-xx-ua-data-sheet.pdf '''

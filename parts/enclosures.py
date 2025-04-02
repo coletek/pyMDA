@@ -2,8 +2,8 @@ import math
 from solid import *
 from solid.utils import *
 
-from pyMDA.new.core import *
-from pyMDA.new.stock_fixtures import *
+from pyMDA.parts.core import *
+from pyMDA.parts.stock_fixtures import *
 
 class Boss(Component):
 

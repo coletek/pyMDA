@@ -2,7 +2,7 @@ import math
 from solid import *
 from solid.utils import *
 
-from pyMDA.new.core import *
+from pyMDA.parts.core import *
 
 Gears = import_scad("pyMDA/cots/gears/gears.scad")
 
